@@ -130,8 +130,14 @@ def run():
         df = pd.DataFrame(table_data)
 
         # Format and display the table
-        df = df.reset_index(drop=True)  # Remove row numbers
-        fraction_cols = [col for col in df.columns if col != "Time Window (Years)"]
+        # Ensure no invalid data in fraction columns
+        df[fraction_cols] = df[fraction_cols].fillna(0).replace([np.inf, -np.inf], 0)
+
+        # Format the table
+        fraction_cols = [c for c in df.columns if c != 'Time (years)']
         format_dict = {col: "{:.2%}" for col in fraction_cols}
         styled_df = df.style.format(format_dict)
+
+        # Display styled DataFrame
         st.write(styled_df)
+
