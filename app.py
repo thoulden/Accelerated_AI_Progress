@@ -5,7 +5,7 @@ import pandas as pd
 
 # Import the other modules
 import math_appendix
-import multiple_simulations
+import multiple_simulations  # Will contain a placeholder for now
 import single_simulation
 
 # Navigation link at the top right
@@ -25,11 +25,9 @@ def get_parameters_table_markdown():
 | $\beta_0$            | Diminishing returns in discovering new ideas when GPT-6 is launched | 0.15          | 0.45            | 0.75          |
 | $\alpha$             | Contribution of cognitive labor vs. compute to AI R&D               | 0.0           | 0.5             | 1.0           |
 | $g$                  | Growth rate of software when GPT-6 is deployed                      | 2.0           | 2.77            | 3.0           |
-| $D$                    | Multiples of GPT-6 we can reach before a ceiling ($ D \equiv S_{\text{ceiling}} /S_0 $) | $10^{7}$ | $10^{8}$ | $10^{9}$ |
+| $D$                  | Multiples of GPT-6 we can reach before a ceiling ($ D \equiv S_{\text{ceiling}} / S_0 $) | $10^{7}$ | $10^{8}$ | $10^{9}$ |
     '''
     return table_markdown
-
-
 
 params = st.experimental_get_query_params()
 if params.get('page') == ['math_appendix']:
@@ -47,7 +45,7 @@ else:
     - 'Single Simulation' allows you to run a single simulation under specific parameter values to illustrate the path of AI progress. Under this second option, you will also see the change in the level of diminishing research productivity over time and the growth rates. The cases considered are the following: 
         - Exponential: This is a hypothetical case where software growth continued at the same rate as when GPT-6 is released. This is hypothetical since it ignores increasing diminishing returns to research. Exponential progress is maintained through a growing compute stock to offset (fixed) diminishing returns to research.
         - Base: Here research is left to humans, and the compute stock is growing as in the exponential case. Here, humans will still face increasing diminishing returns to research. 
-        - Acelerate: Here AI is deployed to research and the compute stock is growing at the same rate as the above two cases.
+        - Accelerate: Here AI is deployed to research and the compute stock is growing at the same rate as the above two cases.
     
     For technical details, refer to the math appendix.
      """)
@@ -79,6 +77,6 @@ else:
     )
 
     if simulation_mode == "Multiple Simulations":
-        multiple_simulations.run()
+        multiple_simulations.run()  # Will show a placeholder message
     elif simulation_mode == "Single Simulation":
         single_simulation.run()
