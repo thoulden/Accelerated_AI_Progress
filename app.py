@@ -79,6 +79,6 @@ else:
     )
 
     if simulation_mode == "Multiple Simulations":
-        multiple_simulations.run()  # Will show a placeholder message
+        multiple_sims.run()  # Will show a placeholder message
     elif simulation_mode == "Single Simulation":
-        single_simulation.run()
+        single_sim.run()
