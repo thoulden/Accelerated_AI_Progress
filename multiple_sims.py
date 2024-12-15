@@ -131,6 +131,6 @@ def run():
 
         # Format and display the table
         # Ensure no invalid data in fraction columns
-           st.dataframe(df)  # Display plain DataFrame without styling
+        st.dataframe(df)  # Display plain DataFrame without styling
 
 
