@@ -78,6 +78,9 @@ def run():
         times_in_years = np.array(times) / 12.0
         sizes = np.array(sizes)
 
+        # Give ceiling a value for all time
+        ceiling_time=ceiling * np.ones(len(time[:-1])))
+                             
         # Plot software level on a log scale (original plot)
         fig1, ax1 = plt.subplots(figsize=(10, 5))
         ax1.plot(times_in_years, sizes, label='Software Level')
