@@ -31,7 +31,7 @@ def get_parameters_table_markdown():
     '''
     return table_markdown
 
-params = st.experimental_get_query_params()
+params = st.query_params()
 if params.get('page') == ['math_appendix']:
     # Display Math Appendix
     math_appendix.display()
