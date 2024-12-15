@@ -4,8 +4,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def run():
-    st.header("Multiple Simulations")
 
+    run_sims = st.sidebar.button("Run Simulations")
+    
     # User inputs for simulation setup
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
     simulation_duration = st.sidebar.number_input("Simulation Duration (years)", min_value=1, max_value=100, value=10)
@@ -33,8 +34,6 @@ def run():
     st.sidebar.markdown("#### lambda_factor (log-uniform)")
     lf_low = st.sidebar.number_input("lambda_factor low bound", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("lambda_factor high bound", min_value=lf_low, value=0.8)
-    
-    run_sims = st.sidebar.button("Run Simulations")
 
     if run_sims:
         # Parameter sampling function
