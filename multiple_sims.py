@@ -6,8 +6,6 @@ import pandas as pd
 def run():
     st.header("Multiple Simulations")
 
-    run_sims = st.sidebar.button("Run Simulations")
-    
     # User inputs for simulation setup
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
     simulation_duration = st.sidebar.number_input("Simulation Duration (years)", min_value=1, max_value=100, value=10)
@@ -15,8 +13,13 @@ def run():
     g = 2.77
 
     # Allow user to specify multiples
-    multiples_input = st.sidebar.text_input("Enter multiples of g (comma-separated)", value="3,10,30")
+    multiples_input = st.sidebar.text_input("Enter speed-up multiples of g (comma-separated)", value="3,10,30")
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
+
+    # Allow user to specify time windows
+    st.sidebar.markdown("### Time Window for Growth Conditions")
+    time_windows = st.sidebar.text_input("Enter time windows (years, comma-separated)", value="1,3,5,10")
+    time_windows = [float(t.strip()) for t in time_windows.split(",")]
 
     # Allow user to specify parameter sampling bounds
     st.sidebar.markdown("### Parameter Sampling Bounds")
@@ -36,8 +39,24 @@ def run():
     lf_low = st.sidebar.number_input("lambda_factor low bound", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("lambda_factor high bound", min_value=lf_low, value=0.8)
     
+    run_sims = st.sidebar.button("Run Simulations")
 
     if run_sims:
+        # Function to calculate summary statistics
+        def calculate_summary_statistics_binary(times, conditions):
+            results = {condition: 'no' for condition in conditions}
+
+            for time_period, speed_up_factor in conditions:
+                baseline_doublings = (time_period / 12) * 8  # 8 doublings per year
+                required_doublings = int(baseline_doublings * speed_up_factor)
+
+                for i in range(len(times) - required_doublings):
+                    time_span = times[i + required_doublings] - times[i]
+                    if time_span < time_period * 12:  # Convert years to months
+                        results[(time_period, speed_up_factor)] = 'yes'
+                        break
+            return results
+
         # Parameter sampling function
         def sample_parameters():
             initial_boost = np.exp(np.random.uniform(np.log(ib_low), np.log(ib_high)))
@@ -49,14 +68,13 @@ def run():
 
             return r_initial, initial_doubling_time, limit_years, lambda_factor
 
+        # Dynamic system function
         def dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, lambda_factor, dt, simulation_duration):
-            # Convert limit_years into the ceiling
             ceiling = 256 ** limit_years
 
             r = r_initial
-            size = 1.0  # Starting size
+            size = 1.0
             times = [0.0]
-            sizes = [size]
             total_doublings = int(limit_years * 8)
             k = r_initial / total_doublings if total_doublings > 0 else 0
 
@@ -68,99 +86,62 @@ def run():
                 g_prime = np.log(2) / doubling_time
                 size *= np.exp(g_prime * dt)
                 current_time += dt
-                if current_time > max_time:
-                    break
                 times.append(current_time)
-                sizes.append(size)
 
                 fraction_of_doubling = (g_prime * dt) / np.log(2)
                 r -= k * fraction_of_doubling
-                if r < 0:
-                    r = 0
                 if r > 0:
-                    doubling_time *= 2 ** (lambda_factor * (1/r - 1))
+                    doubling_time *= 2 ** (lambda_factor * (1 / r - 1))
 
-            return np.array(times), np.array(sizes)
+            return np.array(times)
 
-        # Run all simulations and store sizes
-        progress = st.progress(0)  # Progress bar
-        sim_sizes_list = []
-        sim_times = None
+        # Conditions to check
+        conditions = [(t, m) for t in time_windows for m in multiples]
 
+        # Initialize progress bar
+        progress = st.progress(0)
+
+        # Run simulations and collect results
+        summary_stats = []
         for i in range(num_sims):
             r_initial, initial_doubling_time, limit_years, lambda_factor = sample_parameters()
-            times_array, sizes_array = dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, lambda_factor, dt, simulation_duration)
-            if sim_times is None:
-                sim_times = times_array
-            else:
-                # Ensure all arrays match shortest length
-                min_len = min(len(sim_times), len(times_array))
-                sim_times = sim_times[:min_len]
-                sim_sizes_list = [s[:min_len] for s in sim_sizes_list]
-                sizes_array = sizes_array[:min_len]
+            times_array = dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, lambda_factor, dt, simulation_duration)
+            stats = calculate_summary_statistics_binary(times_array, conditions)
+            summary_stats.append(stats)
+            progress.progress((i + 1) / num_sims)
 
-            sim_sizes_list.append(sizes_array)
-            progress.progress((i+1)/num_sims)
+        # Aggregate results
+        results_count = {condition: 0 for condition in conditions}
+        for stats in summary_stats:
+            for condition, result in stats.items():
+                if result == 'yes':
+                    results_count[condition] += 1
 
-        # Convert to array
-        sim_sizes_mat = np.array(sim_sizes_list) # (num_sims, T)
-        # times shape (T,)
+        results_fraction = {k: v / num_sims for k, v in results_count.items()}
 
-        # Compute growth rates
-        # Assume uniform dt for simplicity
-        growth_times = sim_times[1:]
-        dt_years = growth_times[1] - growth_times[0] if len(growth_times) > 1 else 1.0
+        # Create table
+        table_data = []
+        for time_window in time_windows:
+            row = {"Time Window (Years)": time_window}
+            for multiple in multiples:
+                key = (time_window, multiple)
+                row[f"{multiple}x g"] = f"{results_fraction.get(key, 0):.2%}"
+            table_data.append(row)
 
-        sim_growth_rates = []
-        for i in range(num_sims):
-            sizes_arr = sim_sizes_mat[i]
-            gr = (np.log(sizes_arr[1:]) - np.log(sizes_arr[:-1])) / dt_years
-            sim_growth_rates.append(gr)
-        sim_growth_rates = np.array(sim_growth_rates) # (num_sims, T-1)
+        df = pd.DataFrame(table_data)
+        st.write("### Summary Table")
+        st.write(df.style.hide_index())
 
-        # For each multiple, compute fraction of sims exceeding multiple*g
-        fractions_dict = {}
-        for m in multiples:
-            threshold = m * g
-            exceed_bool = sim_growth_rates > threshold
-            frac = exceed_bool.sum(axis=0) / num_sims
-            fractions_dict[m] = frac
+        # Plot results
+        fig, ax = plt.subplots(figsize=(10, 5))
+        for multiple in multiples:
+            fractions = [results_fraction.get((tw, multiple), 0) for tw in time_windows]
+            ax.plot(time_windows, fractions, label=f"{multiple}x g", marker='o')
 
-        # Plot the fractions over time
-        fig, ax = plt.subplots(figsize=(10,5))
-        for m in multiples:
-            ax.plot(growth_times, fractions_dict[m], label=f'{m}x g')
-        ax.set_xlabel('Time (years)')
-        ax.set_ylabel('Fraction of Sims Exceeding Threshold')
-        ax.set_title('Fraction of Simulations with Growth Rates Above Multiples of g Over Time')
-        ax.grid(True, which='both', linestyle='--', linewidth=0.5)
+        ax.set_xlabel("Time Window (Years)")
+        ax.set_ylabel("Fraction of Simulations Meeting Condition")
+        ax.set_title("Fraction of Simulations with Growth Rate Exceeding Multiples of g")
         ax.legend()
+        ax.grid(True, which='both', linestyle='--', linewidth=0.5)
         st.pyplot(fig)
 
-        # Produce a table
-        report_times = [0.0833, 0.25, 1, 3]
-        def nearest_index(time_array, val):
-            return (np.abs(time_array - val)).argmin()
-
-        data_for_table = {}
-        data_for_table['Time (years)'] = report_times
-        for m in multiples:
-            fractions_at_times = []
-            for rt in report_times:
-                idx = nearest_index(growth_times, rt)
-                fractions_at_times.append(fractions_dict[m][idx])
-            data_for_table[f'{m}x g'] = fractions_at_times
-
-        df = pd.DataFrame(data_for_table)
-
-        # Format the table
-        # We do not want years as percent, only fraction columns.
-        # Fraction columns are all except "Time (years)"
-        fraction_cols = [c for c in df.columns if c != 'Time (years)']
-        format_dict = {col: "{:.2%}" for col in fraction_cols}
-
-        # Hide row numbers and only format fraction columns as percent
-        df = df.reset_index(drop=True)
-
-        styled_df = df.style.format(format_dict)
-        st.write(styled_df)
