@@ -125,3 +125,13 @@ def run():
         ax2.grid(True, which='both', linestyle='--', linewidth=0.5)
         ax2.legend()
         st.pyplot(fig2)
+
+        # Plot r over time
+        fig3, ax3 = plt.subplots(figsize=(10,5))
+        ax3.plot(times_in_years, rs, label='r(t)', color='magenta')
+        ax3.set_xlabel('Time (years)')
+        ax3.set_ylabel('r')
+        ax3.set_title('r Over Time')
+        ax3.grid(True, which='both', linestyle='--', linewidth=0.5)
+        ax3.legend()
+        st.pyplot(fig3)
