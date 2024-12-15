@@ -37,7 +37,7 @@ def run():
     ly_low = st.sidebar.number_input("limit_years low bound", min_value=1.0, value=1000.0)
     ly_high = st.sidebar.number_input("limit_years high bound", min_value=ly_low, value=1000.0)
 
-    st.sidebar.markdown(r"#### \[Lambda] (log-uniform)")
+    st.sidebar.markdown(r"#### Parallelizability (λ) (log-uniform)")
     lf_low = st.sidebar.number_input("lambda_factor low bound", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("lambda_factor high bound", min_value=lf_low, value=0.8)
     
