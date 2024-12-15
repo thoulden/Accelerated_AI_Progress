@@ -131,13 +131,6 @@ def run():
 
         # Format and display the table
         # Ensure no invalid data in fraction columns
-        df[fraction_cols] = df[fraction_cols].fillna(0).replace([np.inf, -np.inf], 0)
+           st.dataframe(df)  # Display plain DataFrame without styling
 
-        # Format the table
-        fraction_cols = [c for c in df.columns if c != 'Time (years)']
-        format_dict = {col: "{:.2%}" for col in fraction_cols}
-        styled_df = df.style.format(format_dict)
-
-        # Display styled DataFrame
-        st.write(styled_df)
 
