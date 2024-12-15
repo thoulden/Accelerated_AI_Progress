@@ -160,5 +160,6 @@ def run():
         format_dict = {col: "{:.2%}" for col in fraction_cols}
 
         # Hide row numbers and only format fraction columns as percent
-       st.write(df.style.format(format_dict).hide_index())
+       styled_df = df.style.format(format_dict)
+        st.write(styled_df)
 
