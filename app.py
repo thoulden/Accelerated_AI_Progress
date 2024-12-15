@@ -1,8 +1,9 @@
 import streamlit as st
 import numpy as np
-pip install matplotlib
-import matplotlib.pyplot as plt
 import pandas as pd
+import matplotlib
+matplotlib.use('agg')
+import matplotlib.pyplot as plt
 
 # Import the other modules
 import math_appendix
