@@ -138,7 +138,7 @@ def run():
         st.pyplot(fig)
 
         # Produce a table
-        report_times = [1, 2, 5, simulation_duration]
+        report_times = [0.0833, 0.25, 1, 3]
         def nearest_index(time_array, val):
             return (np.abs(time_array - val)).argmin()
 
