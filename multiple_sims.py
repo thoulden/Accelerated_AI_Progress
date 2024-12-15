@@ -154,8 +154,14 @@ def run():
         # Format the table
         # We do not want years as percent, only fraction columns.
         # Fraction columns are all except "Time (years)"
+        # Format the table
+        df = df.reset_index(drop=True)  # Remove row numbers
         fraction_cols = [c for c in df.columns if c != 'Time (years)']
         format_dict = {col: "{:.2%}" for col in fraction_cols}
 
-        # Hide row numbers and only format fraction columns as percent
-        st.dataframe(df.style.format(format_dict).hide_index())
+        # Apply formatting using Pandas Styler
+        styled_df = df.style.format(format_dict)
+
+        # Use st.write to display the styled DataFrame
+        st.write(styled_df)
+
