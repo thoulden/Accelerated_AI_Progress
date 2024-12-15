@@ -6,8 +6,6 @@ import pandas as pd
 def run():
     st.header("Multiple Simulations")
 
-    run_sims = st.sidebar.button("Run Simulations")
-    
     # User inputs for simulation setup
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
     simulation_duration = st.sidebar.number_input("Simulation Duration (years)", min_value=1, max_value=100, value=10)
@@ -15,7 +13,7 @@ def run():
     g = 2.77
 
     # Allow user to specify multiples
-    multiples_input = st.sidebar.text_input("Growth rate multiples (enter comma-separated)", value="3,10,30")
+    multiples_input = st.sidebar.text_input("Enter speed-up multiples of g (comma-separated)", value="3,10,30")
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
 
     # Allow user to specify time windows
@@ -29,18 +27,19 @@ def run():
     ib_low = st.sidebar.number_input("initial_boost low bound", min_value=0.1, value=2.0)
     ib_high = st.sidebar.number_input("initial_boost high bound", min_value=ib_low, value=32.0)
 
-    st.sidebar.markdown("#### Initial Research Productivity (r₀) (log-uniform)")
+    st.sidebar.markdown("#### r (log-uniform)")
     r_low = st.sidebar.number_input("r low bound", min_value=0.01, value=0.4)
     r_high = st.sidebar.number_input("r high bound", min_value=r_low, value=3.6)
 
-    st.sidebar.markdown("#### Time to Ceiling (uniform)")
-    ly_low = st.sidebar.number_input("limit_years low bound", min_value=1.0, value=1000.0)
-    ly_high = st.sidebar.number_input("limit_years high bound", min_value=ly_low, value=1000.0)
+    st.sidebar.markdown("#### limit_years (uniform)")
+    ly_low = st.sidebar.number_input("limit_years low bound", min_value=1.0, value=7.0)
+    ly_high = st.sidebar.number_input("limit_years high bound", min_value=ly_low, value=14.0)
 
-    st.sidebar.markdown(r"#### Parallelizability (λ) (log-uniform)")
+    st.sidebar.markdown("#### lambda_factor (log-uniform)")
     lf_low = st.sidebar.number_input("lambda_factor low bound", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("lambda_factor high bound", min_value=lf_low, value=0.8)
     
+    run_sims = st.sidebar.button("Run Simulations")
 
     if run_sims:
         # Function to calculate summary statistics
@@ -131,8 +130,7 @@ def run():
 
         df = pd.DataFrame(table_data)
         st.write("### Summary Table")
-        styled_df = df.style.format(format_dict)
-        st.write(styled_df)
+        st.write(df.style.hide_index())
 
         # Plot results
         fig, ax = plt.subplots(figsize=(10, 5))
