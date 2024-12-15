@@ -68,11 +68,11 @@ def run():
                 if r > 0:
                     doubling_time *= 2 ** (lambda_factor * (1 / r - 1))
 
-            return times, sizes, rs
+            return times, sizes, rs, ceiling
 
         # Run the simulation
         r_initial, initial_doubling_time, limit_years, lambda_factor = choose_parameters()
-        times, sizes, rs = dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, 6, lambda_factor)
+        times, sizes, rs, ceiling = dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, 6, lambda_factor)
 
         # Convert times to years
         times_in_years = np.array(times) / 12.0
@@ -81,6 +81,7 @@ def run():
         # Plot software level on a log scale (original plot)
         fig1, ax1 = plt.subplots(figsize=(10, 5))
         ax1.plot(times_in_years, sizes, label='Software Level')
+        ax1.semilogy(time, ceiling, 'black', linewidth=0.5)  # Ceiling line
         ax1.set_xlabel('Time (years)')
         ax1.set_ylabel('Software Level')
         ax1.set_title('Software Level Over Time (Log Scale)')
