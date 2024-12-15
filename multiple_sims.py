@@ -9,7 +9,7 @@ def run():
     
     # User inputs for simulation setup
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
-    simulation_duration = st.sidebar.number_input("Simulation Duration (years)", min_value=1, max_value=100, value=10)
+    simulation_duration = 4
     dt = 1.0 / 12.0  # 1 month time step
     g = 2.77
 
