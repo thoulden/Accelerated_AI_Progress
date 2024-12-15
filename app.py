@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 
 # Import the other modules
 import math_appendix
-import multiple_simulations  # Will contain a placeholder for now
-import single_simulation
+import multiple_sims  # Will contain a placeholder for now
+import single_sim
 
 # Navigation link at the top right
 col1, col2 = st.columns([8, 1])
