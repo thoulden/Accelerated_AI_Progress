@@ -131,6 +131,24 @@ def run():
 
         # Format and display the table
         # Ensure no invalid data in fraction columns
-        st.dataframe(df)  # Display plain DataFrame without styling
+        import io
+
+        # Convert growth rates to a DataFrame
+        growth_rates_df = pd.DataFrame(sim_growth_rates)
+        growth_rates_df.columns = [f"Time_{t:.2f}" for t in growth_times]  # Optional: Name columns by time
+        growth_rates_df.index.name = "Simulation"
+
+        # Convert DataFrame to CSV in memory
+        csv_buffer = io.StringIO()
+        growth_rates_df.to_csv(csv_buffer)
+        csv_data = csv_buffer.getvalue()
+
+        # Add a download button
+        st.download_button(
+            label="Download Growth Rates as CSV",
+            data=csv_data,
+            file_name="growth_rates.csv",
+            mime="text/csv"
+        )
 
 
