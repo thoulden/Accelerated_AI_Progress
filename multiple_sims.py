@@ -25,7 +25,7 @@ def run():
 
     # Allow user to specify parameter sampling bounds
     st.sidebar.markdown("### Parameter Sampling Bounds")
-    st.sidebar.markdown("#### initial boost (log-uniform)")
+    st.sidebar.markdown("#### Acceleration factor (f) (log-uniform)")
     ib_low = st.sidebar.number_input("initial_boost low bound", min_value=0.1, value=2.0)
     ib_high = st.sidebar.number_input("initial_boost high bound", min_value=ib_low, value=32.0)
 
