@@ -132,6 +132,11 @@ def run():
         st.write("### Summary Table")
         df = df.reset_index(drop=True)
 
+        # Create format_dict to apply percentage formatting only to fraction columns
+        fraction_cols = [col for col in df.columns if col != "Time Window (Years)"]
+        format_dict = {col: "{:.2%}" for col in fraction_cols}
+
+        # Format the DataFrame
         styled_df = df.style.format(format_dict)
         st.write(styled_df)
 
