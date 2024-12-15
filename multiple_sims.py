@@ -29,7 +29,7 @@ def run():
     ib_low = st.sidebar.number_input("initial_boost low bound", min_value=0.1, value=2.0)
     ib_high = st.sidebar.number_input("initial_boost high bound", min_value=ib_low, value=32.0)
 
-    st.sidebar.markdown("#### r (log-uniform)")
+    st.sidebar.markdown("#### Initial Research Productivity (r₀) (log-uniform)")
     r_low = st.sidebar.number_input("r low bound", min_value=0.01, value=0.4)
     r_high = st.sidebar.number_input("r high bound", min_value=r_low, value=3.6)
 
