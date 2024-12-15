@@ -79,12 +79,12 @@ def run():
         sizes = np.array(sizes)
 
         # Give ceiling a value for all time
-        ceiling_time=ceiling * np.ones(len(time[:-1])))
+        #ceiling_time=ceiling * np.ones(len(time[:-1])))
                              
         # Plot software level on a log scale (original plot)
         fig1, ax1 = plt.subplots(figsize=(10, 5))
         ax1.plot(times_in_years, sizes, label='Software Level')
-        ax1.semilogy(time, ceiling, 'black', linewidth=0.5)  # Ceiling line
+        #ax1.semilogy(time, ceiling, 'black', linewidth=0.5)  # Ceiling line
         ax1.set_xlabel('Time (years)')
         ax1.set_ylabel('Software Level')
         ax1.set_title('Software Level Over Time (Log Scale)')
