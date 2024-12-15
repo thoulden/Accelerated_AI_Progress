@@ -62,7 +62,8 @@ def run():
             doubling_time = initial_doubling_time
             current_time = 0.0
 
-            while size < ceiling and r > 0 and current_time < max_time:
+            while current_time < max_time:
+            #while size < ceiling and r > 0 and current_time < max_time: #removed because want to run the whole time
                 g_prime = np.log(2) / doubling_time
                 size *= np.exp(g_prime * dt)
                 current_time += dt
