@@ -6,12 +6,14 @@ import pandas as pd
 def run():
     st.header("Multiple Simulations")
 
+    run_sims = st.sidebar.button("Run Simulations")
+    
     # User inputs for simulation setup
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
     simulation_duration = st.sidebar.number_input("Simulation Duration (years)", min_value=1, max_value=100, value=10)
-    dt = 1.0 / 12.0  # 1 month time step (for example)
+    dt = 1.0 / 12.0  # 1 month time step
     g = 2.77
-    
+
     # Allow user to specify multiples
     multiples_input = st.sidebar.text_input("Enter multiples of g (comma-separated)", value="3,10,30")
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
@@ -34,23 +36,15 @@ def run():
     lf_low = st.sidebar.number_input("lambda_factor low bound", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("lambda_factor high bound", min_value=lf_low, value=0.8)
     
-    run_sims = st.sidebar.button("Run Simulations")
 
     if run_sims:
-        # Run multiple simulations
         # Parameter sampling function
         def sample_parameters():
-            # initial_boost from log-uniform(ib_low, ib_high)
             initial_boost = np.exp(np.random.uniform(np.log(ib_low), np.log(ib_high)))
             initial_doubling_time = 3 / initial_boost
 
-            # r_initial from log-uniform(r_low, r_high)
             r_initial = np.exp(np.random.uniform(np.log(r_low), np.log(r_high)))
-
-            # limit_years uniform(ly_low, ly_high)
             limit_years = np.random.uniform(ly_low, ly_high)
-
-            # lambda_factor from log-uniform(lf_low, lf_high)
             lambda_factor = np.exp(np.random.uniform(np.log(lf_low), np.log(lf_high)))
 
             return r_initial, initial_doubling_time, limit_years, lambda_factor
@@ -63,86 +57,71 @@ def run():
             size = 1.0  # Starting size
             times = [0.0]
             sizes = [size]
-            # Compute total_doublings
             total_doublings = int(limit_years * 8)
             k = r_initial / total_doublings if total_doublings > 0 else 0
 
-            # We'll stop after simulation_duration years
             max_time = simulation_duration
-
-            # Initial doubling_time based on initial_doubling_time
-            # We'll track a "doubling_time" equivalent from initial conditions
             doubling_time = initial_doubling_time
-
             current_time = 0.0
-            while size < ceiling and r > 0 and current_time < max_time:
-                # Growth for dt months at rate given by doubling_time
-                # original code: size *= 2 every doubling_time
-                # continuous growth rate g': g' = ln(2)/doubling_time
-                g_prime = np.log(2) / doubling_time
-                size = size * np.exp(g_prime * dt)
 
+            while size < ceiling and r > 0 and current_time < max_time:
+                g_prime = np.log(2) / doubling_time
+                size *= np.exp(g_prime * dt)
                 current_time += dt
                 if current_time > max_time:
                     break
                 times.append(current_time)
                 sizes.append(size)
 
-                # Fraction of a doubling event that occurred in this dt
                 fraction_of_doubling = (g_prime * dt) / np.log(2)
                 r -= k * fraction_of_doubling
                 if r < 0:
                     r = 0
-
                 if r > 0:
-                    # Update doubling_time
-                    doubling_time *= 2 ** (lambda_factor * (1 / r - 1))
+                    doubling_time *= 2 ** (lambda_factor * (1/r - 1))
 
             return np.array(times), np.array(sizes)
 
-        # Run all simulations and store growth rates
-        all_growth_rates = []  # will store (time, growth_rates) for each sim
-        # We'll assume all sims produce the same time array length by using a common discretization
-        # If not guaranteed, we can store them separately and interpolate.
-
-        # We'll run one sim to get a reference time array (assuming all parameters vary slightly)
-        # Actually we'll just store each sim times and handle by min length approach:
-        sim_times = None
+        # Run all simulations and store sizes
+        progress = st.progress(0)  # Progress bar
         sim_sizes_list = []
+        sim_times = None
 
-        for _ in range(num_sims):
+        for i in range(num_sims):
             r_initial, initial_doubling_time, limit_years, lambda_factor = sample_parameters()
             times_array, sizes_array = dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, lambda_factor, dt, simulation_duration)
-            sim_sizes_list.append(sizes_array)
             if sim_times is None:
                 sim_times = times_array
             else:
-                # If times differ in length, cut to min length
+                # Ensure all arrays match shortest length
                 min_len = min(len(sim_times), len(times_array))
                 sim_times = sim_times[:min_len]
                 sim_sizes_list = [s[:min_len] for s in sim_sizes_list]
+                sizes_array = sizes_array[:min_len]
 
-        # Convert to array for vectorized ops
-        sim_sizes_mat = np.array(sim_sizes_list)  # shape (num_sims, T)
+            sim_sizes_list.append(sizes_array)
+            progress.progress((i+1)/num_sims)
+
+        # Convert to array
+        sim_sizes_mat = np.array(sim_sizes_list) # (num_sims, T)
         # times shape (T,)
 
-        # Compute growth rates for each simulation
-        # growth_rate_i = (ln(size_i) - ln(size_{i-1})) / (t_i - t_{i-1})
-        # We'll do this for i=1,... for each simulation
+        # Compute growth rates
+        # Assume uniform dt for simplicity
         growth_times = sim_times[1:]
+        dt_years = growth_times[1] - growth_times[0] if len(growth_times) > 1 else 1.0
+
         sim_growth_rates = []
         for i in range(num_sims):
             sizes_arr = sim_sizes_mat[i]
-            gr = (np.log(sizes_arr[1:]) - np.log(sizes_arr[:-1])) / (growth_times[1] - growth_times[0])  # uniform dt
+            gr = (np.log(sizes_arr[1:]) - np.log(sizes_arr[:-1])) / dt_years
             sim_growth_rates.append(gr)
-        sim_growth_rates = np.array(sim_growth_rates)  # (num_sims, T-1)
+        sim_growth_rates = np.array(sim_growth_rates) # (num_sims, T-1)
 
-        # Now we have growth_times and sim_growth_rates
-        # For each multiple, compute fraction of sims exceeding multiple*g at each time step
+        # For each multiple, compute fraction of sims exceeding multiple*g
         fractions_dict = {}
         for m in multiples:
             threshold = m * g
-            # Check how many exceed threshold at each time step
             exceed_bool = sim_growth_rates > threshold
             frac = exceed_bool.sum(axis=0) / num_sims
             fractions_dict[m] = frac
@@ -159,9 +138,7 @@ def run():
         st.pyplot(fig)
 
         # Produce a table
-        # Let's pick a few time points to report fractions at (e.g., 1 year, 2 years, 5 years)
-        report_times = [1, 2, 5, simulation_duration] 
-        # Interpolate fractions at these times or pick nearest index
+        report_times = [1, 2, 5, simulation_duration]
         def nearest_index(time_array, val):
             return (np.abs(time_array - val)).argmin()
 
@@ -175,4 +152,13 @@ def run():
             data_for_table[f'{m}x g'] = fractions_at_times
 
         df = pd.DataFrame(data_for_table)
-        st.dataframe(df.style.format("{:.2%}"))
+
+        # Format the table
+        # We do not want years as percent, only fraction columns.
+        # Fraction columns are all except "Time (years)"
+        fraction_cols = [c for c in df.columns if c != 'Time (years)']
+        format_dict = {col: "{:.2%}" for col in fraction_cols}
+
+        # Hide row numbers and only format fraction columns as percent
+        st.dataframe(df.style.format(format_dict).hide_index())
+
