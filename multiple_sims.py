@@ -130,7 +130,10 @@ def run():
 
         df = pd.DataFrame(table_data)
         st.write("### Summary Table")
-        st.write(df.style.hide_index())
+        df = df.reset_index(drop=True)
+
+        styled_df = df.style.format(format_dict)
+        st.write(styled_df)
 
         # Plot results
         fig, ax = plt.subplots(figsize=(10, 5))
