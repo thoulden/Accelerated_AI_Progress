@@ -36,7 +36,7 @@ def run():
     if run_sims:
         # Parameter sampling function
 
-def sample_parameters():
+    def sample_parameters():
     """
     Sample initial parameters from uniform and log-uniform distributions.
 
@@ -47,7 +47,7 @@ def sample_parameters():
         lambda_factor: The lambda factor for adjusting doubling time.
     """
     # Sample initial speed-up from log-uniform distribution (range: 2 to 32)
-    initial_boost = np.exp(np.random.uniform(np.log(2), np.log(32)))
+        initial_boost = np.exp(np.random.uniform(np.log(2), np.log(32)))
     initial_doubling_time = 3 / initial_boost  # Assume current software doubling time is 3 months
 
     # Sample r from a log-uniform distribution (range: 0.4 to 3.6)
