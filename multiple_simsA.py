@@ -212,6 +212,8 @@ def run():
         # Run  simulations with independently sampled parameters
         times_matrix = []
 
+        # Progress bar
+        progress = st.progress(0)
         for _ in range(n_sims):
             # Sample a parameter set
             r, initial_doubling_time, limit_years, lambda_factor = sample_parameters_batch(1)[0]
@@ -223,6 +225,9 @@ def run():
 
             # Save the times
             times_matrix.append(times)
+
+            # Update progress bar
+            progress.progress((i + 1) / n_sims)  
 
         # Calculate summary statistics for the batch
         batch_summary_statistics = {condition: 0 for condition in conditions}
