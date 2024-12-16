@@ -270,6 +270,11 @@ def run():
         format_dict = {col: "{:.2%}" for col in fraction_cols}
 
         # Display the table
+        # Format the table without row numbers
+        formatted_df = df.style.format(format_dict)
+
+        # Display using st.table (removes row numbers)
         st.write("### Fraction of Simulations Meeting Each Condition")
-        st.dataframe(df.style.format(format_dict).hide_index())
+        st.table(formatted_df.data)
+
 
