@@ -140,18 +140,6 @@ def run():
             """
             return [np.log2(size) / 8 for size in sizes]  # log2(256) = 8
 
-        def plot_single_transformed_simulation(times, sizes, label):
-            """
-            Plot a single simulation with transformed sizes.
-
-            Parameters:
-                times: List of time points in months.
-                sizes: List of sizes (pre-transformed).
-                label: Label for the simulation line.
-            """
-            transformed_sizes = transform_sizes_to_years(sizes)
-            times_in_years = [t / 12 for t in times]  # Convert months to years
-
         def calculate_summary_statistics_binary(times, conditions):
             """
             Calculate whether there are periods where the system achieved a rapid growth.
