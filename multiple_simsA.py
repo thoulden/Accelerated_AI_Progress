@@ -271,5 +271,5 @@ def run():
 
         # Display the table
         st.write("### Fraction of Simulations Meeting Each Condition")
-        st.dataframe(df.style.format(format_dict))
+        st.dataframe(df.style.format(format_dict).hide_index())
 
