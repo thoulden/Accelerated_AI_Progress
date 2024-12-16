@@ -50,7 +50,7 @@ else:
 
     st.markdown("### Model Parameters and Estimates")
     st.markdown(r"""
-    This table summarizes the paramaters that the model relies on. Note, we assume the growth rate of software at GPT-6 release, $g$, is 2.77 (i.e., doubles every 3 months).
+    This table summarizes the paramaters that the model relies on. Note, we assume the annual growth rate of software at GPT-6 release, $g$, is 2.77 (i.e., doubles every 3 months).
      """)
     # Get the parameters table in Markdown format
     parameters_table_md = get_parameters_table_markdown()
