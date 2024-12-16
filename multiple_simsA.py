@@ -199,7 +199,7 @@ def run():
         # Run sims
 
         # Define periods (in months) and speed-up factors
-        time_periods = [0.4, 1, 4, 12, 36]  # Corresponding to 4 months, 12 months, and 36 months #OLD
+        time_periods = [1, 4, 12, 36]  # Corresponding to 4 months, 12 months, and 36 months #OLD
         #speed_up_factors = [3, 6, 10, 30]  # Corresponding to 3X, 6X 10X, and 30X speedups #OLD
         speed_up_factors = multiples #incorporating user choice
         # Create a list of all combinations of time periods and speed-up factors
