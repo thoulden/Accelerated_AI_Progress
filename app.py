@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # Import the other modules
 import math_appendix
-import multiple_sims  # Will contain a placeholder for now
+import multiple_sims2  # Will contain a placeholder for now
 import single_sim
 
 # Navigation link at the top right
@@ -79,6 +79,6 @@ else:
     )
 
     if simulation_mode == "Multiple Simulations":
-        multiple_sims.run()  # Will show a placeholder message
+        multiple_sims2.run()  # Will show a placeholder message
     elif simulation_mode == "Single Simulation":
         single_sim.run()
