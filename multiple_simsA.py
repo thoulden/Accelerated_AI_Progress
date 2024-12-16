@@ -245,6 +245,31 @@ def run():
         batch_summary_fractions = {condition: count / n_sims for condition, count in batch_summary_statistics.items()}
 
         # Print the results
-        st.write("Fraction of simulations meeting each condition:")
-        for condition, fraction in batch_summary_fractions.items():
-            st.write(f"Condition {condition}: {fraction:.2%}")
+        #st.write("Fraction of simulations meeting each condition:")
+        #for condition, fraction in batch_summary_fractions.items():
+            #st.write(f"Condition {condition}: {fraction:.2%}")
+
+        # Convert results into a DataFrame format
+        time_periods = sorted(set(condition[0] for condition in batch_summary_fractions.keys()))
+        multiples = sorted(set(condition[1] for condition in batch_summary_fractions.keys()))
+
+        # Create a DataFrame with rows as time periods and columns as multiples
+        data = []
+        for time_period in time_periods:
+            row = {"Time Period (Months)": time_period}
+            for multiple in multiples:
+                row[f"{multiple}x g"] = batch_summary_fractions.get((time_period, multiple), 0)
+            data.append(row)
+
+        # Convert to DataFrame
+        df = pd.DataFrame(data)
+    
+        # Format the DataFrame
+        df = df.sort_values(by="Time Period (Months)").reset_index(drop=True)  # Sort by time period
+        fraction_cols = [f"{m}x g" for m in multiples]
+        format_dict = {col: "{:.2%}" for col in fraction_cols}
+
+        # Display the table
+        st.write("### Fraction of Simulations Meeting Each Condition")
+        st.dataframe(df.style.format(format_dict))
+
