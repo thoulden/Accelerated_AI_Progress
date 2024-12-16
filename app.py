@@ -42,10 +42,8 @@ else:
     
     This tool offers two options:
     - 'Multiple Simulations' allows you to run a bunch of simulations with uncertainty over key parameters—the output of this function will be a plot showing the fraction of simulations where the growth rate of software exceeds the observed exponential rate by some amount over some number of years. 
-    - 'Single Simulation' allows you to run a single simulation under specific parameter values to illustrate the path of AI progress. Under this second option, you will also see the change in the level of diminishing research productivity over time and the growth rates. The cases considered are the following: 
-        - Exponential: This is a hypothetical case where software growth continued at the same rate as when GPT-6 is released. This is hypothetical since it ignores increasing diminishing returns to research. Exponential progress is maintained through a growing compute stock to offset (fixed) diminishing returns to research.
-        - Base: Here research is left to humans, and the compute stock is growing as in the exponential case. Here, humans will still face increasing diminishing returns to research. 
-        - Accelerate: Here AI is deployed to research and the compute stock is growing at the same rate as the above two cases.
+    - 'Single Simulation' allows you to run a single simulation under specific parameter values to illustrate the path of AI progress. Under this second option, you will also see the change in the level of diminishing research productivity over time and the growth rates.  
+        
     
     For technical details, refer to the math appendix.
      """)
