@@ -6,6 +6,35 @@ from itertools import product
 def run():
 
     run_sims = st.sidebar.button("Run Simulations")
+    
+    # User inputs for simulation setup
+    num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
+    simulation_duration = 4
+
+    # Allow user to specify multiples
+    multiples_input = st.sidebar.text_input("Enter multiples of g (comma-separated)", value="3,10,30")
+    multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
+
+    # Allow user to specify parameter sampling bounds
+    st.sidebar.markdown("### Parameter Sampling Bounds")
+    st.sidebar.markdown("#### initial boost (log-uniform)")
+    ib_low = st.sidebar.number_input("initial_boost low bound", min_value=0.1, value=2.0)
+    ib_high = st.sidebar.number_input("initial_boost high bound", min_value=ib_low, value=32.0)
+
+    st.sidebar.markdown("#### r (log-uniform)")
+    r_low = st.sidebar.number_input("r low bound", min_value=0.01, value=0.4)
+    r_high = st.sidebar.number_input("r high bound", min_value=r_low, value=3.6)
+
+    st.sidebar.markdown("#### limit_years (uniform)")
+    ly_low = st.sidebar.number_input("limit_years low bound", min_value=1.0, value=7.0)
+    ly_high = st.sidebar.number_input("limit_years high bound", min_value=ly_low, value=14.0)
+
+    st.sidebar.markdown("#### lambda_factor (log-uniform)")
+    lf_low = st.sidebar.number_input("lambda_factor low bound", min_value=0.01, value=0.2)
+    lf_high = st.sidebar.number_input("lambda_factor high bound", min_value=lf_low, value=0.8)
+
+    if run_sims:
+        # Parameter sampling function
 
 def sample_parameters():
     """
