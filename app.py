@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # Import the other modules
 import math_appendix
-import multiple_sims2  # Will contain a placeholder for now
+import multiple_simsA
 import single_sim
 
 # Navigation link at the top right
