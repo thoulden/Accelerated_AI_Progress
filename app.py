@@ -24,10 +24,8 @@ def get_parameters_table_markdown():
 |----------------------|---------------------------------------------------------------------|---------------|-----------------|---------------|
 | $f$                  | Change in the rate of software growth after deploying AI to research  | 2             | 8               | 32            |
 | $\lambda$            | Parallelizability of research                                       | 0.2           | 0.5             | 0.8           |
-| $\beta_0$            | Diminishing returns in discovering new ideas when GPT-6 is launched | 0.15          | 0.45            | 0.75          |
-| $\alpha$             | Contribution of cognitive labor vs. compute to AI R&D               | 0.0           | 0.5             | 1.0           |
-| $g$                  | Growth rate of software when GPT-6 is deployed                      | 2.0           | 2.77            | 3.0           |
-| $D$                  | Multiples of GPT-6 we can reach before a ceiling ($ D \equiv S_{\text{ceiling}} / S_0 $) | $10^{7}$ | $10^{8}$ | $10^{9}$ |
+| $\r_0$               | Research productivity when GPT-6 is launched                        | 0.15          | 0.45            | 0.75          |
+| Year Till Ceiling    |   | $7$ | $9$ | $14$ |
     '''
     return table_markdown
 
