@@ -37,15 +37,15 @@ def run():
         # Parameter sampling function
 
         def sample_parameters():
-        """
-        Sample initial parameters from uniform and log-uniform distributions.
+            """
+            Sample initial parameters from uniform and log-uniform distributions.
 
-        Returns:
+            Returns:
             r_initial: The initial value of r (diminishing returns).
             initial_doubling_time: Initial doubling time in months.
             limit_years: The limit expressed as years of progress at recent rates.
             lambda_factor: The lambda factor for adjusting doubling time.
-        """
+            """
             # Sample initial speed-up from log-uniform distribution (range: 2 to 32)
             initial_boost = np.exp(np.random.uniform(np.log(2), np.log(32)))
             initial_doubling_time = 3 / initial_boost  # Assume current software doubling time is 3 months
