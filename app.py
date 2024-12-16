@@ -25,7 +25,7 @@ def get_parameters_table_markdown():
 | $f$                  | Change in the rate of software growth after deploying AI to research  | 2             | 8               | 32            |
 | $\lambda$            | Parallelizability of research                                       | 0.2           | 0.5             | 0.8           |
 | r₀              | Research productivity when GPT-6 is launched                        | 0.15          | 0.45            | 0.75          |
-| Year Till Ceiling    |   | $7$ | $9$ | $14$ |
+| Year Till Ceiling    |   |$7 | 9 | 14 |
     '''
     return table_markdown
 
