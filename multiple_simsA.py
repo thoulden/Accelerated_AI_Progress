@@ -245,6 +245,6 @@ def run():
         batch_summary_fractions = {condition: count / n_sims for condition, count in batch_summary_statistics.items()}
 
         # Print the results
-        print("Fraction of simulations meeting each condition:")
+        st.write("Fraction of simulations meeting each condition:")
         for condition, fraction in batch_summary_fractions.items():
-            print(f"Condition {condition}: {fraction:.2%}")
+            st.write(f"Condition {condition}: {fraction:.2%}")
