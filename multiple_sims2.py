@@ -1,4 +1,11 @@
+import streamlit as st
 import numpy as np
+import pandas as pd
+from itertools import product
+
+def run():
+
+    run_sims = st.sidebar.button("Run Simulations")
 
 def sample_parameters():
     """
