@@ -21,15 +21,15 @@ def run():
     ib_low = st.sidebar.number_input("initial_boost low bound", min_value=0.1, value=2.0)
     ib_high = st.sidebar.number_input("initial_boost high bound", min_value=ib_low, value=32.0)
 
-    st.sidebar.markdown("#### r (log-uniform)")
+    st.sidebar.markdown("#### Initial Research Productivity (log-uniform)")
     r_low = st.sidebar.number_input("r low bound", min_value=0.01, value=0.4)
     r_high = st.sidebar.number_input("r high bound", min_value=r_low, value=3.6)
 
-    st.sidebar.markdown("#### limit_years (uniform)")
+    st.sidebar.markdown("#### Years Till Ceiling (log-uniform)")
     ly_low = st.sidebar.number_input("limit_years low bound", min_value=1.0, value=7.0)
     ly_high = st.sidebar.number_input("limit_years high bound", min_value=ly_low, value=14.0)
 
-    st.sidebar.markdown("#### lambda_factor (log-uniform)")
+    st.sidebar.markdown("#### Parallelizability (λ, log-uniform)")
     lf_low = st.sidebar.number_input("lambda_factor low bound", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("lambda_factor high bound", min_value=lf_low, value=0.8)
 
