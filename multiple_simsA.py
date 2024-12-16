@@ -214,7 +214,7 @@ def run():
 
         # Progress bar
         progress = st.progress(0)
-        for _ in range(n_sims):
+        for i in range(n_sims):
             # Sample a parameter set
             r, initial_doubling_time, limit_years, lambda_factor = sample_parameters_batch(1)[0]
         
