@@ -264,21 +264,17 @@ def run():
         # Convert to DataFrame
         df = pd.DataFrame(data)
     
-        # Reset the index and format the table without indices
-        df = df.reset_index(drop=True)  
-
-        # Format the values in the fraction columns as percentages
-        fraction_cols = [col for col in df.columns if "g" in col]
+               # Format the DataFrame
+        df = df.sort_values(by="Time Period (Months)").reset_index(drop=True)  # Sort by time period
+        fraction_cols = [f"{m}x g" for m in multiples]
         format_dict = {col: "{:.2%}" for col in fraction_cols}
-        styled_df = df.style.format(format_dict)
 
         # Display the table
         # Format the table without row numbers
         formatted_df = df.style.format(format_dict)
 
         # Display using st.table (removes row numbers)
-        markdown_table = df.to_markdown(index=False)
         st.write("### Fraction of Simulations Meeting Each Condition")
-        st.markdown(f"```markdown\n{markdown_table}\n```")
+        st.table(formatted_df.data)
 
 
