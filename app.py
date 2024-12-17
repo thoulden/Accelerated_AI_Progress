@@ -61,7 +61,7 @@ else:
     st.markdown("### Sampling")
 
     st.markdown(
-    r"When 'multiple simulations' is selected, randomization occurs over log-uniform distributions for $f$, $\beta_0$, $\lambda$, and $D$. "
+    r"When 'multiple simulations' is selected, randomization occurs over log-uniform distributions for $f$, $r_0$, $\lambda$, and Years till ceiling. "
     r"When you select 'display empirical distributions' in the sidebar, on running a simulation, you will also get a histogram of the values used in the simulation."
 )
 
