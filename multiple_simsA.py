@@ -30,7 +30,7 @@ def run():
     # Checkbox for retraining cost
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
     # User inputs for simulation setup
-    num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
+    num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
     simulation_duration = 4
 
     # Allow user to specify multiples
