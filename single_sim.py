@@ -70,10 +70,6 @@ def run():
     f_sample = st.sidebar.number_input('Acceleration term (f)', min_value=1.0, max_value=100.0, value=8.0, step=0.1)
 
     
-    if retraining_cost:
-        doubling_factor = (lambda_factor * ((1 / r) - 1))/((lambda_factor * (1 - 1 / r)) + 1)
-    else:
-        doubling_factor = (lambda_factor * (1 / r - 1))
 
     if run_simulation:
         def choose_parameters():
@@ -103,6 +99,10 @@ def run():
                 sizes.append(size)
                 r -= k
                 rs.append(r)
+                if retraining_cost:
+                    doubling_factor = (lambda_factor * ((1 / r) - 1))/((lambda_factor * (1 - 1 / r)) + 1)
+                else:
+                    doubling_factor = (lambda_factor * (1 / r - 1))
                 if r > 0:
                     doubling_time *= 2 ** doubling_factor
             return times, sizes, rs, ceiling
