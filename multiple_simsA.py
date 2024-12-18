@@ -6,17 +6,9 @@ from itertools import product
 def run():
 
     run_sims = st.sidebar.button("Run Simulations")
-    
-    # User inputs for simulation setup
-    num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
-    simulation_duration = 4
-
-    # Allow user to specify multiples
-    multiples_input = st.sidebar.text_input("Enter multiples of g (comma-separated)", value="3,10,30")
-    multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
 
     # Allow user to specify parameter sampling bounds
-    st.sidebar.markdown("### Parameter Sampling Bounds")
+    st.sidebar.markdown("### Key Parameter Sampling Bounds")
     st.sidebar.markdown("#### Acceleration factor (f, log-uniform)")
     ib_low = st.sidebar.number_input("low bound", min_value=0.1, value=2.0)
     ib_high = st.sidebar.number_input("high bound", min_value=ib_low, value=32.0)
@@ -32,6 +24,15 @@ def run():
     st.sidebar.markdown("#### Parallelizability (λ, log-uniform)")
     lf_low = st.sidebar.number_input("low bound", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("high bound", min_value=lf_low, value=0.8)
+
+    st.sidebar.markdown("### Additional Choices")
+    # User inputs for simulation setup
+    num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
+    simulation_duration = 4
+
+    # Allow user to specify multiples
+    multiples_input = st.sidebar.text_input("Test growth rates exceeding how many times usual growth? (comma-separated)", value="3,10,30")
+    multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
 
     if run_sims:
         # Parameter sampling function
