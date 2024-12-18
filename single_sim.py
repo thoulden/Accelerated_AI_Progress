@@ -53,7 +53,6 @@ def plot_single_transformed_simulation(times, sizes, label):
     ax.legend(fontsize=10)
     st.pyplot(fig)  # Display the plot using Streamlit
 
-
 def run():
     # === Single Simulation Code ===
     # Run Simulation Button
@@ -61,12 +60,20 @@ def run():
     
     # Option to compute growth
     compute_growth = st.sidebar.checkbox('Compute Growth', value=True)
+    # Checkbox for retraining cost
+    retraining_cost = st.sidebar.checkbox('Retraining Cost')
 
     # Parameters for the simulation
     lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, value=0.4, step=0.01)
     r_0_sample = st.sidebar.number_input('Initial Research Productivity (r₀)', min_value=0.0, max_value=5.0, value=1.2, step=0.1)
     Yr_Left_sample = st.sidebar.number_input('Years Till Ceiling', min_value=1.0, max_value=50.0, value=9.0, step=0.5)
     f_sample = st.sidebar.number_input('Acceleration term (f)', min_value=1.0, max_value=100.0, value=8.0, step=0.1)
+
+    
+    if retraining_cost:
+        doubling_factor = (lambda_factor * (1 / r - 1))/((lambda_factor * (1 / r - 1)) + 1)
+    else:
+        doubling_factor = (lambda_factor * (1 / r - 1))
 
     if run_simulation:
         def choose_parameters():
@@ -97,7 +104,6 @@ def run():
                 r -= k
                 rs.append(r)
                 if r > 0:
-                    doubling_factor = (lambda_factor * (1 / r - 1))
                     doubling_time *= 2 ** doubling_factor
             return times, sizes, rs, ceiling
 
