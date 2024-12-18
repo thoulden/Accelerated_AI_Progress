@@ -91,8 +91,6 @@ def run():
                         results[(time_period, speed_up_factor)] = 'yes'
                         break
             return results
-        else 
-            st.markdown("Select 'run simulation' to produce results")
 
         # Define periods and speed-up factors
         time_periods = [0.083, 0.25, 1.0, 3.0]  # 1 month, 3 months, 1 year, 3 years
