@@ -48,6 +48,20 @@ else:
     For technical details, refer to the math appendix.
      """)
 
+    st.markdown("### Results")
+
+    # Simulation Mode Selector
+    st.sidebar.title("Simulation Options")
+    simulation_mode = st.sidebar.selectbox(
+        "Select Simulation Mode",
+        ("Multiple Simulations", "Single Simulation")
+    )
+
+    if simulation_mode == "Multiple Simulations":
+        multiple_simsA.run()  # Will show a placeholder message
+    elif simulation_mode == "Single Simulation":
+        single_sim.run()
+    
     st.markdown("### Model Parameters and Estimates")
     st.markdown(r"""
     This table summarizes the paramaters that the model relies on. Note, we assume the annual growth rate of software at GPT-6 release, $g$, is 2.77 (i.e., doubles every 3 months).
@@ -65,16 +79,4 @@ else:
     r"When you select 'display empirical distributions' in the sidebar, on running a simulation, you will also get a histogram of the values used in the simulation."
 )
 
-    st.markdown("### Results")
-
-    # Simulation Mode Selector
-    st.sidebar.title("Simulation Options")
-    simulation_mode = st.sidebar.selectbox(
-        "Select Simulation Mode",
-        ("Multiple Simulations", "Single Simulation")
-    )
-
-    if simulation_mode == "Multiple Simulations":
-        multiple_simsA.run()  # Will show a placeholder message
-    elif simulation_mode == "Single Simulation":
-        single_sim.run()
+    
