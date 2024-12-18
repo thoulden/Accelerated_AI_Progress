@@ -97,7 +97,8 @@ def run():
                 r -= k
                 rs.append(r)
                 if r > 0:
-                    doubling_time *= 2 ** (lambda_factor * (1 / r - 1))
+                    doubling_factor = (lambda_factor * (1 / r - 1))
+                    doubling_time *= 2 ** doubling_factor
             return times, sizes, rs, ceiling
 
         # Run the simulation
