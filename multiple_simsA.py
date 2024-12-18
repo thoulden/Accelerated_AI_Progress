@@ -267,7 +267,7 @@ def run():
     
                # Format the DataFrame
         df = df.sort_values(by="Time Period (Months)").reset_index(drop=True)  # Sort by time period
-        fraction_cols = [f"{m}x g" for m in multiples]
+        fraction_cols = [f"{m}x faster" for m in multiples]
         format_dict = {col: "{:.2%}" for col in fraction_cols}
 
         # Display the table
@@ -275,7 +275,7 @@ def run():
         formatted_df = df.style.format(format_dict)
 
         # Display using st.table (removes row numbers)
-        st.write("### Fraction of Simulations Meeting Each Condition")
+        st.write("#### What is the probability AI progress is X times faster for N months?")
         st.table(formatted_df.data)
 
     else:
