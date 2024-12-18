@@ -71,7 +71,7 @@ def run():
 
     
     if retraining_cost:
-        doubling_factor = (lambda_factor * (1 / r - 1))/((lambda_factor * (1 / r - 1)) + 1)
+        doubling_factor = (lambda_factor * ((1 / r) - 1))/((lambda_factor * (1 - 1 / r)) + 1)
     else:
         doubling_factor = (lambda_factor * (1 / r - 1))
 
