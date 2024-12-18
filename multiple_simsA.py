@@ -259,7 +259,7 @@ def run():
         for time_period in time_periods:
             row = {"Time Period (Months)": time_period}
             for multiple in multiples:
-                row[f"{multiple}x g"] = batch_summary_fractions.get((time_period, multiple), 0)
+                row[f"{multiple}x faster"] = batch_summary_fractions.get((time_period, multiple), 0)
             data.append(row)
 
         # Convert to DataFrame
@@ -275,7 +275,7 @@ def run():
         formatted_df = df.style.format(format_dict)
 
         # Display using st.table (removes row numbers)
-        st.write("#### What is the probability AI progress is X times faster for N months?")
+        st.write("###### What is the probability AI progress is X times faster for N months?")
         st.table(formatted_df.data)
 
     else:
