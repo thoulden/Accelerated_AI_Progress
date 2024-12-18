@@ -277,4 +277,7 @@ def run():
         st.write("### Fraction of Simulations Meeting Each Condition")
         st.table(formatted_df.data)
 
+    else:
+        st.write("Press 'Run Simulation' to view results.")
+
 
