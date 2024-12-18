@@ -2,6 +2,58 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
+def transform_sizes_to_years(sizes):
+    """
+    Transform sizes such that 256^n -> n.
+
+    We will display AI capabilities in units of "years of progress at recent rates."
+    The sims assume that software has recently doubled every 3 months. We assume
+    hardware has recently been contributing an equal amount to AI progress,
+    which leaves a doubling time of 1.5 months. That's 8 doublings per year so 256X
+    per year.
+
+    More explanation of why these assumptions are reasonable:
+    - Compute inputs have doubled every 6 months according to Epoch.
+    - Software algorithms have become twice as efficient every ~8 months, but this
+    excludes post-training enhancements so we reduce this to 6 months.
+    - That's a combined doubling time of 3 months for effective training compute
+    (incorporating compute and algorithms).
+    - We estimate that each doubling of effective training compute is equivalent
+    to ~2 doublings in the parallel size of the AI population, because you
+    get smarter models. This model counts as doubling of "AI capabilities" as a doubling
+    of the size of the AI population. So we get two doublings of AI capabilities per
+    doubling of effective compute. (Search "Better capabilities" in gdoc appendix.)
+    - So AI capabilities have recently been doubling every 1.5 months, according
+    to this model.
+    """
+    return [np.log2(size) / 8 for size in sizes]  # log2(256) = 8
+
+def plot_single_transformed_simulation(times, sizes, label):
+    """
+    Plot a single simulation with transformed sizes.
+
+    Parameters:
+        times: List of time points in months.
+        sizes: List of sizes (pre-transformed).
+        label: Label for the simulation line.
+    """
+    transformed_sizes = transform_sizes_to_years(sizes)
+    times_in_years = [t / 12 for t in times]  # Convert months to years
+
+    plt.figure(figsize=(12, 6))
+    plt.plot(times_in_years, transformed_sizes, label=label, color='blue', linestyle='-')
+
+    # Add a reference line for the recent pace of progress
+    plt.plot(times_in_years, times_in_years, label='Recent pace of progress', color='black', linestyle=':')
+
+    plt.xlabel('Time (years)', fontsize=12)
+    plt.ylabel('AI capabilities\n(years of progress at 2020-4 pace)', fontsize=12)
+    plt.title('AI capabilities over time', fontsize=14)
+    plt.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
+    plt.legend(fontsize=10)
+    plt.tight_layout()
+    plt.show()
+
 def run():
     # === Single Simulation Code ===
     # Run Simulation Button
@@ -18,122 +70,41 @@ def run():
 
     if run_simulation:
         def choose_parameters():
-            """
-            Choose initial parameters manually (no random sampling).
-            Returns:
-                r_initial: The initial value of r (diminishing returns).
-                initial_doubling_time: Initial doubling time in months.
-                limit_years: The limit expressed as years of progress at recent rates.
-                lambda_factor: The lambda factor for adjusting doubling time.
-            """
             r_initial = r_0_sample
             initial_boost = f_sample
-            initial_doubling_time = 3 / initial_boost  # Assume current software doubling time is 3 months
+            initial_doubling_time = 3 / initial_boost
             limit_years = Yr_Left_sample
             lambda_factor = lambda_sample
             return r_initial, initial_doubling_time, limit_years, lambda_factor
 
         def dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, stop_doubling_time=6, lambda_factor=0.5):
-            # Convert limit_years into the actual ceiling
             ceiling = 256 ** limit_years
-
             r = r_initial
             doubling_time = initial_doubling_time
-            size = 1.0  # Starting size
+            size = 1.0
             sizes = [size]
-            times = [0]  # times in months
+            times = [0]
             rs = [r]
-
-            # Compute total_doublings
             total_doublings = int(limit_years * 8)
-            k = r_initial / total_doublings  # Constant reduction in r per doubling
-
-            time_elapsed = 0  # Track time in months
-
+            k = r_initial / total_doublings
+            time_elapsed = 0
             while size < ceiling and r > 0 and doubling_time <= stop_doubling_time:
-                # Update time
                 time_step = doubling_time
                 time_elapsed += time_step
                 times.append(time_elapsed)
-
-                # Double the size
                 size *= 2
                 sizes.append(size)
-
-                # Update r
                 r -= k
                 rs.append(r)
-
-                # Update the doubling time for the next iteration with lambda adjustment
                 if r > 0:
                     doubling_time *= 2 ** (lambda_factor * (1 / r - 1))
-
             return times, sizes, rs, ceiling
 
         # Run the simulation
         r_initial, initial_doubling_time, limit_years, lambda_factor = choose_parameters()
         times, sizes, rs, ceiling = dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, 6, lambda_factor)
 
-        # Convert times to years
-        times_in_years = np.array(times) / 12.0
-        sizes = np.array(sizes)
-
-        # Give ceiling a value for all time
-        ceiling_time = ceiling * np.ones(len(times_in_years))
-                             
-        # Plot software level on a log scale (original plot)
-        fig1, ax1 = plt.subplots(figsize=(10, 5))
-        ax1.plot(times_in_years, sizes, label='Software Level')
-        ax1.semilogy(times_in_years, ceiling_time, 'black', linewidth=0.5)  # Ceiling line
-        ax1.text(times_in_years[2], ceiling_time[2], 'Ceiling', fontsize=8, color='black')
-        ax1.set_xlabel('Time (years)')
-        ax1.set_ylabel('Software Level')
-        ax1.set_title('Software Level Over Time (Log Scale)')
-        ax1.grid(True, which='both', linestyle='--', linewidth=0.5)
-        ax1.set_yscale('log')
-        ax1.legend()
-        st.pyplot(fig1)
-
-        # Calculate annualized growth rates
-        growth_rates = []
-        for i in range(1, len(sizes)):
-            dt = times_in_years[i] - times_in_years[i-1]
-            if dt > 0:
-                rate = (np.log(sizes[i]) - np.log(sizes[i-1])) / dt
-                growth_rates.append(rate)
-            else:
-                growth_rates.append(np.nan)
-
-        growth_times = times_in_years[1:]
-
-        # Define g and multiples
-        g = 2.77
-        multipliers = [3, 10, 30]
-
-        # Plot growth rates
-        fig2, ax2 = plt.subplots(figsize=(10,5))
-        ax2.plot(growth_times, growth_rates, label='Annualized Growth Rate', color='blue')
-        ax2.axhline(y=g, color='red', linestyle='--', label=f'g = {g}')
-
-        colors = ['green', 'orange', 'purple']
-        for m, c in zip(multipliers, colors):
-            ax2.axhline(y=m*g, color=c, linestyle=':', label=f'{m}x g = {m*g}')
-
-        ax2.set_xlabel('Time (years)')
-        ax2.set_ylabel('Annualized Growth Rate')
-        ax2.set_title('Annualized Software Growth Rate Over Time')
-        ax2.grid(True, which='both', linestyle='--', linewidth=0.5)
-        ax2.legend()
-        st.pyplot(fig2)
-
-        # Plot r over time
-        fig3, ax3 = plt.subplots(figsize=(10,5))
-        ax3.plot(times_in_years, rs, label='r(t)', color='magenta')
-        ax3.set_xlabel('Time (years)')
-        ax3.set_ylabel('r')
-        ax3.set_title('r Over Time')
-        ax3.grid(True, which='both', linestyle='--', linewidth=0.5)
-        ax3.legend()
-        st.pyplot(fig3)
+        # Plot transformed simulation
+        plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation")
     else:
         st.write("Press 'Run Simulation' to view results.")
