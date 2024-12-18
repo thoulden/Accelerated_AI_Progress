@@ -106,5 +106,42 @@ def run():
 
         # Plot transformed simulation
         plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation")
+
+        # Plot r over time
+        times_in_years = [t / 12 for t in times]
+        fig_r, ax_r = plt.subplots(figsize=(10, 5))
+        ax_r.plot(times_in_years, rs, label='r(t)', color='magenta')
+        ax_r.set_xlabel('Time (years)')
+        ax_r.set_ylabel('r')
+        ax_r.set_title('r Over Time')
+        ax_r.grid(True, which='both', linestyle='--', linewidth=0.5)
+        ax_r.legend()
+        st.pyplot(fig_r)
+
+        # Calculate and plot growth rates
+        growth_rates = []
+        for i in range(1, len(sizes)):
+            dt = times_in_years[i] - times_in_years[i-1]
+            if dt > 0:
+                rate = (np.log(sizes[i]) - np.log(sizes[i-1])) / dt
+                growth_rates.append(rate)
+            else:
+                growth_rates.append(np.nan)
+        growth_times = times_in_years[1:]
+
+        g = 2.77
+        multipliers = [3, 10, 30]
+        fig_growth, ax_growth = plt.subplots(figsize=(10, 5))
+        ax_growth.plot(growth_times, growth_rates, label='Annualized Growth Rate', color='blue')
+        ax_growth.axhline(y=g, color='red', linestyle='--', label=f'g = {g}')
+        colors = ['green', 'orange', 'purple']
+        for m, c in zip(multipliers, colors):
+            ax_growth.axhline(y=m*g, color=c, linestyle=':', label=f'{m}x g = {m*g}')
+        ax_growth.set_xlabel('Time (years)')
+        ax_growth.set_ylabel('Annualized Growth Rate')
+        ax_growth.set_title('Annualized Software Growth Rate Over Time')
+        ax_growth.grid(True, which='both', linestyle='--', linewidth=0.5)
+        ax_growth.legend()
+        st.pyplot(fig_growth)
     else:
         st.write("Press 'Run Simulation' to view results.")
