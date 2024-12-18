@@ -135,3 +135,5 @@ def run():
         ax3.grid(True, which='both', linestyle='--', linewidth=0.5)
         ax3.legend()
         st.pyplot(fig3)
+    else:
+    st.write("Press the button to start the simulation.")
