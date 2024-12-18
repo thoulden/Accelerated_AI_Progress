@@ -25,7 +25,10 @@ def run():
     lf_low = st.sidebar.number_input("low bound", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("high bound", min_value=lf_low, value=0.8)
 
+    
     st.sidebar.markdown("### Additional Choices")
+    # Checkbox for retraining cost
+    retraining_cost = st.sidebar.checkbox('Retraining Cost')
     # User inputs for simulation setup
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=10000, value=1000, step=100)
     simulation_duration = 4
@@ -111,7 +114,11 @@ def run():
 
                 # Update the doubling time for the next iteration with lambda adjustment
                 if r > 0:
-                    doubling_time *= 2 ** (lambda_factor * (1 / r - 1))
+                    if retraining_cost:
+                        doubling_factor = (lambda_factor * (1 / r - 1))/((lambda_factor * ( 1- 1 / r )) + 1)
+                    else:
+                        doubling_factor = (lambda_factor * (1 / r - 1))
+                    doubling_time *= 2 ** doubling_factor
 
             return times, sizes, rs
 
