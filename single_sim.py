@@ -40,19 +40,19 @@ def plot_single_transformed_simulation(times, sizes, label):
     transformed_sizes = transform_sizes_to_years(sizes)
     times_in_years = [t / 12 for t in times]  # Convert months to years
 
-    plt.figure(figsize=(12, 6))
-    plt.plot(times_in_years, transformed_sizes, label=label, color='blue', linestyle='-')
+    fig, ax = plt.subplots(figsize=(12, 6))
+    ax.plot(times_in_years, transformed_sizes, label=label, color='blue', linestyle='-')
 
     # Add a reference line for the recent pace of progress
-    plt.plot(times_in_years, times_in_years, label='Recent pace of progress', color='black', linestyle=':')
+    ax.plot(times_in_years, times_in_years, label='Recent pace of progress', color='black', linestyle=':')
 
-    plt.xlabel('Time (years)', fontsize=12)
-    plt.ylabel('AI capabilities\n(years of progress at 2020-4 pace)', fontsize=12)
-    plt.title('AI capabilities over time', fontsize=14)
-    plt.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
-    plt.legend(fontsize=10)
-    plt.tight_layout()
-    plt.show()
+    ax.set_xlabel('Time (years)', fontsize=12)
+    ax.set_ylabel('AI capabilities\n(years of progress at 2020-4 pace)', fontsize=12)
+    ax.set_title('AI capabilities over time', fontsize=14)
+    ax.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
+    ax.legend(fontsize=10)
+    st.pyplot(fig)  # Display the plot using Streamlit
+
 
 def run():
     # === Single Simulation Code ===
