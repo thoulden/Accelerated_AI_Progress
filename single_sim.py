@@ -117,7 +117,7 @@ def run():
         times, sizes, rs, ceiling = dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, 6, lambda_factor)
 
         # Plot transformed simulation
-        plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation")
+        plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation", ceiling=ceiling)
 
         # Plot r over time
         times_in_years = [t / 12 for t in times]
