@@ -286,8 +286,11 @@ def run():
         #st.table(formatted_df.data)
 
         # Convert the DataFrame to HTML and remove the row index
+        html_table = formatted_df.hide(axis='index').to_html()
+
+        # Use st.markdown to display the table without row numbers
         st.write("###### What is the probability AI progress is X times faster for N months?")
-        st.markdown(formatted_df.hide(axis='index').to_html(), unsafe_allow_html=True)
+        st.markdown(html_table, unsafe_allow_html=True)
 
 
     else:
