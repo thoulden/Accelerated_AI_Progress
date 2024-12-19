@@ -282,8 +282,13 @@ def run():
         formatted_df = df.style.format(format_dict)
 
         # Display using st.table (removes row numbers)
+        #st.write("###### What is the probability AI progress is X times faster for N months?")
+        #st.table(formatted_df.data)
+
+        # Convert the DataFrame to HTML and remove the row index
         st.write("###### What is the probability AI progress is X times faster for N months?")
-        st.table(formatted_df.data)
+        st.markdown(formatted_df.hide(axis='index').to_html(), unsafe_allow_html=True)
+
 
     else:
         st.write("Press 'Run Simulation' to view results.")
