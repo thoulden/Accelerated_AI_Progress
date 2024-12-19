@@ -28,7 +28,7 @@ def transform_sizes_to_years(sizes):
     """
     return [np.log2(size) / 8 for size in sizes]  # log2(256) = 8
 
-def plot_single_transformed_simulation(times, sizes, label, ceiling):
+def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     """
     Plot a single simulation with transformed sizes.
 
@@ -48,8 +48,8 @@ def plot_single_transformed_simulation(times, sizes, label, ceiling):
     ax.plot(times_in_years, times_in_years, label='Recent pace of progress', color='black', linestyle=':')
 
     # Add ceiling line
-    ax.semilogy(times_in_years, [ceiling] * len(times_in_years), 'black', linewidth=0.5, label='Ceiling')
-    ax.text(times_in_years[2], ceiling, 'Ceiling', fontsize=8, color='black')
+    ax.semilogy(times_in_years, [Yr_Left_sample] * len(times_in_years), 'black', linewidth=0.5, label='Ceiling')
+    ax.text(times_in_years[2], Yr_Left_sample, 'Ceiling', fontsize=8, color='black')
 
     ax.set_xlabel('Time (years)', fontsize=12)
     ax.set_ylabel('AI capabilities\n(years of progress at 2020-4 pace)', fontsize=12)
@@ -117,7 +117,7 @@ def run():
         times, sizes, rs, ceiling = dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, 6, lambda_factor)
 
         # Plot transformed simulation
-        plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation", ceiling=ceiling)
+        plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation", Yr_Left_sample=Yr_Left_sample)
 
         # Plot r over time
         times_in_years = [t / 12 for t in times]
