@@ -57,7 +57,7 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     ax.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
     ax.legend(fontsize=10)
     st.pyplot(fig)
-    st.markdown("3 years of progress at the old rate corresponds to 1 GPT-sized jump")
+    st.markdown("*Note:* 3 years of progress at the old rate corresponds to 1 GPT-sized jump")
 
 def run():
     # === Single Simulation Code ===
