@@ -172,7 +172,7 @@ def run():
                         accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))
                     else: 
                         accel_factor = (lambda_factor * (1 / r - 1)) 
-                    factor_increase_time *= (factor_increase ** accel_factor)/((1+f)/(1+f_old))
+                    factor_increase_time *= (factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))
             return times, sizes, rs, ceiling, compute_sizes, f_values
 
         # Run the simulation
