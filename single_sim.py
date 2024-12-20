@@ -104,7 +104,7 @@ def run():
             compute_max = 4096
             compute_doubling_time = 3
             compute_growth_monthly_rate = np.log(2) / compute_doubling_time
-            limit_years = 7
+            limit_years = Yr_Left_sample
             lambda_factor = lambda_sample
             doubling_time_starting = 3 #months
             implied_month_growth_rate = np.log(2)/doubling_time_starting
@@ -169,7 +169,7 @@ def run():
 
                 # Set factor increasing factor
                 if retraining_cost:
-                    accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))/(f/f_old)
+                    accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))/(f/f_old) # note f/f_old = 1 if no compute growth
                 else:
                     accel_factor = (lambda_factor * (1 / r - 1)) / (f/f_old)
                 
