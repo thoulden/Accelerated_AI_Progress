@@ -64,8 +64,6 @@ def run():
     # Run Simulation Button
     run_simulation = st.sidebar.button('Run Simulation')
     
-    
-
     # Parameters for the simulation
     lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, value=0.4, step=0.01)
     r_0_sample = st.sidebar.number_input('Initial Research Productivity (r₀)', min_value=0.0, max_value=5.0, value=1.2, step=0.1)
@@ -127,7 +125,7 @@ def run():
                 compute_max,
             )
 
-        def dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5, max_time_months=48):
+        def dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=lambda_factor, max_time_months=48):
             ceiling = 256 ** limit_years
             r = r_initial
             factor_increase_time = initial_factor_increase_time
