@@ -71,13 +71,14 @@ def run():
     r_0_sample = st.sidebar.number_input('Initial Research Productivity (r₀)', min_value=0.0, max_value=5.0, value=1.2, step=0.1)
     Yr_Left_sample = st.sidebar.number_input('Years Till Ceiling', min_value=1.0, max_value=50.0, value=9.0, step=0.5)
     # Option to compute growth
-    compute_growth = st.sidebar.checkbox('Compute Growth', value = False)
+    
     if compute_growth:
         f_sample = st.sidebar.number_input('Acceleration term (f)', min_value=1.0, max_value=1000.0, value=8.0, step=0.1)
     else:
         f_sample_min = st.sidebar.number_input('Initial Acceleration (f)', min_value=1.0, max_value=1000.0, value=8.0, step=0.1)
         f_sample_max = st.sidebar.number_input('Max Acceleration (f)', min_value=f_sample_min, max_value=1000.0, value=8.0, step=0.1)
     # Checkbox for retraining cost
+    compute_growth = st.sidebar.checkbox('Compute Growth')
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
     
     
