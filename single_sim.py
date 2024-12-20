@@ -94,7 +94,7 @@ def run():
             """
             # Set the parameters to your desired values here:
             if compute_growth:
-                factor_increase = 2  # Set the desired factor increase (e.g., 1.1 for 10% increases)
+                factor_increase = 1.1  # Set the desired factor increase (e.g., 1.1 for 10% increases)
             else: 
                 factor_increase = 2 # when not doing compute growing just use doublings
             r_initial = r_0_sample
@@ -170,7 +170,7 @@ def run():
                 if retraining_cost:
                     accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))/(f/f_old) # note f/f_old = 1 if no compute growth
                 else:
-                    accel_factor = (lambda_factor * (1 / r - 1)) / (f/f_old)
+                    accel_factor = (lambda_factor * (1 / r - 1)) / ((1+f)/(1+f_old))
                 
                 if r > 0:
                     factor_increase_time *= factor_increase ** accel_factor
