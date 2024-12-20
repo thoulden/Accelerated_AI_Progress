@@ -73,10 +73,10 @@ def run():
     # Option to compute growth
     compute_growth = st.sidebar.checkbox('Compute Growth')
     if compute_growth:
-        f_sample_min = st.sidebar.number_input('Initial Acceleration (f)', min_value=1.0, max_value=1000.0, value=8.0, step=0.1)
+        f_sample_min = st.sidebar.number_input('Initial Acceleration (f)', min_value=0.0, max_value=1000.0, value=8.0, step=0.1)
         f_sample_max = st.sidebar.number_input('Max Acceleration (f)', min_value=f_sample_min, max_value=1000.0, value=8.0, step=0.1)
     else:
-        f_sample = st.sidebar.number_input('Acceleration term (f)', min_value=1.0, max_value=1000.0, value=8.0, step=0.1)
+        f_sample = st.sidebar.number_input('Acceleration term (f)', min_value=0.0, max_value=1000.0, value=8.0, step=0.1)
         f_sample_max = f_sample
         f_sample_min = f_sample
     # Checkbox for retraining cost
