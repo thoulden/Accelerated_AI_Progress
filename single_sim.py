@@ -194,6 +194,16 @@ def run():
         ax_r.legend()
         st.pyplot(fig_r)
 
+        plt.figure(figsize=(10, 5))
+        plt.plot(times_in_years, f_values, label='Acceleration Factor (f)', color='purple')
+        plt.xlabel('Time (years)')
+        plt.ylabel('Acceleration Factor (f)')
+        plt.title('Acceleration Factor Over Time')
+        plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+
         # Calculate and plot growth rates
         growth_rates = []
         for i in range(1, len(sizes)):
