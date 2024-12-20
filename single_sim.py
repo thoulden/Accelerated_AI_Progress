@@ -186,24 +186,14 @@ def run():
         # Plot r over time
         times_in_years = [t / 12 for t in times]
         fig_r, ax_r = plt.subplots(figsize=(10, 5))
-        ax_r.plot(times_in_years, rs, label='r(t)', color='magenta')
+        ax_r.plot(times_in_years, f_values, label='r(t)', color='magenta')
         ax_r.set_xlabel('Time (years)')
         ax_r.set_ylabel('r')
         ax_r.set_title('r Over Time')
         ax_r.grid(True, which='both', linestyle='--', linewidth=0.5)
         ax_r.legend()
         st.pyplot(fig_r)
-
-        plt.figure(figsize=(10, 5))
-        plt.plot(times_in_years, f_values, label='Acceleration Factor (f)', color='purple')
-        plt.xlabel('Time (years)')
-        plt.ylabel('Acceleration Factor (f)')
-        plt.title('Acceleration Factor Over Time')
-        plt.grid(True, which='both', linestyle='--', linewidth=0.5)
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
-
+        
         # Calculate and plot growth rates
         growth_rates = []
         for i in range(1, len(sizes)):
