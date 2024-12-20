@@ -71,8 +71,8 @@ def run():
     # Option to compute growth
     compute_growth = st.sidebar.checkbox('Compute Growth')
     if compute_growth:
-        f_sample_min = st.sidebar.number_input('Initial Acceleration (f)', min_value=0.0, max_value=1000.0, value=8.0, step=0.1)
-        f_sample_max = st.sidebar.number_input('Max Acceleration (f)', min_value=f_sample_min, max_value=1000.0, value=8.0, step=0.1)
+        f_sample_min = st.sidebar.number_input('Initial Acceleration (f)', min_value=0.0, max_value=1000.0, value=0.10, step=0.1)
+        f_sample_max = st.sidebar.number_input('Max Acceleration (f)', min_value=f_sample_min, max_value=1000.0, value=32.0, step=0.1)
     else:
         f_sample = st.sidebar.number_input('Acceleration term (f)', min_value=0.0, max_value=1000.0, value=8.0, step=0.1)
         f_sample_max = f_sample
@@ -168,7 +168,7 @@ def run():
 
                 # Set factor increasing factor
                 if retraining_cost:
-                    accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))/(f/f_old) # note f/f_old = 1 if no compute growth
+                    accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))/((1+f)/(1+f_old)) # note f/f_old = 1 if no compute growth
                 else:
                     accel_factor = (lambda_factor * (1 / r - 1)) / ((1+f)/(1+f_old))
                 
