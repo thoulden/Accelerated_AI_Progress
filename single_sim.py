@@ -75,7 +75,7 @@ def run():
     # Checkbox for retraining cost
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
     # Option to compute growth
-    compute_growth = st.sidebar.checkbox('Compute Growth', value=False)
+    compute_growth = st.sidebar.checkbox('Compute Growth')
     
     if run_simulation:
         def choose_parameters():
