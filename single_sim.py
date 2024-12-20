@@ -86,16 +86,43 @@ def run():
     
     if run_simulation:
         def choose_parameters():
-            factor_increase = 1.1
+            """
+            Choose initial parameters manually.
+            Returns:
+                r_initial: The initial value of r (diminishing returns).
+                initial_doubling_time: Initial doubling time in months.
+                D: The ceiling level for size.
+                lambda_factor: The lambda factor for adjusting doubling time.
+            """
+            # Set the parameters to your desired values here:
+            factor_increase = 1.1  # Set the desired factor increase (e.g., 1.1 for 10% increases)
             r_initial = r_0_sample
-            initial_boost = f_sample
+            f_0 = f_sample_min
+            f_max = f_sample_max
             compute_size_start = 1
             compute_max = 4096
             compute_doubling_time = 3
-            initial_doubling_time = 3 / initial_boost
-            limit_years = Yr_Left_sample
+            compute_growth_monthly_rate = np.log(2) / compute_doubling_time
+            limit_years = 7
             lambda_factor = lambda_sample
-            return r_initial, initial_doubling_time, limit_years, lambda_factor
+            doubling_time_starting = 3 #months
+            implied_month_growth_rate = np.log(2)/doubling_time_starting
+            time_takes_to_factor_increase = np.log(factor_increase)/implied_month_growth_rate
+            initial_factor_increase_time = time_takes_to_factor_increase / (1+f_0)
+            limit_years = Yr_Left_sample
+
+            return (
+                factor_increase,
+                r_initial,
+                initial_factor_increase_time,
+                limit_years,
+                lambda_factor,
+                compute_growth_monthly_rate,
+                f_0,
+                f_max,
+                compute_size_start,
+                compute_max,
+            )
 
         def dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, stop_doubling_time=6, lambda_factor=0.5):
             ceiling = 256 ** limit_years
