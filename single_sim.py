@@ -95,7 +95,10 @@ def run():
                 lambda_factor: The lambda factor for adjusting doubling time.
             """
             # Set the parameters to your desired values here:
-            factor_increase = 1.1  # Set the desired factor increase (e.g., 1.1 for 10% increases)
+            if compute_growing:
+                factor_increase = 1.1  # Set the desired factor increase (e.g., 1.1 for 10% increases)
+            else: 
+                factor_increase = 2 # when not doing compute growing just use doublings
             r_initial = r_0_sample
             f_0 = f_sample_min
             f_max = f_sample_max
@@ -127,33 +130,58 @@ def run():
         def dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, stop_doubling_time=6, lambda_factor=0.5):
             ceiling = 256 ** limit_years
             r = r_initial
-            doubling_time = initial_doubling_time
+            factor_increase_time = initial_factor_increase_time
             size = 1.0
-            sizes = [size]
+            compute_size = compute_size_start
+
+            # Lists to store outputs
             times = [0]
+            sizes = [size]
             rs = [r]
-            total_doublings = int(limit_years * 8)
-            k = r_initial / total_doublings
+            compute_sizes = [compute_size]
+            f_values = [f_0]
+            
+            # Calculate total factor increasings
+            total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
+            k = r_initial / total_factor_increasings
+
             time_elapsed = 0
-            while size < ceiling and r > 0 and doubling_time <= stop_doubling_time:
-                time_step = doubling_time
+            while size < ceiling and r > 0:
+                # Store previous f for updates
+                f_old = f_values[-1]
+                
+                time_step = factor_increase_time
                 time_elapsed += time_step
                 times.append(time_elapsed)
-                size *= 2
+                size *= factor_increase
                 sizes.append(size)
                 r -= k
                 rs.append(r)
-                if retraining_cost:
-                    doubling_factor = (lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1))
+
+                # Update compute size
+                compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
+                compute_sizes.append(compute_size)
+
+                # Update acceleration factor f
+                if compute_size < compute_max:
+                    f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) / np.log(compute_max / compute_size_start))
                 else:
-                    doubling_factor = (lambda_factor * (1 / r - 1))
+                    f = f_max
+                f_values.append(f)
+
+                # Set factor increasing factor
+                if retraining_cost:
+                    accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))/(f/f_old)
+                else:
+                    accel_factor = (lambda_factor * (1 / r - 1)) / (f/f_old)
+                
                 if r > 0:
-                    doubling_time *= 2 ** doubling_factor
-            return times, sizes, rs, ceiling
+                    factor_increase_time *= factor_increase ** accel_factor
+            return times, sizes, rs, ceiling, compute_sizes, f_values
 
         # Run the simulation
-        r_initial, initial_doubling_time, limit_years, lambda_factor = choose_parameters()
-        times, sizes, rs, ceiling = dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, 6, lambda_factor)
+        factor_increase, r_initial, initial_factor_increase_time, limit_years, lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max = choose_parameters()
+        times, sizes, rs, ceiling, compute_sizes, f_values = dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=lambda_factor)
 
         # Plot transformed simulation
         plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation", Yr_Left_sample=Yr_Left_sample)
