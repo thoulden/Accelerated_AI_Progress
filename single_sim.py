@@ -138,7 +138,7 @@ def run():
             rs = [r]
             compute_sizes = [compute_size]
             f_values = [f_0]
-            
+            f=f_0
             # Calculate total factor increasings
             total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
             k = r_initial / total_factor_increasings
@@ -146,7 +146,7 @@ def run():
             time_elapsed = 0
             while time_elapsed < max_time_months and size < ceiling and r > 0:
                 # Store previous f for updates
-                f_old = f_values[-1]
+                f_old = f
                 
                 time_step = factor_increase_time
                 time_elapsed += time_step
