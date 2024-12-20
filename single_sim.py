@@ -64,10 +64,7 @@ def run():
     # Run Simulation Button
     run_simulation = st.sidebar.button('Run Simulation')
     
-    # Option to compute growth
-    compute_growth = st.sidebar.checkbox('Compute Growth', value=True)
-    # Checkbox for retraining cost
-    retraining_cost = st.sidebar.checkbox('Retraining Cost')
+    
 
     # Parameters for the simulation
     lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, value=0.4, step=0.01)
@@ -75,12 +72,19 @@ def run():
     Yr_Left_sample = st.sidebar.number_input('Years Till Ceiling', min_value=1.0, max_value=50.0, value=9.0, step=0.5)
     f_sample = st.sidebar.number_input('Acceleration term (f)', min_value=1.0, max_value=1000.0, value=8.0, step=0.1)
 
+    # Checkbox for retraining cost
+    retraining_cost = st.sidebar.checkbox('Retraining Cost')
+    # Option to compute growth
+    compute_growth = st.sidebar.checkbox('Compute Growth', value=False)
     
-
     if run_simulation:
         def choose_parameters():
+            factor_increase = 1.1
             r_initial = r_0_sample
             initial_boost = f_sample
+            compute_size_start = 1
+            compute_max = 4096
+            compute_doubling_time = 3
             initial_doubling_time = 3 / initial_boost
             limit_years = Yr_Left_sample
             lambda_factor = lambda_sample
