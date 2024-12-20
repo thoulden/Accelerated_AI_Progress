@@ -167,13 +167,12 @@ def run():
                 f_values.append(f)
 
                 # Set factor increasing factor
-                if retraining_cost:
-                    accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))/((1+f)/(1+f_old)) # note f/f_old = 1 if no compute growth
-                else:
-                    accel_factor = (lambda_factor * (1 / r - 1)) / ((1+f)/(1+f_old))
-                
                 if r > 0:
-                    factor_increase_time *= factor_increase ** accel_factor
+                    if retraining_cost:
+                        accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))
+                    else: 
+                        accel_factor = (lambda_factor * (1 / r - 1)) 
+                    factor_increase_time *= (factor_increase ** accel_factor)/((1+f)/(1+f_old))
             return times, sizes, rs, ceiling, compute_sizes, f_values
 
         # Run the simulation
