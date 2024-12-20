@@ -9,9 +9,14 @@ def run():
 
     # Allow user to specify parameter sampling bounds
     st.sidebar.markdown("### Key Parameter Sampling Bounds")
+    
+    
     st.sidebar.markdown("#### Acceleration factor (f, log-uniform)")
+    
+    # Option to compute growth
+    st.sidebar.markdown("#### Boost (f, log-uniform)")
     ib_low = st.sidebar.number_input("low bound", min_value=0.1, value=2.0)
-    ib_high = st.sidebar.number_input("high bound", min_value=ib_low, value=32.0)
+    ib_high = st.sidebar.number_input("high bound", min_value=ib_low, value=32.0) #will say the difference between compute growth or not is slow progress up to chocie
 
     st.sidebar.markdown("#### Initial Research Productivity (r₀, log-uniform)")
     r_low = st.sidebar.number_input("low bound", min_value=0.01, value=0.4)
@@ -24,11 +29,11 @@ def run():
     st.sidebar.markdown("#### Parallelizability (λ, log-uniform)")
     lf_low = st.sidebar.number_input("low bound", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("high bound", min_value=lf_low, value=0.8)
-
     
     st.sidebar.markdown("### Additional Choices")
     # Checkbox for retraining cost
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
+    compute_growth = st.sidebar.checkbox('Compute Growth')
     # User inputs for simulation setup
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
     simulation_duration = 4
@@ -50,23 +55,38 @@ def run():
             limit_years: The limit expressed as years of progress at recent rates.
             lambda_factor: The lambda factor for adjusting doubling time.
             """
-            # Sample initial speed-up from log-uniform distribution (range: 2 to 32)
-            initial_boost = np.exp(np.random.uniform(np.log(2), np.log(32)))
-            initial_doubling_time = 3 / initial_boost  # Assume current software doubling time is 3 months
 
             # Sample r from a log-uniform distribution (range: 0.4 to 3.6)
-            r_initial = np.exp(np.random.uniform(np.log(0.4), np.log(3.6)))
+            r_initial = np.exp(np.random.uniform(np.log(r_low), np.log(r_high)))
 
             # Sample limit_years uniformly from 7 to 14
             limit_years = np.random.uniform(ly_low, ly_high)
 
             # Sample lambda factor from log-uniform distribution (range: 0.2 to 0.8)
-            lambda_factor = np.exp(np.random.uniform(np.log(0.2), np.log(0.8)))
+            lambda_factor = np.exp(np.random.uniform(np.log(lf_low), np.log(lf_high)))
 
-            return r_initial, initial_doubling_time, limit_years, lambda_factor
+            # Have to interpret boost differently depending on compute growing
+            initial_boost = np.exp(np.random.uniform(np.log(ib_low), np.log(ib_high)))
 
+            if compute_growth:
+                factor_increase = 1.1  # Set the desired factor increase (e.g., 1.1 for 10% increases)
+                f_0 = 0.1 # ensures that boost starts low and goes to 'inital boost' which we can interpret as max boost here
+            else: 
+                factor_increase = 2 # when not doing compute growing just use doublings
+                f_0 = initial_boost # ensures that boost starts high
+            f_max = initial_boost
+            compute_size_start = 1
+            compute_max = 4096
+            compute_doubling_time = 3
+            compute_growth_monthly_rate = np.log(2) / compute_doubling_time
+            doubling_time_starting = 3 #months
+            implied_month_growth_rate = np.log(2)/doubling_time_starting
+            time_takes_to_factor_increase = np.log(factor_increase)/implied_month_growth_rate
+            initial_factor_increase_time = time_takes_to_factor_increase / (1+f_0)
 
-        def dynamic_system_with_lambda(r_initial, initial_doubling_time, limit_years, stop_doubling_time=6, lambda_factor=0.5):
+            return r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, factor_increase, lambda_factor)
+
+            def dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5, max_time_months=48):
             """
             Simulate the dynamical system with an adjustable lambda factor and stop once the doubling time exceeds the specified limit.
         
@@ -84,43 +104,53 @@ def run():
             """
             # Convert limit_years into the actual ceiling
             ceiling = 256 ** limit_years
-
             r = r_initial
-            doubling_time = initial_doubling_time
-            size = 1.0  # Starting size
-            sizes = [size]
+            factor_increase_time = initial_factor_increase_time
+            size = 1.0
+            compute_size = compute_size_start
+
+            # Lists to store outputs
             times = [0]
+            sizes = [size]
             rs = [r]
-
-            total_doublings = int(np.log2(ceiling))
-            k = r_initial / total_doublings  # Constant reduction in r per doubling
-
-            time_elapsed = 0  # Track time in months
-
-            # Run the simulation until size reaches the ceiling or doubling time exceeds the limit
-            while size < ceiling and r > 0 and doubling_time <= stop_doubling_time:
-                # Update time based on current doubling time
-                time_step = doubling_time
+            compute_sizes = [compute_size]
+            f_values = [f_0]
+            f=f_0
+            # Calculate total factor increasings
+            total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
+            k = r_initial / total_factor_increasings
+            time_elapsed = 0
+            while time_elapsed < max_time_months and size < ceiling and r > 0:
+                # Store previous f for updates
+                f_old = f
+                
+                time_step = factor_increase_time
                 time_elapsed += time_step
                 times.append(time_elapsed)
-
-                # Double the size
-                size *= 2
+                size *= factor_increase
                 sizes.append(size)
-
-                # Update r
                 r -= k
                 rs.append(r)
 
-                # Update the doubling time for the next iteration with lambda adjustment
+                # Update compute size
+                compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
+                compute_sizes.append(compute_size)
+
+                # Update acceleration factor f
+                if compute_size < compute_max:
+                    f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) / np.log(compute_max / compute_size_start))
+                else:
+                    f = f_max
+                f_values.append(f)
+
+                # Set factor increasing factor
                 if r > 0:
                     if retraining_cost:
-                        doubling_factor = (((lambda_factor*((1/r) -1))/(abs(lambda_factor*((1/r) -1))+1)))
-                    else:
-                        doubling_factor = (lambda_factor * (1 / r - 1))
-                    doubling_time *= 2 ** doubling_factor
-
-            return times, sizes, rs
+                        accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))
+                    else: 
+                        accel_factor = (lambda_factor * (1 / r - 1)) 
+                    factor_increase_time *= (factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))
+            return times, sizes, rs, ceiling, compute_sizes, f_values
 
         def transform_sizes_to_years(sizes):
             """
