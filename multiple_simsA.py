@@ -4,20 +4,34 @@ import pandas as pd
 from itertools import product
 
 def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, compute_growth):
+    """
+    Sample n_samples sets of parameters in a vectorized manner, ensuring consistency in dimensions.
+
+    Returns:
+        A NumPy array of shape (n_samples, 8) containing sampled parameters.
+    """
+    # Log-uniform distributions
     initial_boost = np.exp(np.random.uniform(np.log(ib_low), np.log(ib_high), size=n_samples))
     r_initial = np.exp(np.random.uniform(np.log(r_low), np.log(r_high), size=n_samples))
     limit_years = np.random.uniform(ly_low, ly_high, size=n_samples)
     lambda_factor = np.exp(np.random.uniform(np.log(lf_low), np.log(lf_high), size=n_samples))
 
+    # Scalars or fixed values
     factor_increase = 1.1 if compute_growth else 2
-    f_0 = 0.1 if compute_growth else initial_boost
-    f_max = initial_boost
-    compute_growth_monthly_rate = np.log(2) / 3
-    implied_month_growth_rate = np.log(2) / 3
+    compute_growth_monthly_rate = np.log(2) / 3  # Fixed scalar for monthly compute growth rate
+    implied_month_growth_rate = np.log(2) / 3  # Fixed scalar for implied monthly growth rate
     time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
-    initial_factor_increase_time = time_takes_to_factor_increase / (1 + f_0)
+    initial_factor_increase_time = time_takes_to_factor_increase / (1 + (0.1 if compute_growth else initial_boost))  # Matches each initial_boost
 
-    return np.column_stack((r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor))
+    # Variables dependent on initial_boost
+    f_0 = np.full(n_samples, 0.1) if compute_growth else initial_boost  # Matches each draw of initial_boost
+    f_max = initial_boost  # f_max depends on initial_boost
+
+    # Stack the parameters into a consistent array
+    return np.column_stack((
+        r_initial, initial_factor_increase_time, limit_years,
+        np.full(n_samples, compute_growth_monthly_rate), f_0, f_max, lambda_factor
+    ))
 
 def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost, max_time_months=48):
     ceiling = 256 ** limit_years
