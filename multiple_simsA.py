@@ -45,7 +45,7 @@ def run():
     if run_sims:
         # Parameter sampling function
 
-        def sample_parameters():
+        def sample_parameters(): # i think I can deleted this
             """
             Sample initial parameters from uniform and log-uniform distributions.
 
@@ -220,6 +220,7 @@ def run():
                 r_initial, initial_doubling_time, limit_years, lambda_factor.
             """
             # Log-uniform distribution for initial speed-up (2 to 32)
+            
             initial_boost = np.exp(np.random.uniform(np.log(ib_low), np.log(ib_high), size=n_samples))
             initial_doubling_time = 3 / initial_boost  # Initial doubling time
 
@@ -231,8 +232,24 @@ def run():
 
             # Log-uniform distribution for lambda factor (0.2 to 0.8)
             lambda_factor = np.exp(np.random.uniform(np.log(lf_low), np.log(lf_high), size=n_samples))
-        
-            return np.column_stack((r_initial, initial_doubling_time, limit_years, lambda_factor))
+
+            if compute_growth:
+                factor_increase = 1.1  # Set the desired factor increase (e.g., 1.1 for 10% increases)
+                f_0 = 0.1 # ensures that boost starts low and goes to 'inital boost' which we can interpret as max boost here
+            else: 
+                factor_increase = 2 # when not doing compute growing just use doublings
+                f_0 = initial_boost # ensures that boost starts high
+            f_max = initial_boost
+            compute_size_start = 1
+            compute_max = 4096
+            compute_doubling_time = 3
+            compute_growth_monthly_rate = np.log(2) / compute_doubling_time
+            doubling_time_starting = 3 #months
+            implied_month_growth_rate = np.log(2)/doubling_time_starting
+            time_takes_to_factor_increase = np.log(factor_increase)/implied_month_growth_rate
+            initial_factor_increase_time = time_takes_to_factor_increase / (1+f_0)
+            
+            return np.column_stack((r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, factor_increase, lambda_factor))
 
         # Run sims
 
@@ -255,10 +272,13 @@ def run():
         for i in range(n_sims):
             # Sample a parameter set
             r, initial_doubling_time, limit_years, lambda_factor = sample_parameters_batch(1)[0]
-        
+
+            #use sampled values to derive relevant inputs
+            
+            
             # Run the simulation
             times, _, _ = dynamic_system_with_lambda(
-                r, initial_doubling_time, limit_years, lambda_factor=lambda_factor
+                r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=lambda_factor)
             )
 
             # Save the times
