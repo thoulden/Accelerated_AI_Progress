@@ -271,7 +271,7 @@ def run():
         progress = st.progress(0)
         for i in range(n_sims):
             # Sample a parameter set
-            r, initial_doubling_time, limit_years, lambda_factor = sample_parameters_batch(1)[0]
+            r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, factor_increase, lambda_factor = sample_parameters_batch(1)[0]
 
             #use sampled values to derive relevant inputs
             
