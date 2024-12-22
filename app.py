@@ -37,7 +37,7 @@ if st.session_state["page"] == "main":
     st.title('Simulation of Accelerated AI Progress')
 
     st.markdown(r"""
-    The purpose of this tool is to simulate the path of AI progress once AI provides 'cognitive labor' for AI research. Unlike standard applications of semi-endogenous growth theory, I assume that diminishing returns to (software) research effort increase with the level of software. 
+    A a complement to the our post on the size and speed of a software-driven intelligence explosion, this tool is to simulate the path of AI progress once AI provides 'cognitive labor' for AI research. 
     
     This tool offers two options:
     - 'Multiple Simulations' allows you to run a bunch of simulations with uncertainty over key parameters—the output of this function will be a plot showing the fraction of simulations where the growth rate of software exceeds the observed exponential rate by some amount over some number of years. 
