@@ -20,9 +20,8 @@ def display():
     \frac{\dot{S}(2S, C)}{\dot{S}(S, C)} = \frac{[(a2S)^{\alpha}(b C)^{1-\alpha}]^{\lambda} (2S)^{-\frac{\lambda}{r}}}{[(aS)^{\alpha}(b C)^{1-\alpha}]^{\lambda} S^{-\frac{\lambda}{r(2S)}}} = 2^{\lambda \alpha}\times 2^{-\frac{\lambda}{r(2S)}}\times S^{\lambda({\frac{1}{r(S)} - \frac{1}{r(2S)}})}
     """)
     st.markdown(r""" to simplify this expression we just ignore the last $S$ term (i.e., assume here that ${\frac{1}{r(S)} =\frac{1}{r(2S)}}$), so that the rate of doubling is independent of the level of $S$. We can see that this assumption results in an overestimation of the impact of software doubling on the rate of software progress (since we are assuming that $r(2S) < r(S)$). We expect this overestimation to be relatively minor given a sufficient number of software doublings availaible before the software ceiling. 
-    Under this assumetion we arive at the result that a doubling of software doubles the rate of software progress $\lambda(\alpha - \frac{1}{r(2S)})$ times, or equivalently, by $\lambda\alpha(1 - \frac{1}{r(2S)\alpha})$ times. 
+    Under this assumetion we arive at the result that a doubling of software doubles the rate of software progress $\lambda(\alpha - \frac{1}{r(2S)})$ times, or equivalently, by $\lambda\alpha(1 - \frac{1}{r(2S)\alpha})$ times. In the original post we (generally) assume that compute is held fixed. So instead of introducing $\alpha$ (which does impact the effect of software levels on sofftware progress) we opt to just reduce estimates of $\lambda$ and $r$ to account for the fact that software is only one component of `effective researchers'. Defining $\hat{\lambda} = \lambda \alpha$ and $\hat{r} = r \alpha$ we can see that we arrive at the result that doubling software levels doubdle the rate of software growth by $\hat{\lambda}(1 - \frac{1}{\hat{r}(2S)})$. 
     """)
-    
     
     st.markdown("""##### Semi-Endogenous Growth Environment""")
     st.markdown(r""" Throughout, I assume software, $S$ follows the law of motion""")
