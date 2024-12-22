@@ -27,5 +27,5 @@ def display():
 
   Under this assumption, we arrive at the result that doubling software doubles the rate of software progress $\lambda(\alpha - \frac{1}{r(2S)})$ times, or equivalently, by $\lambda\alpha(1 - \frac{1}{r(2S)\alpha})$ times. In the original post, we (generally) assume that compute is held fixed. 
 
-  Instead of introducing $\alpha$ (which does affect the relationship between software levels and software progress), we opt to reduce estimates of $\lambda$ and $r$ to account for the fact that software is only one component of "effective researchers." Defining $\hat{\lambda} = \lambda \alpha$ and $\hat{r} = r \alpha$, we can see that doubling software levels doubles the rate of software growth by $\hat{\lambda}(1 - \frac{1}{\hat{r}(2S)})$.""")
+  Instead of introducing $\alpha$ (which does affect the relationship between software levels and software progress), we opt to reduce estimates of $\lambda$ and $r$ to account for the fact that software is only one component of "effective researchers." Defining $\hat{\lambda} = \lambda \alpha$ and $\hat{r} = r \alpha$, we can see that doubling software levels doubles the rate of software growth by $\hat{\lambda}(1 - \frac{1}{\hat{r}(2S)})$, as implemented in the simulation.""")
 
