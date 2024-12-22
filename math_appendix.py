@@ -1,9 +1,9 @@
 import streamlit as st
 
 def display():
-    st.markdown(r""" ## Math Appendix""")
+st.markdown(r""" ## Math Appendix""")
 
- st.markdown("""##### Retraining Costs""")
+st.markdown("""##### Retraining Costs""")
 st.markdown(r""" In the model, we assume that every time software doubles, the pace of software progress doubles $q$ times, where $q = \lambda(r^{-1} - 1)$. The assumption underlying this process is that models can be developed through a relatively continuous process, building on the previous model. In reality, state-of-the-art models must be trained, a process that takes time. To implement this possibility, we assume that software improvements can also be used to increase the pace of training.
 
 The median parameters suggest that software must double roughly 5 times to double the pace of software progress. To account for retraining, we assume that software has to double an additional time (so roughly 6 times) to achieve this effect. To implement this additional requirement, we assume that every time software doubles, the pace of software doubles by $q / |q+1|$ times.""")
