@@ -17,7 +17,7 @@ def display():
     To combine software quality and compute availability into effective researchers we assume a Cobb-Douglass form: $R(S_t, C_t) = (a S_t)^{\alpha} (b C_t)^{1-\alpha}$. 
     Now, to answer `how much does the pace of software progress change when we double software quality (holdnding compute fixed) we just compare \dot{S}(S, C) with \dot{S}(2S, C): """)
     st.latex(r"""
-    \frac{\dot{S}(2S, C)}{\dot{S}(S, C)} = \frac{[(aS)^{\alpha}(b C)^{1-\alpha}]^{\lambda} S^{1-\frac{\lambda}{r}}}{[(a2S)^{\alpha}(b C)^{1-\alpha}]^{\lambda} (2S)^{1-\frac{\lambda}{r(2S)}}}
+    \frac{\dot{S}(2S, C)}{\dot{S}(S, C)} = \frac{[(a2S)^{\alpha}(b C)^{1-\alpha}]^{\lambda} (2S)^{1-\frac{\lambda}{r}}}{[(aS)^{\alpha}(b C)^{1-\alpha}]^{\lambda} S^{1-\frac{\lambda}{r(2S)}}} = 2^{\lambda \alpha}\times 2^{1-\frac{\lambda}{r(2S)}}\times S^{\lambda{\frac{1}{r(S)} - \frac{1}{r(2S)}}}
     """)
     
     st.markdown("""##### Semi-Endogenous Growth Environment""")
