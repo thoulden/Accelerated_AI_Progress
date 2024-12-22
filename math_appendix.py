@@ -19,6 +19,8 @@ def display():
     st.latex(r"""
     \frac{\dot{S}(2S, C)}{\dot{S}(S, C)} = \frac{[(a2S)^{\alpha}(b C)^{1-\alpha}]^{\lambda} (2S)^{1-\frac{\lambda}{r}}}{[(aS)^{\alpha}(b C)^{1-\alpha}]^{\lambda} S^{1-\frac{\lambda}{r(2S)}}} = 2^{\lambda \alpha}\times 2^{1-\frac{\lambda}{r(2S)}}\times S^{\lambda({\frac{1}{r(S)} - \frac{1}{r(2S)}})}
     """)
+    st.markdown(r""" to simplify this expression we just ignore the last $S$ term (i.e., assume here that ${\frac{1}{r(S)} =\frac{1}{r(2S)}}$), so that the rate of doubling is independent of the level of $S$. We can see that this assumption results in an overestimation of the impact of software doubling on the rate of software progress (since we are assuming that $r(2S) < r(S)$). """)
+    
     
     st.markdown("""##### Semi-Endogenous Growth Environment""")
     st.markdown(r""" Throughout, I assume software, $S$ follows the law of motion""")
