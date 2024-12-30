@@ -147,9 +147,9 @@ def run():
                 row[f"{multiple}x faster"] = results.get((time_period, multiple), 0)
             data.append(row)
 
-        df = pd.DataFrame(data).sort_values(by="Time Period (Months)").reset_index(drop=True)
-        st.write("###### What is the probability AI progress is X times faster for N months?")
-        st.table(df.style.hide_index())
+        df = df.sort_values(by="Time Period (Months)").reset_index(drop=True)
+        st.write("###### Probability AI progress is X times faster for N months?")
+        st.table(df)  # No row numbering now
     else:
         st.write("Press 'Run Simulation' to view results.")
     
