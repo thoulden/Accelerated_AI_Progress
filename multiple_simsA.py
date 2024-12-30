@@ -125,7 +125,7 @@ def run():
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
     multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
-    conditions = list(product([4, 12, 36], multiples))
+    conditions = list(product([1, 4, 12, 36], multiples))
 
     if st.sidebar.button("Run Simulations"):
         results = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth)
