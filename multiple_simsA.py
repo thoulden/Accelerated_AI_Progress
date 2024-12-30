@@ -161,7 +161,8 @@ def run():
             for multiple in sorted(set(c[1] for c in results.keys())):
                 row[f"{multiple}x faster"] = results.get((time_period, multiple), 0)
             data.append(row)
-        
+        # Convert 'data' (list of dicts) to a DataFrame
+        df = pd.DataFrame(data)
 
         # Example usage:
         md_table = to_markdown_table(df)
