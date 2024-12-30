@@ -120,7 +120,7 @@ def run():
     run_button = st.sidebar.button("Run Simulations")
         
     st.sidebar.markdown("### Key Parameter Sampling Bounds")
-    ib_low = st.sidebar.number_input("Boost (low)", min_value=0.1, value=2.0)
+    ib_low = st.sidebar.number_input(r"Boost $f$ (low)", min_value=0.1, value=2.0)
     ib_high = st.sidebar.number_input("Boost (high)", min_value=ib_low, value=32.0)
     r_low = st.sidebar.number_input("Initial Productivity (low)", min_value=0.01, value=0.4)
     r_high = st.sidebar.number_input("Initial Productivity (high)", min_value=r_low, value=3.6)
