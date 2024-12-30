@@ -132,6 +132,7 @@ def run():
         st.table(df)
     else:
         st.write("Press 'Run Simulation' to view results.")
+        
     st.sidebar.markdown("### Key Parameter Sampling Bounds")
     ib_low = st.sidebar.number_input("Boost (low)", min_value=0.1, value=2.0)
     ib_high = st.sidebar.number_input("Boost (high)", min_value=ib_low, value=32.0)
@@ -142,9 +143,9 @@ def run():
     lf_low = st.sidebar.number_input("Parallelizability (low)", min_value=0.01, value=0.2)
     lf_high = st.sidebar.number_input("Parallelizability (high)", min_value=lf_low, value=0.8)
 
-    
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
     multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
+    
     retraining_cost = st.sidebar.checkbox("Retraining Cost")
     compute_growth = st.sidebar.checkbox("Compute Growth")
     
