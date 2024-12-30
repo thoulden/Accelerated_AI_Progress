@@ -20,7 +20,8 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
     compute_growth_monthly_rate = np.log(2) / 3  # Fixed scalar for monthly compute growth rate
     implied_month_growth_rate = np.log(2) / 3  # Fixed scalar for implied monthly growth rate
     time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
-    initial_factor_increase_time = time_takes_to_factor_increase / (1 + (0.1 if compute_growth else initial_boost))  # Matches each initial_boost
+    initial_factor_increase_time = time_takes_to_factor_increase / ((1.1) if compute_growth else initial_boost)) # assumes that if we have compute growth the starting boost is 1 + 0.1
+    #initial_factor_increase_time = time_takes_to_factor_increase / (1 + (0.1 if compute_growth else initial_boost))  # Matches each initial_boost
 
     # Variables dependent on initial_boost
     f_0 = np.full(n_samples, 0.1) if compute_growth else initial_boost  # Matches each draw of initial_boost
