@@ -59,8 +59,8 @@ def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increa
     while time_elapsed < max_time_months and size < ceiling and r > 0:
         f_old = f
         time_elapsed += initial_factor_increase_time
-        size *= 2
-        compute_size = compute_sizes[-1] * np.exp(compute_growth_monthly_rate * time_elapsed)
+        size *= factor_increase
+        compute_size = compute_sizes[-1] * np.exp(compute_growth_monthly_rate * initial_factor_increase_time)
 
         if compute_size < 4096:
             f = f_0 + (f_max - f_0) * (np.log(compute_size) / np.log(4096))
