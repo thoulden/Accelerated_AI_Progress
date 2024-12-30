@@ -117,21 +117,7 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
     return {condition: count / num_sims for condition, count in batch_summary.items()}
 
 def run():
-    if st.sidebar.button("Run Simulations"):
-        results = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth)
-
-        data = []
-        for time_period in sorted(set(c[0] for c in results.keys())):
-            row = {"Time Period (Months)": time_period}
-            for multiple in sorted(set(c[1] for c in results.keys())):
-                row[f"{multiple}x faster"] = results.get((time_period, multiple), 0)
-            data.append(row)
-
-        df = pd.DataFrame(data).sort_values(by="Time Period (Months)").reset_index(drop=True)
-        st.write("###### What is the probability AI progress is X times faster for N months?")
-        st.table(df)
-    else:
-        st.write("Press 'Run Simulation' to view results.")
+    run_button = st.sidebar.button("Run Simulations")
         
     st.sidebar.markdown("### Key Parameter Sampling Bounds")
     ib_low = st.sidebar.number_input("Boost (low)", min_value=0.1, value=2.0)
@@ -148,9 +134,26 @@ def run():
     
     retraining_cost = st.sidebar.checkbox("Retraining Cost")
     compute_growth = st.sidebar.checkbox("Compute Growth")
-    
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
     conditions = list(product([1, 4, 12, 36], multiples))
+
+    if run_button:
+        results = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth)
+
+        data = []
+        for time_period in sorted(set(c[0] for c in results.keys())):
+            row = {"Time Period (Months)": time_period}
+            for multiple in sorted(set(c[1] for c in results.keys())):
+                row[f"{multiple}x faster"] = results.get((time_period, multiple), 0)
+            data.append(row)
+
+        df = pd.DataFrame(data).sort_values(by="Time Period (Months)").reset_index(drop=True)
+        st.write("###### What is the probability AI progress is X times faster for N months?")
+        st.table(df)
+    else:
+        st.write("Press 'Run Simulation' to view results.")
+    
+    
 
     
 
