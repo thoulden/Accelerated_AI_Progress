@@ -6,4 +6,4 @@ single_simulation.py runs the code to simulate a single simulation for given par
 math_appendix.py is the text for the math appendix included;
 requirements.txt tells streamlit which packages to install;
 
-Example_Or_Sim and Simulate_ComputeGrowth are old files
+multiple_sims is an are old file
