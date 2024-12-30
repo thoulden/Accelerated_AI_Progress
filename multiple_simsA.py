@@ -61,7 +61,7 @@ def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increa
             f = f_max
 
         if r > 0:
-            accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1))) if retraining_cost else lambda_factor * (1 / r - 1))
+            accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1))) if retraining_cost else lambda_factor * (1 / r - 1)
             initial_factor_increase_time *= (factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))
 
         r -= k
