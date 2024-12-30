@@ -146,11 +146,25 @@ def run():
             for multiple in sorted(set(c[1] for c in results.keys())):
                 row[f"{multiple}x faster"] = results.get((time_period, multiple), 0)
             data.append(row)
-
+        def to_markdown_table(df):
+        """
+         Convert a small pandas DataFrame to a markdown table (no index).
+        """
         df = df.reset_index(drop=True)
-        
-        st.write("###### Probability AI progress is X times faster for N months?")
-        st.table(df)  # No row numbering now
+        header = "| " + " | ".join(df.columns) + " |\n"
+        separator = "| " + " | ".join("---" for _ in df.columns) + " |\n"
+
+        rows = []
+        for row_tuple in df.itertuples(index=False):
+            row_str = "| " + " | ".join(str(x) for x in row_tuple) + " |"
+            rows.append(row_str)
+
+        return header + separator + "\n".join(rows)
+
+    # Example usage:
+    md_table = to_markdown_table(df)
+    st.write("###### Probability AI progress is X times faster for N months?")
+    st.markdown(md_table)
     else:
         st.write("Press 'Run Simulation' to view results.")
     
