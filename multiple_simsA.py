@@ -30,7 +30,7 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
     # Stack the parameters into a consistent array
     return np.column_stack((
         r_initial,                     # 1
-        factor_increase * np.ones(n_samples),  # 2  <-- new column
+        factor_increase * np.ones(n_samples),  # 2 
         initial_factor_increase_time,  # 3
         limit_years,                   # 4
         np.full(n_samples, compute_growth_monthly_rate),  # 5
