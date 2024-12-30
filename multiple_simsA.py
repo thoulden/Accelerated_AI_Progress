@@ -6,7 +6,6 @@ from itertools import product
 def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, compute_growth):
     """
     Sample n_samples sets of parameters in a vectorized manner, ensuring consistency in dimensions.
-
     Returns:
         A NumPy array of shape (n_samples, 8) containing sampled parameters.
     """
@@ -30,7 +29,7 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
     # Stack the parameters into a consistent array
     return np.column_stack((
         r_initial,                     # 1
-        factor_increase * np.ones(n_samples),  # 2 
+        factor_increase * np.ones(n_samples),  # 2  <-- new column
         initial_factor_increase_time,  # 3
         limit_years,                   # 4
         np.full(n_samples, compute_growth_monthly_rate),  # 5
