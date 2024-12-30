@@ -149,7 +149,7 @@ def run():
 
         df = pd.DataFrame(data).sort_values(by="Time Period (Months)").reset_index(drop=True)
         st.write("###### What is the probability AI progress is X times faster for N months?")
-        st.table(df)
+        st.table(df.style.hide_index())
     else:
         st.write("Press 'Run Simulation' to view results.")
     
