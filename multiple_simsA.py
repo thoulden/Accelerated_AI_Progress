@@ -29,8 +29,14 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
 
     # Stack the parameters into a consistent array
     return np.column_stack((
-        r_initial, initial_factor_increase_time, limit_years,
-        np.full(n_samples, compute_growth_monthly_rate), f_0, f_max, lambda_factor
+        r_initial,                     # 1
+        factor_increase * np.ones(n_samples),  # 2  <-- new column
+        initial_factor_increase_time,  # 3
+        limit_years,                   # 4
+        np.full(n_samples, compute_growth_monthly_rate),  # 5
+        f_0,                           # 6
+        f_max,                         # 7
+        lambda_factor                  # 8
     ))
 
 def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost, max_time_months=48):
