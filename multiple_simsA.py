@@ -117,23 +117,6 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
     return {condition: count / num_sims for condition, count in batch_summary.items()}
 
 def run():
-    st.sidebar.markdown("### Key Parameter Sampling Bounds")
-    ib_low = st.sidebar.number_input("Boost (low)", min_value=0.1, value=2.0)
-    ib_high = st.sidebar.number_input("Boost (high)", min_value=ib_low, value=32.0)
-    r_low = st.sidebar.number_input("Initial Productivity (low)", min_value=0.01, value=0.4)
-    r_high = st.sidebar.number_input("Initial Productivity (high)", min_value=r_low, value=3.6)
-    ly_low = st.sidebar.number_input("Years to Ceiling (low)", min_value=1.0, value=7.0)
-    ly_high = st.sidebar.number_input("Years to Ceiling (high)", min_value=ly_low, value=14.0)
-    lf_low = st.sidebar.number_input("Parallelizability (low)", min_value=0.01, value=0.2)
-    lf_high = st.sidebar.number_input("Parallelizability (high)", min_value=lf_low, value=0.8)
-
-    retraining_cost = st.sidebar.checkbox("Retraining Cost")
-    compute_growth = st.sidebar.checkbox("Compute Growth")
-    num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
-    multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
-    multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
-    conditions = list(product([1, 4, 12, 36], multiples))
-
     if st.sidebar.button("Run Simulations"):
         results = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth)
 
@@ -149,6 +132,26 @@ def run():
         st.table(df)
     else:
         st.write("Press 'Run Simulation' to view results.")
+    st.sidebar.markdown("### Key Parameter Sampling Bounds")
+    ib_low = st.sidebar.number_input("Boost (low)", min_value=0.1, value=2.0)
+    ib_high = st.sidebar.number_input("Boost (high)", min_value=ib_low, value=32.0)
+    r_low = st.sidebar.number_input("Initial Productivity (low)", min_value=0.01, value=0.4)
+    r_high = st.sidebar.number_input("Initial Productivity (high)", min_value=r_low, value=3.6)
+    ly_low = st.sidebar.number_input("Years to Ceiling (low)", min_value=1.0, value=7.0)
+    ly_high = st.sidebar.number_input("Years to Ceiling (high)", min_value=ly_low, value=14.0)
+    lf_low = st.sidebar.number_input("Parallelizability (low)", min_value=0.01, value=0.2)
+    lf_high = st.sidebar.number_input("Parallelizability (high)", min_value=lf_low, value=0.8)
+
+    
+    num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
+    multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
+    retraining_cost = st.sidebar.checkbox("Retraining Cost")
+    compute_growth = st.sidebar.checkbox("Compute Growth")
+    
+    multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
+    conditions = list(product([1, 4, 12, 36], multiples))
+
+    
 
 if __name__ == "__main__":
     run()
