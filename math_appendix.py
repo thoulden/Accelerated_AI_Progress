@@ -11,10 +11,10 @@ def display():
   st.markdown("""##### Compute Growth""")
   st.markdown(r"""When 'compute growth' is this means that the boost from deploying AI to software R&D happens over time, rather than all in one go. To implement this we assume that the boost in each time period originates from compute growth, which is growing an an exogenous rate until it hits a ceiling; we assume this ceiling is after 12 doublings of compute (or 4096x the original size of compute). """)
   st.latex(r"""
-  C_t = C_0 \exp(g_c t)""")
+  C_t = \begin{cases} C_0 \exp(g_c t) \quad \text{if } C_t < C_{\text{max}}& C_{\text{max}} \quad \text{otherwise}\end{cases}""")
   st.latex(r"""
   f(C) = f_0 + (f_{\text{max}} - f_0) \times \frac{\log(C) - \log(C_0)}{\log(C_{\text{max}}) - \log(C_0)}""")
-  st.markdown(r"""And the rate of AI progress is multiplied by $f(C_t)$ at each time step.""")
+  st.markdown(r"""where $g_c$ is the rate of growth of computue And the rate of AI progress is multiplied by $f(C_t)$ at each time step.""")
   
   
   
