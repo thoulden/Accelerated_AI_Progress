@@ -59,6 +59,9 @@ if st.session_state["page"] == "main":
         multiple_simsA.run()  # Placeholder for Multiple Simulations
     elif simulation_mode == "Single Simulation":
         single_sim.run()  # Placeholder for Single Simulation
+        st.markdown(r""" In general, we make the following observations about how parameterizations influence the model: 
+        - test 
+        """)
     
     st.markdown("### Model Parameters and Estimates")
     st.markdown(r"""
