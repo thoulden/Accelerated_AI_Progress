@@ -15,7 +15,7 @@ def display():
   st.markdown(r"""where $g_c$ is the rate of growth of compute. This translates into a boost to research productivity according to:""")
   st.latex(r"""
   f(C) = f_0 + (f_{\text{max}} - f_0) \times \frac{\log(C) - \log(C_0)}{\log(C_{\text{max}}) - \log(C_0)}""")
-  st.markdown(r"""Given exponential growth in compute, $f(C)$ increases linearly with time untill it reaches the compute ceiling, at which point $f$ remains at $f_{\text{max}}$.""")
+  st.markdown(r"""Given exponential growth in compute, $f(C)$ increases linearly with time untill it reaches the compute ceiling, at which point $f$ remains at $f_{\text{max}}$. In the simulation it is assumed that $f_0 = 0.1$ so the initial bost to research productivity from deployment of AI is an additional 10% on top of the usual rate.""")
   
   
   st.markdown("""##### Connection between Doubling Time and Semi-Endogenous Growth Models""")
