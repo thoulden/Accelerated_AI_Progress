@@ -12,10 +12,10 @@ def display():
   st.markdown(r"""When 'compute growth' is this means that the boost from deploying AI to software R&D happens over time, rather than all in one go. To implement this we assume that the boost in each time period originates from compute growth, which is growing an an exogenous rate until it hits a ceiling; we assume this ceiling is after 12 doublings of compute (or 4096x the original size of compute). """)
   st.latex(r"""
   C_t = \begin{cases} C_0 \exp(g_c t) \quad \text{if } C_t < C_{\text{max}} \\ C_{\text{max}} \quad \text{otherwise}\end{cases}""")
+  st.markdown(r"""where $g_c$ is the rate of growth of compute. This translates into a boost to research productivity according to:""")
   st.latex(r"""
   f(C) = f_0 + (f_{\text{max}} - f_0) \times \frac{\log(C) - \log(C_0)}{\log(C_{\text{max}}) - \log(C_0)}""")
-  st.markdown(r"""where $g_c$ is the rate of growth of computue And the rate of AI progress is multiplied by $f(C_t)$ at each time step.""")
-  
+  st.markdown(r"""Given exponential growth in compute $f(C)$ follows a linear path over time untill it reaches the compute ceiling, at which point $f$ remains at $f_{\text{max}}$.""")
   
   
   st.markdown("""##### Connection between Doubling Time and Semi-Endogenous Growth Models""")
