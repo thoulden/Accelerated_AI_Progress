@@ -68,6 +68,12 @@ if st.session_state["page"] == "main":
     # Display parameters table
     parameters_table_md = get_parameters_table_markdown()
     st.markdown(parameters_table_md)
+    st.markdown(r"""
+    In addition to model parameters you can also select whether to enable compute growth or retraining costs. Intution for these are as follows: 
+    - Retraining cost: imposes a penalty on growth so that some software progress has to be 'spent' on increasing the rate at which models can be trained
+    - Compute growth: this results in the initial acceleration being spread out over time so there is some initial acceleration in the rate of progress and as compute grows (up to a ceiling) there is additional boosts to research progress.
+    more details on retraining costs and compute growth are provided in the math appendix. 
+    """)
 
     st.markdown("### Sampling")
     st.markdown(
