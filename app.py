@@ -70,8 +70,8 @@ if st.session_state["page"] == "main":
     st.markdown(parameters_table_md)
     st.markdown(r"""
     In addition to model parameters you can also select whether to enable compute growth or retraining costs. Details on the specifics of these choices can be found in the math appendix, but briefly: 
-    - Retraining cost: imposes a penalty on growth so that some software progress has to be 'spent' on increasing the rate at which models can be trained
-    - Compute growth: this results in the initial acceleration being spread out over time so there is some initial acceleration in the rate of progress and as compute grows (up to a ceiling) there is additional boosts to research progress.
+    - Retraining cost imposes a penalty on growth so that some software progress has to be 'spent' on increasing the rate at which models can be trained
+    - Compute growth results in the initial acceleration being spread out over time so there is some initial acceleration in the rate of progress and as compute grows (up to a ceiling) there is additional boosts to research progress.
    
     """)
 
