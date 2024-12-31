@@ -14,6 +14,8 @@ def display():
   C_t = C_0 \exp(g_c t)""")
   st.latex(r"""
   f(C) = f_0 + (f_{\text{max}} - f_0) \times \frac{\log(C) - \log(C_0)}{\log(C_{\text{max}}) - \log(C_0)}""")
+  st.markdown(r"""And the rate of AI progress is multiplied by $f(C_t)$ at each time step.""")
+  
   
   
   st.markdown("""##### Connection between Doubling Time and Semi-Endogenous Growth Models""")
