@@ -229,9 +229,9 @@ def run():
         ax_growth.legend()
         st.pyplot(fig_growth)
 
-        st.markdown(r""" In general, we make the following observations about how parameterizations influence the model: 
-        - test 
-        test
-        """)
+        #st.markdown(r""" In general, we make the following observations about how parameterizations influence the model: 
+        #- Increasing $r_0$, $f$, and $\lambda$ all increase the initial rate of growth of software
+        #- Incr
+        #""")
     else:
         st.write("Press 'Run Simulation' to view results.")
