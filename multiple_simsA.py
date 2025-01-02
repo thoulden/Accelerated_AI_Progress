@@ -69,7 +69,11 @@ def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increa
 
         if r > 0:
             accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1))) if retraining_cost else lambda_factor * (1 / r - 1)
-            initial_factor_increase_time *= (factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))
+            #initial_factor_increase_time *= (factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))
+            if size_adjustment:
+                    initial_factor_increase_time *= ((factor_increase ** accel_factor) / ((1 + f) / (1 + f_old)))* (size ** (1/r - 1/rs[-2])) #TH mehtod with size adjustment
+            else:         
+                    initial_factor_increase_time *= ((factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))) #TD's method
 
         r -= k
         times.append(time_elapsed)
@@ -148,6 +152,7 @@ def run():
     multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
     
     retraining_cost = st.sidebar.checkbox("Retraining Cost")
+    size_adjustment = st.sidebar.checkbox("size_adjustment")
     compute_growth = st.sidebar.checkbox("Compute Growth")
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
     conditions = list(product([1, 4, 12, 36], multiples))
