@@ -27,7 +27,7 @@ def display():
 
   To combine software quality and compute availability into effective researchers, we assume a Cobb-Douglas form: $R(S_t, C_t) = (a S_t)^{\alpha} (b C_t)^{1-\alpha}$. 
 
-  Now, to answer: "How much does the pace of software progress change when we double software quality (holding compute fixed)?" we compare $\dot{S}(S, C)$ with $\dot{S}(2S, C)$:
+  Now, to answer: "How much does the pace of software progress change when we double software quality (holding compute fixed)?" we compare $g(S, C)$ with $g(2S, C)$:
   """)
   st.latex(r"""
   \frac{g_{S}(2S, C)}{g_{S}(S, C)} = \frac{[(a2S)^{\alpha}(b C)^{1-\alpha}]^{\lambda} (2S)^{-\frac{\lambda}{r}}}{[(aS)^{\alpha}(b C)^{1-\alpha}]^{\lambda} S^{-\frac{\lambda}{r(2S)}}} = 2^{\lambda \alpha}\times 2^{-\frac{\lambda}{r(2S)}}\times S^{\lambda({\frac{1}{r(S)} - \frac{1}{r(2S)}})}
