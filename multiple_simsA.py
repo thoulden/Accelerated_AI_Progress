@@ -46,7 +46,7 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
         lambda_factor                  # 8
     ))
 
-def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost, max_time_months=48):
+def dynamic_system_with_lambda(size_adjustment, r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost, max_time_months=48):
     ceiling = 256 ** limit_years
     size = 1.0
     r = r_initial
@@ -97,7 +97,7 @@ def calculate_summary_statistics_binary(times, conditions):
 
     return results
 
-def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth):
+def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth, size_adjustment):
     params_batch = sample_parameters_batch(num_sims, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, compute_growth)
     times_matrix = []
     progress = st.progress(0)
@@ -156,7 +156,7 @@ def run():
     conditions = list(product([1, 4, 12, 36], multiples))
 
     if run_button:
-        results = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth)
+        results = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth, size_adjustment)
 
         data = []
         for time_period in sorted(set(c[0] for c in results.keys())):
