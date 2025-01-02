@@ -67,6 +67,12 @@ def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increa
         else:
             f = f_max
 
+        r -= k
+        times.append(time_elapsed)
+        sizes.append(size)
+        rs.append(r)
+        compute_sizes.append(compute_size)
+        f_values.append(f)
         if r > 0:
             accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1))) if retraining_cost else lambda_factor * (1 / r - 1)
             #initial_factor_increase_time *= (factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))
@@ -74,14 +80,6 @@ def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increa
                     initial_factor_increase_time *= ((factor_increase ** accel_factor) / ((1 + f) / (1 + f_old)))* (size ** (1/r - 1/rs[-2])) #TH mehtod with size adjustment
             else:         
                     initial_factor_increase_time *= ((factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))) #TD's method
-
-        r -= k
-        times.append(time_elapsed)
-        sizes.append(size)
-        rs.append(r)
-        compute_sizes.append(compute_size)
-        f_values.append(f)
-
     return times, sizes, rs, compute_sizes, f_values
 
 def calculate_summary_statistics_binary(times, conditions):
