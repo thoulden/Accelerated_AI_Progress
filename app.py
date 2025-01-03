@@ -77,7 +77,7 @@ if st.session_state["page"] == "main":
 
     st.markdown("### Sampling")
     st.markdown(
-    r"When 'multiple simulations' is selected, randomization occurs over log-uniform distributions for $f$, $r_0$, $\lambda$, and Years till ceiling. "
+    r"When 'multiple simulations' is selected, randomization occurs over log-uniform distributions for $f$, $r_0$, $\lambda$, and Years till ceiling where the bounds on this distribution come from the input on the sidebar. "
     )
 
 # Math Appendix Page
