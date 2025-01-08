@@ -169,7 +169,7 @@ def run():
 
         # Example usage:
         md_table = to_markdown_table(df)
-        st.write("###### Probability AI progress is X times faster for N months?")
+        st.write("###### What is the probability AI progress is X times faster for N months?")
         st.markdown(md_table)
     else:
         st.write("Press 'Run Simulation' to view results.")
