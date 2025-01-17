@@ -37,8 +37,7 @@ if st.session_state["page"] == "main":
     st.title('Simulation of Accelerated AI Progress')
 
     st.markdown(r"""
-    A a complement to the our post on the size and speed of a software-driven intelligence explosion, this tool is to simulate the path of AI progress once AI provides 'cognitive labor' for AI research. 
-    
+    This tool is a complement to the this post on the pace of software porgress once AI can totally replace humans in AI reseasrch.
     This tool offers two options:
     - 'Multiple Simulations' allows you to run a bunch of simulations with uncertainty over key parameters—the output of this function will be a plot showing the fraction of simulations where the growth rate of software exceeds the observed exponential rate by some amount over some number of years. The default parameters under this simulation will give you the result reported in the table in the post.  
     - 'Single Simulation' allows you to run a single simulation under specific parameter values to illustrate the path of AI progress. Under this second option, you will also see the change in the level of diminishing research productivity over time and the growth rates.  
