@@ -229,6 +229,7 @@ def run():
         ax_growth.grid(True, which='both', linestyle='--', linewidth=0.5)
         ax_growth.legend()
         st.pyplot(fig_growth)
+        st.markdown("*Note:* an annual growth rate of 2.77 corresponds to doubling every 3 months. ")
 
     else:
         st.write("Press 'Run Simulation' to view results.")
