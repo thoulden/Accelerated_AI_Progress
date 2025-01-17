@@ -6,7 +6,7 @@ def display():
   st.markdown("""##### Retraining Costs""")
   st.markdown(r""" In the model, we assume that every time software doubles, the pace of software progress doubles $q$ times, where $q = \lambda(r^{-1} - 1)$. The assumption underlying this process is that models can be developed through a relatively continuous process, building on the previous model. In reality, state-of-the-art models must be trained, a process that takes time. To implement this possibility, we assume that software improvements can also be used to increase the pace of training.  
 
-  In summary: 
+  In summary 
   - without retraining costs: software doubles $1/q$ times before the pace of software progress doubles
   - with retraining costs: software doubles $(1/q) + 1$ times before the pace of software progress doubles
   
