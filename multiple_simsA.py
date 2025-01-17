@@ -140,7 +140,7 @@ def run():
     ib_low = st.sidebar.number_input(r"Boost ($f$); lower bound", min_value=0.1, value=2.0)
     ib_high = st.sidebar.number_input(r"Boost ($f$); upper bound)", min_value=ib_low, value=32.0)
     r_low = st.sidebar.number_input(r"Initial Productivity ($r_0$); lower bound", min_value=0.01, value=0.4)
-    r_high = st.sidebar.number_input(r"Initial Productivity ($r_0$); upper bound", min_value=r_low, value=3.6)
+    r_high = st.sidebar.number_input(r"Initial Productivity ($r_0$); upper bound", min_value=r_low, value=2.4)
     ly_low = st.sidebar.number_input("Years to Ceiling; lower bound", min_value=1.0, value=7.0)
     ly_high = st.sidebar.number_input("Years to Ceiling; upper bound", min_value=ly_low, value=14.0)
     lf_low = st.sidebar.number_input(r"Parallelizability ($\lambda$); lower bound", min_value=0.01, value=0.2)
