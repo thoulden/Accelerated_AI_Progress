@@ -26,9 +26,9 @@ def get_parameters_table_markdown():
 | Parameter            | Description                                                         | Low Estimate  | Median Estimate | High Estimate |
 |----------------------|---------------------------------------------------------------------|---------------|-----------------|---------------|
 | $f$                  | Change in the rate of software growth after deploying AI to research  | 2             | 8               | 32            |
-| $\lambda$            | Parallelizability of research                                       | 0.2           | 0.5             | 0.8           |
-| r₀                   | Research productivity when GPT-6 is launched                        | 0.15          | 0.45            | 0.75          |
-| Years Till Ceiling    |                                                                     | 7             | 9               | 14            |
+| $\lambda$            | Parallelizability of research                                       | 0.2           | 0.4             | 0.8           |
+| r₀                   | Research productivity when GPT-6 is launched                        | 0.6          | 1.2            | 2.4          |
+| Years Till Ceiling    |                                                                     | 7             | 10.5               | 14            |
     '''
     return table_markdown
 
