@@ -11,8 +11,8 @@ def display():
   This calculation assumes that software progress is getting faster over time so it is only valid for $q > 0$. To generalize this formula to cases where software progress is slowing over time ($q < 0$) we can use the expression $q/(|q| + 1)$. Why? When $q < 0$ software must double a negative number of times for the pace of software progress to double, retraining reduces that number by 1 (because retraining still makes progress change more slowly). So now software must double $(1/q) - 1$ times before the pace of software progress doubles. The inverse of this is $q/(1-q)$.
 
   In summary 
-  - without retraining costs: software doubles $1/q$ times before the pace of software progress doubles
-  - with retraining costs: software doubles $(1/q) + 1$ times before the pace of software progress doubles
+  - without retraining costs: software doubles $1/q$ times before the pace of software progress doubles,
+  - with retraining costs: software doubles $(1/q) + 1$ times before the pace of software progress doubles.
 
   st.markdown("""##### Compute Growth""")
   st.markdown(r"""When 'compute growth' is this means that the boost from deploying AI to software R&D happens over time, rather than all in one go. To implement this we assume that the boost in each time period originates from compute growth, which is growing an an exogenous rate until it hits a ceiling; we assume this ceiling is after 12 doublings of compute (or 4096x the original size of compute). """)
