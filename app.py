@@ -76,7 +76,7 @@ if st.session_state["page"] == "main":
 
     st.markdown("### Sampling")
     st.markdown(
-    r"When 'multiple simulations' is selected, randomization occurs over log-uniform distributions for $f$, $r_0$, and $\lambda$; and years till ceiling is sampled over a uniform distribution. The (maximum/minimum) bounds on this distribution come from the input on the sidebar. "
+    r"When 'multiple simulations' is selected, randomization occurs over log-uniform distributions for $f$, $r_0$, and $\lambda$; while years till ceiling is randomized over a uniform distribution. The (maximum/minimum) bounds on this distribution come from the input on the sidebar. "
     )
 
 # Math Appendix Page
