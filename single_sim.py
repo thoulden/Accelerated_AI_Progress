@@ -170,7 +170,7 @@ def run():
                 # Set factor increasing factor
                 if r > 0:
                     if retraining_cost:
-                        accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1) + 1)))
+                        accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1)) + 1))
                     else: 
                         accel_factor = (lambda_factor * (1 / r - 1)) 
                     if size_adjustment:
