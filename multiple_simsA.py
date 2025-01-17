@@ -151,8 +151,8 @@ def run():
     multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30")
 
     retraining_cost = st.sidebar.checkbox("Retraining Cost")
-    # size_adjustment = st.sidebar.checkbox("size_adjustment") # old code for size adjustment to match SEG results
-    size_adjustment = 'false'
+    size_adjustment = st.sidebar.checkbox("size_adjustment") # old code for size adjustment to match SEG results
+    # size_adjustment = 'false'
     compute_growth = st.sidebar.checkbox("Compute Growth")
     
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
