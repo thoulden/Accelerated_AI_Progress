@@ -10,6 +10,8 @@ def display():
   - without retraining costs: software doubles $1/q$ times before the pace of software progress doubles
   - with retraining costs: software doubles $(1/q) + 1$ times before the pace of software progress doubles
   
+  This calculation assumes that software progress is getting faster over time so it is only valid for $q > 0$. To generalize this formula to cases where software progress is slowing over time ($q < 0$) we can use the expression $q/(|q| + 1)$. Why? When $q < 0$ software must double a negative number of times for the pace of software progress to double, retraining reduces that number by 1 (because retraining still makes progress change more slowly). So now software must double $(1/q) - 1$ times before the pace of software progress doubles. The inverse of this (for every time that software doubles, how many times does the pace of software progress double?) is $q/(1-q)$.
+  
   The median parameters suggest that software must double roughly 5 times to double the pace of software progress. To account for retraining, we assume that software has to double an additional time (so roughly 6 times) to achieve this effect. To implement this additional requirement, we assume that every time software doubles, the pace of software doubles by $q / |q+1|$ times.""")
 
   st.markdown("""##### Compute Growth""")
