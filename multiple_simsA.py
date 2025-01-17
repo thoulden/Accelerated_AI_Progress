@@ -147,7 +147,7 @@ def run():
     lf_high = st.sidebar.number_input(r"Parallelizability ($\lambda$); upper bound", min_value=lf_low, value=0.8)
 
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
-    multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
+    multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30")
     
     retraining_cost = st.sidebar.checkbox("Retraining Cost")
     size_adjustment = st.sidebar.checkbox("size_adjustment")
