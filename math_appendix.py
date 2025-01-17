@@ -12,7 +12,7 @@ def display():
 
   In summary 
   - without retraining costs: software doubles $1/q$ times before the pace of software progress doubles,
-  - with retraining costs: software doubles $(1/q) + 1$ times before the pace of software progress doubles.
+  - with retraining costs: software doubles $(1/q) + 1$ times before the pace of software progress doubles.""")
 
   st.markdown("""##### Compute Growth""")
   st.markdown(r"""When 'compute growth' is this means that the boost from deploying AI to software R&D happens over time, rather than all in one go. To implement this we assume that the boost in each time period originates from compute growth, which is growing an an exogenous rate until it hits a ceiling; we assume this ceiling is after 12 doublings of compute (or 4096x the original size of compute). """)
