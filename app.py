@@ -61,7 +61,7 @@ if st.session_state["page"] == "main":
     
     st.markdown("### Model Parameters and Estimates")
     st.markdown(r"""
-    This table summarizes the parameters that the model relies on. Note, we assume the annual growth rate of software at GPT-6 release, $g$, is 2.77 (i.e., doubles every 3 months).
+    This table summarizes the parameters of the model:
     """)
 
     # Display parameters table
