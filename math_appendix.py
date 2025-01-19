@@ -36,7 +36,7 @@ def display():
   Next, to calculate the time it takes for software to double under a given growth rate we solve for the $D$ such that $2 = \exp(g_{S}\times D)$, which yields $D = \log(2)/g_{S}$. Next, for a given doubling time, $D$ we can calculate the time it takes to do the subsequent doubling so that we can write out the doubling time itteratively. For example, holding compute fixed, call doubling time $D(S)$ at a given software level we can show 
   """)
   st.latex(r"""D(2S) = D(S) \times 2^{\lambda( \frac{1}{r(2S)} - \alpha)} \times S^{\lambda( \frac{1}{r(2S)} -  \frac{1}{r(S)})}""")
-  st.markdown(r""" Hence we can see that """)
+  st.markdown(r""" Hence we can see that the semi-endogenous growth version of the itterative doubling time expression differs in two ways from the one employed in the post: a). the semi-engodenous set up includes an $\alpha$ term which was not included in the post and b). the semi-endogenous version include a software level adjustment term, $S^{\lambda(\frac{1}{r(2S)} - \frac{1}{r(S)})}$""")
 
   
 
