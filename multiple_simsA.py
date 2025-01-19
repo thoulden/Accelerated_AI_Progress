@@ -98,6 +98,7 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
     params_batch = sample_parameters_batch(num_sims, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, compute_growth)
     times_matrix = []
     sizes_matrix = []
+    params_list = []
 
     progress = st.progress(0)
 
@@ -107,6 +108,16 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
          r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost)
         times_matrix.append(times)
         sizes_matrix.append(sizes)
+        params_list.append({
+            "r_initial": r_initial,
+            "factor_increase": factor_increase,
+            "initial_factor_increase_time": initial_factor_increase_time,
+            "limit_years": limit_years,
+            "compute_growth_monthly_rate": compute_growth_monthly_rate,
+            "f_0": f_0,
+            "f_max": f_max,
+            "lambda_factor": lambda_factor
+        })
         progress.progress((i + 1) / num_sims)
 
     batch_summary = {condition: 0 for condition in conditions}
@@ -120,7 +131,7 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
         condition: count / num_sims
         for condition, count in batch_summary.items()
     }
-    return probabilities, times_matrix, sizes_matrix
+    return probabilities, times_matrix, sizes_matrix, params_list
 
 def to_markdown_table(df):
         """
@@ -182,9 +193,20 @@ def run():
         #Create DataFrame for times & sizes
         simulation_results = []
         for i, (times, sizes) in enumerate(zip(times_matrix, sizes_matrix)):
+            # Retrieve this simulation’s parameters
+            sim_params = params_list[i]
+            # For each timestep in this simulation, add a row
             for t, s in zip(times, sizes):
                 simulation_results.append({
                     "Simulation": i + 1,
+                    "r_initial": sim_params["r_initial"],
+                    "factor_increase": sim_params["factor_increase"],
+                    "initial_factor_increase_time": sim_params["initial_factor_increase_time"],
+                    "limit_years": sim_params["limit_years"],
+                    "compute_growth_monthly_rate": sim_params["compute_growth_monthly_rate"],
+                    "f_0": sim_params["f_0"],
+                    "f_max": sim_params["f_max"],
+                    "lambda_factor": sim_params["lambda_factor"],
                     "Time (Months)": t,
                     "Size": s
                 })
