@@ -171,6 +171,26 @@ def run():
         md_table = to_markdown_table(df)
         st.write("###### What is the probability AI progress is X times faster for N months?")
         st.markdown(md_table)
+
+    # Combine the results into a DataFrame for better exportability
+    simulation_results = []
+    for i, (times, sizes) in enumerate(zip(times_matrix, sizes_matrix)):
+        for t, s in zip(times, sizes):
+            simulation_results.append({"Simulation": i + 1, "Time (Months)": t, "Size": s})
+
+            # Create a DataFrame
+    results_df = pd.DataFrame(simulation_results)
+    
+    # Convert the DataFrame to CSV for download
+    csv_data = results_df.to_csv(index=False)
+
+    # Add a download button to Streamlit
+    st.download_button(
+        label="Download Simulation Results (CSV)",
+        data=csv_data,
+        file_name="simulation_results.csv",
+        mime="text/csv"
+    )
     else:
         st.write("Press 'Run Simulation' to view results.")
     
