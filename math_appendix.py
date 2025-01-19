@@ -29,7 +29,7 @@ def display():
   st.latex(r"""
   \dot{S}_t(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{1-\frac{\lambda}{r(S_t)}} \implies {g}_{S,t}(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{-\frac{\lambda}{r(S_t)}}
   """)
-  st.markdown(r"""Where the first expression is the rate of and the second expression is the growth rate (dividing the rate of change expression by $S$). In contrast to the standard semi-endogenous growth framework, we replace human labor with effective researchers, $R$. Since we assume that AI completely replaces human labor, effective researchers are just a function of software capabilities and compute.
+  st.markdown(r"""Where the first expression is the rate of and the second expression is the growth rate (dividing the rate of change expression by $S$). In contrast to the standard semi-endogenous growth framework, we replace human labor with effective researchers, $R$, and assume that the research productivity term, $r$, is a function of software level. Since we assume that AI completely replaces human labor, effective researchers are just a function of software capabilities and compute.
 
   To combine software quality and compute availability into effective researchers, we assume a Cobb-Douglas form: $R(S_t, C_t) = (a S_t)^{\alpha} (b C_t)^{1-\alpha}$, for some $a$ and $b > 0$ and $0 \leq \alpha \leq 1$. 
 
