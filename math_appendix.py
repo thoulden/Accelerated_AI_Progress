@@ -33,7 +33,11 @@ def display():
 
   To combine software quality and compute availability into effective researchers, we assume a Cobb-Douglas form: $R(S_t, C_t) = (a S_t)^{\alpha} (b C_t)^{1-\alpha}$, for some $a$ and $b > 0$ and $0 \leq \alpha \leq 1$. 
 
-  Next, to calculate the time it takes for software to double under a given growth rate we solve for the $t$ such that $2 = \exp(g_{S}\times t)$, which yields $t = log(2)/g_{S}$.
+  Next, to calculate the time it takes for software to double under a given growth rate we solve for the $T$ such that $2 = \exp(g_{S}\times T)$, which yields $T = \log(2)/g_{S}$. Next, for a given doubling time, $T$ we can calculate the time it takes to do the subsequent doubling so that we can write out the doubling time itteratively. 
+
+  Now if one wanted to interpret, 
+
+  
   
   Now, to answer: "How much does the pace of software progress change when we double software quality (holding compute fixed)?" we compare $g(S, C)$ with $g(2S, C)$:
   """)
