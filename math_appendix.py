@@ -35,12 +35,12 @@ def display():
 
   Next, to calculate the time it takes for software to double under a given growth rate we solve for the $D$ such that $2 = \exp(g_{S}\times D)$, which yields $D = \log(2)/g_{S}$. Next, for a given doubling time, $D$ we can calculate the time it takes to do the subsequent doubling so that we can write out the doubling time itteratively. For example, holding compute fixed, call doubling time $D(S)$ at a given software level we can show 
   """)
-  st.latex(r"""D(2S) = D(S) \times 2^{\lambda( \frac{1}{r(2S)} - \alpha)} \times S^{\lambda( \frac{1}{r(2S)} -  \frac{1}{r(S)})}""")
+  st.latex(r"""D(2S) = D(S) \times \frac{g_{S}(S,C)}{g_{S}(2S,C)} = D(S) \times 2^{\lambda( \frac{1}{r(2S)} - \alpha)} \times S^{\lambda( \frac{1}{r(2S)} -  \frac{1}{r(S)})}""")
   st.markdown(r""" Hence we can see that the semi-endogenous growth version of the itterative doubling time expression differs in two ways from the one employed in the post: i). the semi-engodenous set up includes an $\alpha$ term which was equal to one in the post and ii). the semi-endogenous version include a software level adjustment term, $S^{\lambda(\frac{1}{r(2S)} - \frac{1}{r(S)})}$. I will say something about each of these differences in turn.
 
   On i), this difference can be recitfied by reinterpretting $\lambda$ and $r$ terms. Instead of introducing $\alpha$ (which does affect the relationship between software levels and software progress), we opt to reduce estimates of $\lambda$ and $r$ to account for the fact that software is only one component of "effective researchers." Defining $\hat{\lambda} = \lambda \alpha$ and $\hat{r} = r \alpha$, we can see that doubling software levels doubles the rate of software growth by $\hat{\lambda}(\frac{1}{\hat{r}(2S)}-1)$, as implemented in the simulation.
 
-  On ii), this difference can't be rectified directly with our simple model. In our model we 
+  On ii), this difference can't be rectified directly with our simple model. We can see that this term comes from the fact that $r$ is declining over time as software level grows
   """)
 
   
