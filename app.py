@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # Import the other modules
 import math_appendix
-import multiple_simsA
+import multiple_simsB
 import single_sim
 
 # Initialize session state for page navigation
@@ -55,7 +55,7 @@ if st.session_state["page"] == "main":
     )
 
     if simulation_mode == "Multiple Simulations":
-        multiple_simsA.run()  # Placeholder for Multiple Simulations
+        multiple_simsB.run()  # Placeholder for Multiple Simulations
     elif simulation_mode == "Single Simulation":
         single_sim.run()  # Placeholder for Single Simulation
     
