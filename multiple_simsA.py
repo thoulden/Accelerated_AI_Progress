@@ -221,7 +221,7 @@ def run():
             file_name="simulation_results.csv",
             mime="text/csv",
         )
-        st.write("Recommended for small number of simulations only.")
+        st.write("Download recommended for small number of simulations only.")
     else:
         st.write("Press 'Run Simulation' to view results.")
     
