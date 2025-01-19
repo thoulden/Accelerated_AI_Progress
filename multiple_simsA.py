@@ -97,6 +97,8 @@ def calculate_summary_statistics_binary(times, conditions):
 def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth):
     params_batch = sample_parameters_batch(num_sims, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, compute_growth)
     times_matrix = []
+    sizes_matrix = []
+
     progress = st.progress(0)
 
     for i, params in enumerate(params_batch):
@@ -104,6 +106,7 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
         times, _, _, _, _ = dynamic_system_with_lambda(
          r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost)
         times_matrix.append(times)
+        sizes_matrix.append(sizes)
         progress.progress((i + 1) / num_sims)
 
     batch_summary = {condition: 0 for condition in conditions}
@@ -112,8 +115,12 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
         for condition in conditions:
             if stats[condition] == 'yes':
                 batch_summary[condition] += 1
-
-    return {condition: count / num_sims for condition, count in batch_summary.items()}
+    # Probability of condition = count / total number of simulations
+    probabilities = {
+        condition: count / num_sims
+        for condition, count in batch_summary.items()
+    }
+    return probabilities, times_matrix, sizes_matrix
 
 def to_markdown_table(df):
         """
@@ -156,13 +163,13 @@ def run():
     conditions = list(product([1, 4, 12, 36], multiples))
 
     if run_button:
-        results = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth)
+        probabilities, times_matrix, sizes_matrix = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth)
 
         data = []
-        for time_period in sorted(set(c[0] for c in results.keys())):
+        for time_period in sorted(set(c[0] for c in probabilities.keys())):
             row = {"Time Period (Months)": time_period}
-            for multiple in sorted(set(c[1] for c in results.keys())):
-                row[f"{multiple}x faster"] = results.get((time_period, multiple), 0)
+            for multiple in sorted(set(c[1] for c in probabilities.keys())):
+                row[f"{multiple}x faster"] = probabilities.get((time_period, multiple), 0)
             data.append(row)
         # Convert 'data' (list of dicts) to a DataFrame
         df = pd.DataFrame(data)
@@ -172,25 +179,26 @@ def run():
         st.write("###### What is the probability AI progress is X times faster for N months?")
         st.markdown(md_table)
 
-    # Combine the results into a DataFrame for better exportability
-    simulation_results = []
-    for i, (times, sizes) in enumerate(zip(times_matrix, sizes_matrix)):
-        for t, s in zip(times, sizes):
-            simulation_results.append({"Simulation": i + 1, "Time (Months)": t, "Size": s})
+        #Create DataFrame for times & sizes
+        simulation_results = []
+        for i, (times, sizes) in enumerate(zip(times_matrix, sizes_matrix)):
+            for t, s in zip(times, sizes):
+                simulation_results.append({
+                    "Simulation": i + 1,
+                    "Time (Months)": t,
+                    "Size": s
+                })
 
-            # Create a DataFrame
-    results_df = pd.DataFrame(simulation_results)
-    
-    # Convert the DataFrame to CSV for download
-    csv_data = results_df.to_csv(index=False)
+        df_results = pd.DataFrame(simulation_results)
 
-    # Add a download button to Streamlit
-    st.download_button(
-        label="Download Simulation Results (CSV)",
-        data=csv_data,
-        file_name="simulation_results.csv",
-        mime="text/csv"
-    )
+        # Convert to CSV & create Download Button
+        csv_data = df_results.to_csv(index=False)
+        st.download_button(
+            label="Download Simulation Results (CSV)",
+            data=csv_data,
+            file_name="simulation_results.csv",
+            mime="text/csv",
+        )    
     else:
         st.write("Press 'Run Simulation' to view results.")
     
