@@ -31,7 +31,7 @@ def display():
   """)
   st.markdown(r"""In contrast to the standard semi-endogenous growth framework, we replace human labor with effective researchers, $R$. Since we assume that AI completely replaces human labor, effective researchers are just a function of software capabilities and compute.
 
-  To combine software quality and compute availability into effective researchers, we assume a Cobb-Douglas form: $R(S_t, C_t) = (a S_t)^{\alpha} (b C_t)^{1-\alpha}$, for some $a$ and $b > 0$. 
+  To combine software quality and compute availability into effective researchers, we assume a Cobb-Douglas form: $R(S_t, C_t) = (a S_t)^{\alpha} (b C_t)^{1-\alpha}$, for some $a$ and $b > 0$ and $0 \leq \alpha \leq 1$. 
 
   Now, to answer: "How much does the pace of software progress change when we double software quality (holding compute fixed)?" we compare $g(S, C)$ with $g(2S, C)$:
   """)
