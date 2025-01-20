@@ -27,7 +27,7 @@ def display():
   st.markdown("""##### Connection between Doubling Time and Semi-Endogenous Growth Models""")
   st.markdown(r"""How do we derive the relationship between software doubling and software progress doubling in semi-endogenous growth models? Consider the standard semi-endogenous growth framework:""")
   st.latex(r"""
-  \dot{S}_t(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{1-\lambda} r(S_t) \implies g_{S,t}(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{-\lambda} r(S_t)
+  \dot{S}_t(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{1-\frac{\lambda}{r(S_t)}}  \implies g_{S,t}(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{-\frac{\lambda}{r(S_t)}}
   """)
   st.markdown(r"""Here, the first expression represents the rate of change, while the second represents the growth rate (i.e., dividing the rate of change by $S$). In contrast to the standard semi-endogenous growth framework, we replace human labor with effective researchers, $R$, and assume that the research productivity term, $r$, is a function of the software level. Since AI completely replaces human labor, effective researchers depend solely on software capabilities and compute.
 
