@@ -47,11 +47,12 @@ def display():
   On point (1), this difference can be addressed by reinterpreting the $\lambda$ and $r$ terms. Instead of introducing $\alpha$ (which modifies the relationship between software levels and software progress), we reduce estimates of $\lambda$ and $r$ to account for the fact that software is only one component of "effective researchers." By defining $\hat{\lambda} = \lambda \alpha$ and $\hat{r} = r \alpha$, we see that doubling software levels increases the rate of software growth by $\hat{\lambda} \left( \frac{1}{\hat{r}(2S)} - 1 \right)$, as implemented in the simulation.
 
   On point (2), this difference cannot be directly rectified in the simplified model. This term arises because $r$ declines over time as the software level grows, which implies that the exponent on $S$ decreases after each doubling of software. Since $r$ is declining, we have:
-
-  \[
+  """)
+  
+  st.latex(r"""
   \lambda \left( \frac{1}{r(2S)} - \frac{1}{r(S)} \right) > 0
-  \]
-
+  """)
+  st.markdown(r"""
   This indicates that, relative to the semi-endogenous growth model, the simplified model overestimates the doubling time according to the iterative doubling time expression above. We omit this term because it complicates the model. Instead, we treat the change in $r$ over time as a simple way to implement a penalty to additional software progress, rather than as a literal reflection of the semi-endogenous framework.
   """)
 
