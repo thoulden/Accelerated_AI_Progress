@@ -25,20 +25,33 @@ def display():
   """)
     
   st.markdown("""##### Connection between Doubling Time and Semi-Endogenous Growth Models""")
-  st.markdown(r""" How do we derive the relationship between software doubling and software progress doubling from semi-endogenous growth models? Take the standard semi-endogenous growth environment:""")
+  st.markdown(r"""How do we derive the relationship between software doubling and software progress doubling in semi-endogenous growth models? Consider the standard semi-endogenous growth framework:""")
   st.latex(r"""
-  \dot{S}_t(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{1-\frac{\lambda}{r(S_t)}} \implies {g}_{S,t}(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{-\frac{\lambda}{r(S_t)}}
+  \dot{S}_t(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{1-\lambda} r(S_t) \implies g_{S,t}(S_t, C_t) = (R(S_t, C_t))^{\lambda} S_t^{-\lambda} r(S_t)
   """)
-  st.markdown(r"""Where the first expression is the rate of and the second expression is the growth rate (dividing the rate of change expression by $S$). In contrast to the standard semi-endogenous growth framework, we replace human labor with effective researchers, $R$, and assume that the research productivity term, $r$, is a function of software level. Since we assume that AI completely replaces human labor, effective researchers are just a function of software capabilities and compute.
+  st.markdown(r"""Here, the first expression represents the rate of change, while the second represents the growth rate (i.e., dividing the rate of change by $S$). In contrast to the standard semi-endogenous growth framework, we replace human labor with effective researchers, $R$, and assume that the research productivity term, $r$, is a function of the software level. Since AI completely replaces human labor, effective researchers depend solely on software capabilities and compute.
 
-  To combine software quality and compute availability into effective researchers, we assume a Cobb-Douglas form: $R(S_t, C_t) = (a S_t)^{\alpha} (b C_t)^{1-\alpha}$, for some $a$ and $b > 0$ and $0 \leq \alpha \leq 1$. 
+  To combine software quality and compute availability into effective researchers, we assume a Cobb-Douglas form: $R(S_t, C_t) = (a S_t)^{\alpha} (b C_t)^{1-\alpha}$, where $a > 0$, $b > 0$, and $0 \leq \alpha \leq 1$.
 
-  Next, to calculate the time it takes for software to double under a given growth rate we solve for the $D$ such that $2 = \exp(g_{S}\times D)$, which yields $D = \log(2)/g_{S}$. Next, for a given doubling time, $D$ we can calculate the time it takes to do the subsequent doubling so that we can write out the doubling time itteratively. For example, holding compute fixed, call doubling time $D(S)$ at a given software level we can show 
+  Next, to calculate the time required for software to double under a given growth rate, we solve for $D$ such that $2 = \exp(g_{S} \times D)$, which yields $D = \log(2) / g_{S}$. For a given doubling time, $D$, we can calculate the subsequent doubling time iteratively. For instance, holding compute fixed, let the doubling time at a given software level be $D(S)$. Then, we can show:
   """)
-  st.latex(r"""D(2S) = D(S) \times \frac{g_{S}(S,C)}{g_{S}(2S,C)} = D(S) \times 2^{\lambda( \frac{1}{r(2S)} - \alpha)} \times S^{\lambda( \frac{1}{r(2S)} -  \frac{1}{r(S)})}""")
-  st.markdown(r""" Hence we can see that the semi-endogenous growth version of the itterative doubling time expression differs in two ways from the one employed in the post: i). the semi-engodenous set up includes an $\alpha$ term which was equal to one in the post and ii). the semi-endogenous version include a software level adjustment term, $S^{\lambda(\frac{1}{r(2S)} - \frac{1}{r(S)})}$. I will say something about each of these differences in turn.
-
-  On i), this difference can be recitfied by reinterpretting $\lambda$ and $r$ terms. Instead of introducing $\alpha$ (which does affect the relationship between software levels and software progress), we opt to reduce estimates of $\lambda$ and $r$ to account for the fact that software is only one component of "effective researchers." Defining $\hat{\lambda} = \lambda \alpha$ and $\hat{r} = r \alpha$, we can see that doubling software levels doubles the rate of software growth by $\hat{\lambda}(\frac{1}{\hat{r}(2S)}-1)$, as implemented in the simulation.
-
-  On ii), this difference can't be rectified directly with our simple model. We can see that this term comes from the fact that $r$ is declining over time as software level grows and which implies that the exponent on $S$ after a doubling of software will decrease. Because $r$ is declining, we have that $\lambda(\frac{1}{r(2S)} - \frac{1}{r(S)}) > 0$ which implies that, relative to the semi-engodenous growth model, our simple model will over estimate the doubling time according to the itterative doubling time expression above. We omit this terms since it complicates the model. We prefer for the changing in $r$ over time to be thought of as a simple way of implementing a penalty to additional software progress, rather than raken too litterally as we in the semi-endogenous version of this model detailed above.   
+  st.latex(r"""
+  D(2S) = D(S) \times \frac{g_{S}(S, C)}{g_{S}(2S, C)} = D(S) \times 2^{\lambda \left( \frac{1}{r(2S)} - \alpha \right)} \times S^{\lambda \left( \frac{1}{r(2S)} - \frac{1}{r(S)} \right)}
   """)
+  st.markdown(r"""From this, we see that the semi-endogenous growth version of the iterative doubling time expression differs in two key ways from the one employed in the simplified model: 
+  1. The semi-endogenous setup includes an $\alpha$ term, which was assumed to be 1 in the simplified model. 
+  2. The semi-endogenous version includes a software level adjustment term, $S^{\lambda \left( \frac{1}{r(2S)} - \frac{1}{r(S)} \right)}$. 
+
+  I will address each of these differences in turn.
+
+  On point (1), this difference can be addressed by reinterpreting the $\lambda$ and $r$ terms. Instead of introducing $\alpha$ (which modifies the relationship between software levels and software progress), we reduce estimates of $\lambda$ and $r$ to account for the fact that software is only one component of "effective researchers." By defining $\hat{\lambda} = \lambda \alpha$ and $\hat{r} = r \alpha$, we see that doubling software levels increases the rate of software growth by $\hat{\lambda} \left( \frac{1}{\hat{r}(2S)} - 1 \right)$, as implemented in the simulation.
+
+  On point (2), this difference cannot be directly rectified in the simplified model. This term arises because $r$ declines over time as the software level grows, which implies that the exponent on $S$ decreases after each doubling of software. Since $r$ is declining, we have:
+
+  \[
+  \lambda \left( \frac{1}{r(2S)} - \frac{1}{r(S)} \right) > 0
+  \]
+
+  This indicates that, relative to the semi-endogenous growth model, the simplified model overestimates the doubling time according to the iterative doubling time expression above. We omit this term because it complicates the model. Instead, we treat the change in $r$ over time as a simple way to implement a penalty to additional software progress, rather than as a literal reflection of the semi-endogenous framework.
+  """)
+
