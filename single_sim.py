@@ -85,7 +85,7 @@ def run():
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
     #size_adjustment = st.sidebar.checkbox('size_adjustment') # old code to test the impact of a size adjustment term to match to a SEG model, not used anymore
    
-    if run_simulation:
+    def run_the_simulation:
         def choose_parameters():
             """
             Choose initial parameters manually.
@@ -233,5 +233,16 @@ def run():
         st.pyplot(fig_growth)
         st.markdown("*Note:* an annual growth rate of 2.77 corresponds to doubling every 3 months. ")
 
+    if run_simulation:
+        # User explicitly clicked "Run Simulation"
+        run_the_simulation()
+        st.session_state.initial_run_done = True
+
+    elif not st.session_state.initial_run_done:
+        # First time page load -> auto-run with the defaults
+        run_the_simulation()
+        st.session_state.initial_run_done = True
+
     else:
-        st.write("Press 'Run Simulation' to view results.")
+        # We've run once, but user hasn't pressed the button again
+        st.write("Press **Run Simulation** (in the sidebar) to see results.")
