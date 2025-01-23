@@ -48,10 +48,9 @@ if st.session_state["page"] == "main":
     st.markdown("### Results")
 
     # Simulation Mode Selector
-    st.sidebar.title("Simulation Options")
     simulation_mode = st.sidebar.selectbox(
-        "Select Simulation Mode",
-        ("Multiple Simulations", "Single Simulation")
+    "Select Simulation Mode",
+    ("Single Simulation", "Multiple Simulations"),  # Single Sim first
     )
 
     if simulation_mode == "Single Simulations":
