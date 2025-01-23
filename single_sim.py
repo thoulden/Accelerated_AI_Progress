@@ -13,7 +13,7 @@ def transform_sizes_to_years(sizes):
     per year.
 
     More explanation of why these assumptions are reasonable:
-    - Compute inputs have doubled every 6 months according to Epoch.
+    - Compute will reach ceiling in 5 years according to Epoch.
     - Software algorithms have become twice as efficient every ~8 months, but this
     excludes post-training enhancements so we reduce this to 6 months.
     - That's a combined doubling time of 3 months for effective training compute
@@ -127,7 +127,7 @@ def run():
                 compute_max,
             )
 
-        def dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5, max_time_months=48):
+        def dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5, max_time_months=60):
             ceiling = 256 ** limit_years
             r = r_initial
             factor_increase_time = initial_factor_increase_time
