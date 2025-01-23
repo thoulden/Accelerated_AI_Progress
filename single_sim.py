@@ -60,6 +60,9 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     st.markdown("*Note:* 3 years of progress at the old rate corresponds to 1 GPT-sized jump")
 
 def run():
+    if "initial_run_done" not in st.session_state:
+        st.session_state.initial_run_done = False
+    
     # === Single Simulation Code ===
     # Run Simulation Button
     run_simulation = st.sidebar.button('Run Simulation')
@@ -82,7 +85,6 @@ def run():
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
     #size_adjustment = st.sidebar.checkbox('size_adjustment') # old code to test the impact of a size adjustment term to match to a SEG model, not used anymore
    
-    
     if run_simulation:
         def choose_parameters():
             """
