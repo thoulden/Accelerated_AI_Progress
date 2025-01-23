@@ -17,7 +17,7 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
 
     # Scalars or fixed values
     factor_increase = 2 if compute_growth else 2 # this can be adjusted so that the model is run in smaller steps than doublings. This would requre changes to the calculate binary statistics function. 
-    compute_growth_monthly_rate = np.log(2) / 3  # Fixed scalar for monthly compute growth rate
+    compute_growth_monthly_rate = np.log(2) / 5  # Fixed scalar for monthly compute growth rate, compute doubles every 5 months
     implied_month_growth_rate = np.log(2) / 3  # Fixed scalar for implied monthly growth rate
     time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
     if compute_growth:
