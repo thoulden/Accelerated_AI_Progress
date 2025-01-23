@@ -54,10 +54,10 @@ if st.session_state["page"] == "main":
         ("Multiple Simulations", "Single Simulation")
     )
 
-    if simulation_mode == "Multiple Simulations":
-        multiple_simsA.run()  # Placeholder for Multiple Simulations
-    elif simulation_mode == "Single Simulation":
-        single_simA.run()  # Placeholder for Single Simulation
+    if simulation_mode == "Single Simulations":
+        single_sim.run()  # Placeholder for Single Simulations
+    elif simulation_mode == "Multiple Simulation":
+        multiple_simsA.run()  # Placeholder for Multiple Simulation
     
     st.markdown("### Model Parameters and Estimates")
     st.markdown(r"""
