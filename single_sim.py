@@ -85,7 +85,7 @@ def run():
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
     #size_adjustment = st.sidebar.checkbox('size_adjustment') # old code to test the impact of a size adjustment term to match to a SEG model, not used anymore
    
-    def run_the_simulation:
+    def run_the_simulation():
         def choose_parameters():
             """
             Choose initial parameters manually.
@@ -245,4 +245,4 @@ def run():
 
     else:
         # We've run once, but user hasn't pressed the button again
-        st.write("Press **Run Simulation** (in the sidebar) to see results.")
+        st.write("Press **Run Simulation** (in the sidebar) to generate new results.")
