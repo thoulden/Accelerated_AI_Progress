@@ -105,7 +105,7 @@ def run():
             f_max = f_sample_max
             compute_size_start = 1
             compute_max = 4096
-            compute_doubling_time = 3
+            compute_doubling_time = 5
             compute_growth_monthly_rate = np.log(2) / compute_doubling_time
             limit_years = Yr_Left_sample
             lambda_factor = lambda_sample
