@@ -25,10 +25,10 @@ def get_parameters_table_markdown():
     table_markdown = r'''
 | Parameter            | Description                                                         | Low Estimate  | Median Estimate | High Estimate |
 |----------------------|---------------------------------------------------------------------|---------------|-----------------|---------------|
-| $f$                  | Change in the rate of software growth after deploying AI to research  | 2             | 8               | 32            |
+| $f$                  | After ASARA is deployed, how many times faster does software progress become?  | 2             | 8               | 32            |
 | $\lambda$            | Parallelizability of research                                       | 0.15           | 0.3             | 0.6           |
-| r₀                   | Research productivity when GPT-6 is launched                        | 0.4          | 1.2           | 3.6          |
-| Distance to physical software limits    |     We measure this in years left of possible software progress at the rate of recent software progress           | 5             | 9               | 13            |
+| r₀                   | (Initially) Each time cognitive inputs to software R&D double, how many times does software double?                 | 0.4          | 1.2           | 3.6          |
+| Distance to physical software limits    |     At the start of the simulation, how far is software from effective limits? Measured in the years of AI progress at recent rates of progress.         | 5             | 9               | 13            |
     '''
     return table_markdown
 
