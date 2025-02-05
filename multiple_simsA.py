@@ -163,7 +163,7 @@ def run():
 
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
     #multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
-    multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30")
+    multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30", help="These are the comparisson multiples (of the current growth rate) that are reported in the results.")
 
     compute_growth = st.sidebar.checkbox("Gradual Boost")
     retraining_cost = st.sidebar.checkbox("Retraining Cost")
