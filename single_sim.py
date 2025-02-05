@@ -70,15 +70,15 @@ def run():
     # Parameters for the simulation
     compute_growth = st.sidebar.checkbox('Compute Growth')
     if compute_growth:
-        f_sample_min = st.sidebar.number_input('Initial Research Boost ', min_value=0.0, max_value=1000.0, value=0.10, step=0.1, help="After ASARA is deployed, how many times faster does software progress become immediately (compared to the recent pace of software progress)?")
-        f_sample_max = st.sidebar.number_input('Max Boost', min_value=f_sample_min, max_value=1000.0, value=32.0, step=0.1, help="After ASARA is deployed, how many times faster does software progress reach after 5 years (compared to the recent pace of software progress)?")
+        f_sample_min = st.sidebar.number_input('Initial Boost ($f_0$)', min_value=0.0, max_value=1000.0, value=0.10, step=0.1, help="After ASARA is deployed, how many times faster does software progress become immediately (compared to the recent pace of software progress)?")
+        f_sample_max = st.sidebar.number_input('Max Boost ($f_{max}$)', min_value=f_sample_min, max_value=1000.0, value=32.0, step=0.1, help="After ASARA is deployed, how many times faster does software progress reach after 5 years (compared to the recent pace of software progress)?")
     else:
-        f_sample = st.sidebar.number_input('Acceleration term (f)', min_value=0.0, max_value=1000.0, value=8.0, step=0.1, help="After ASARA is deployed, how many times faster does software progress become (compared to the recent pace of software progress)?")
+        f_sample = st.sidebar.number_input('Initial Boost ($f$)', min_value=0.0, max_value=1000.0, value=8.0, step=0.1, help="After ASARA is deployed, how many times faster does software progress become (compared to the recent pace of software progress)?")
         f_sample_max = f_sample
         f_sample_min = f_sample
 
-    r_0_sample = st.sidebar.number_input('Initial Research Productivity (r₀)', min_value=0.0, max_value=5.0, value=1.2, step=0.1, help="Each time cognitive inputs to software R&D double, how many times does software double? (Note, this parameter falls over time.)) ")
-    Yr_Left_sample = st.sidebar.number_input('Years Till Ceiling', min_value=1.0, max_value=50.0, value=9.0, step=0.5, help="At the start of the simulation, how far is software from effective limits? (Measured in the years of AI progress at recent rates of progress.")
+    r_0_sample = st.sidebar.number_input('Diminishing returns (r₀)', min_value=0.0, max_value=5.0, value=1.2, step=0.1, help="Each time cognitive inputs to software R&D double, how many times does software double? (Note, this parameter falls over time.)) ")
+    Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software', min_value=1.0, max_value=50.0, value=9.0, step=0.5, help="At the start of the simulation, how far is software from effective limits? (Measured in the years of AI progress at recent rates of progress.")
     lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, value=0.3, step=0.01, help="If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double? ")
     # Option to compute growth
     
