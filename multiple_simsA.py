@@ -165,10 +165,11 @@ def run():
     #multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
     multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30")
 
+    compute_growth = st.sidebar.checkbox("Gradual Boost")
     retraining_cost = st.sidebar.checkbox("Retraining Cost")
     # size_adjustment = st.sidebar.checkbox("size_adjustment") # old code for size adjustment to match SEG results
     # size_adjustment = 'false'
-    compute_growth = st.sidebar.checkbox("Gradual Boost")
+    
     
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
     conditions = list(product([1, 4, 12, 36], multiples))
