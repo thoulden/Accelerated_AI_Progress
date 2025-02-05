@@ -76,7 +76,7 @@ def run():
         f_sample_max = f_sample
         f_sample_min = f_sample
 
-    r_0_sample = st.sidebar.number_input('Diminishing returns (r₀)', min_value=0.0, max_value=5.0, value=1.2, step=0.1, help="Each time cognitive inputs to software R&D double, how many times does software double? (Note, this parameter falls over time.)) ")
+    r_0_sample = st.sidebar.number_input('$r$', min_value=0.0, max_value=5.0, value=1.2, step=0.1, help="Controls diminishing returns to research. Each time cognitive inputs to software R&D double, how many times does software double? (Note, this parameter falls over time.)) ")
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software', min_value=1.0, max_value=50.0, value=9.0, step=0.5, help="At the start of the simulation, how far is software from effective limits? (Measured in the years of AI progress at recent rates of progress.")
     lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, value=0.3, step=0.01, help="If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double? ")
     # Option to compute growth
