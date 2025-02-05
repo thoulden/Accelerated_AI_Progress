@@ -55,7 +55,7 @@ st.markdown(parameters_table_md)
 st.markdown(r"""
 In addition to model parameters, you can select whether to enable compute growth or retraining costs:
 - **Retraining Cost:** Imposes a penalty on growth by allocating some progress toward increasing the model training rate.
-- **Compute Growth:** Spreads the initial acceleration over time, with further boosts as compute increases (up to a ceiling).
+- **Gradual Boost:** Spreads the initial acceleration evenly over 5 years.
 """)
 
 st.markdown("### Sampling")
