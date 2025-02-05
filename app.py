@@ -7,12 +7,7 @@ import matplotlib.pyplot as plt
 import multiple_simsA 
 import single_sim
 
-# Initialize session state for page navigation
-if "page" not in st.session_state:
-    st.session_state["page"] = "main"
 
-# Sidebar navigation
-with st.sidebar:
 
 # Parameters table in Markdown format
 def get_parameters_table_markdown():
