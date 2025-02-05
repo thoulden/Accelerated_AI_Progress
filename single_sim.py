@@ -69,7 +69,7 @@ def run():
     
     # Parameters for the simulation
     lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, value=0.3, step=0.01, help="This parameter controls how much the task can be parallelized. A higher value means greater parallelism.")
-    r_0_sample = st.sidebar.number_input('Initial Research Productivity (r₀)', min_value=0.0, max_value=5.0, value=1.2, step=0.1)
+    r_0_sample = st.sidebar.number_input('Initial Research Productivity (r₀)', min_value=0.0, max_value=5.0, value=1.2, step=0.1, help="This parameter controls how much the task can be parallelized. A higher value means greater parallelism.")
     Yr_Left_sample = st.sidebar.number_input('Years Till Ceiling', min_value=1.0, max_value=50.0, value=9.0, step=0.5)
     # Option to compute growth
     compute_growth = st.sidebar.checkbox('Compute Growth')
