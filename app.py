@@ -4,7 +4,6 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 # Import the other modules
-import math_appendix
 import multiple_simsA 
 import single_sim
 
@@ -14,11 +13,6 @@ if "page" not in st.session_state:
 
 # Sidebar navigation
 with st.sidebar:
-    st.title("Navigation")
-    if st.button("Main Page"):
-        st.session_state["page"] = "main"
-    if st.button("Math Appendix"):
-        st.session_state["page"] = "math_appendix"
 
 # Parameters table in Markdown format
 def get_parameters_table_markdown():
