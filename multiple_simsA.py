@@ -155,7 +155,7 @@ def run():
     ib_low = st.sidebar.number_input(r"Initial speed-up ($f$); lower bound", min_value=0.1, value=2.0, help="After ASARA is deployed, how many times faster does software progress become (compared to the recent pace of software progress)?")
     ib_high = st.sidebar.number_input(r"Initial speed-up ($f$); upper bound)", min_value=ib_low, value=32.0)
     r_low = st.sidebar.number_input(r"$r$; lower bound", min_value=0.01, value=0.4, help="Controls diminishing returns to research. Each time cognitive inputs to software R&D double, how many times does software double? (Note this parameter falls over time.)")
-    r_high = st.sidebar.number_input(r"$r$); upper bound", min_value=r_low, value=3.6)
+    r_high = st.sidebar.number_input(r"$r$; upper bound", min_value=r_low, value=3.6)
     ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=5.0, help="At the start of the simulation, how far is software from effective limits? Measured in the years of AI progress at recent rates of progress.")
     ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=13.0)
     lf_low = st.sidebar.number_input(r"Parallelizability ($\lambda$); lower bound", min_value=0.01, value=0.15, help="If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double?")
