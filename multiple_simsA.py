@@ -168,7 +168,7 @@ def run():
     retraining_cost = st.sidebar.checkbox("Retraining Cost")
     # size_adjustment = st.sidebar.checkbox("size_adjustment") # old code for size adjustment to match SEG results
     # size_adjustment = 'false'
-    compute_growth = st.sidebar.checkbox("Compute Growth")
+    compute_growth = st.sidebar.checkbox("Gradual Boost")
     
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
     conditions = list(product([1, 4, 12, 36], multiples))
