@@ -15,10 +15,10 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     Plot a single simulation with transformed sizes.
     
     Parameters:
-      - times: list of time points in months
-      - sizes: list of raw sizes
-      - label: label for the curve
-      - Yr_Left_sample: a reference ceiling (in years) to plot
+        times: list of time points in months
+        sizes: list of raw sizes
+        label: label for the curve
+        Yr_Left_sample: a reference ceiling (in years) to plot
     """
     transformed_sizes = transform_sizes_to_years(sizes)
     times_in_years = [t / 12 for t in times]
@@ -37,33 +37,40 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     ax.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
     ax.legend(fontsize=10)
     st.pyplot(fig)
-    st.markdown("*Note:* 3 years of progress was roughly the time from GPT-2 to ChatGPT")
+    st.markdown("*Note:* 3 years of progress at the old rate corresponds to 1 GPT‑sized jump")
 
 def run():
+    # Initialize session state for auto-run:
     if "initial_run_done" not in st.session_state:
         st.session_state.initial_run_done = False
 
+    # The "Run Simulation" button.
     run_simulation = st.sidebar.button('Run Simulation')
 
     # Simulation parameters
     compute_growth = st.sidebar.checkbox('Gradual Boost')
     if compute_growth:
-        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0, value=1.0, step=0.1,
+        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0,
+                                               value=1.0, step=0.1,
                                                help="How many times faster does software progress become immediately?")
-        f_sample_max = st.sidebar.number_input('Max speed-up ($f_{max}$)', min_value=f_sample_min, max_value=1000.0, value=32.0, step=0.1,
+        f_sample_max = st.sidebar.number_input('Max speed-up ($f_{max}$)', min_value=f_sample_min,
+                                               max_value=1000.0, value=32.0, step=0.1,
                                                help="Max speed-up after 5 years.")
     else:
-        f_sample = st.sidebar.number_input('Initial speed-up ($f$)', min_value=0.0, max_value=1000.0, value=8.0, step=0.1,
+        f_sample = st.sidebar.number_input('Initial speed-up ($f$)', min_value=0.0, max_value=1000.0,
+                                           value=8.0, step=0.1,
                                            help="How many times faster does software progress become?")
         f_sample_max = f_sample
         f_sample_min = f_sample
 
-    r_0_sample = st.sidebar.number_input('$r$', min_value=0.0, max_value=5.0, value=1.2, step=0.1,
+    r_0_sample = st.sidebar.number_input('$r$', min_value=0.0, max_value=5.0,
+                                         value=1.2, step=0.1,
                                          help="Controls diminishing returns to research.")
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
                                               min_value=1.0, max_value=50.0, value=9.0, step=0.5,
                                               help="How far is software from effective limits (in years)?")
-    lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, value=0.3, step=0.01,
+    lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0,
+                                            value=0.3, step=0.01,
                                             help="How many times does the pace double if R&D inputs double?")
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
 
@@ -126,7 +133,7 @@ def run():
                 time_elapsed += dt
                 times.append(time_elapsed)
 
-                # Update size with proportional scaling of the full growth factor.
+                # Update size proportionally.
                 size *= factor_increase ** (dt / factor_increase_time)
                 if size > ceiling:
                     size = ceiling
@@ -146,7 +153,6 @@ def run():
                     f = f_max
                 f_values.append(f)
 
-                # Update adaptive time step if applicable.
                 if r > 0:
                     if retraining_cost:
                         accel_factor = ((lambda_factor * ((1 / r) - 1)) /
@@ -163,9 +169,19 @@ def run():
                               f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor,
                               max_time_months=72)
 
+    # --- Auto-run Logic ---
+    # If the user presses the button OR if the simulation has never been run before, run it.
     if run_simulation:
         times, sizes, rs, ceiling, compute_sizes, f_values = run_the_simulation()
+        st.session_state.initial_run_done = True
+    elif not st.session_state.initial_run_done:
+        times, sizes, rs, ceiling, compute_sizes, f_values = run_the_simulation()
+        st.session_state.initial_run_done = True
+    else:
+        st.write("Press **Run Simulation** (in the sidebar) to generate new results.")
 
+    # Display the simulation outputs (if they exist).
+    if "initial_run_done" in st.session_state and st.session_state.initial_run_done:
         plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation", 
                                            Yr_Left_sample=Yr_Left_sample)
 
@@ -214,14 +230,5 @@ def run():
         st.pyplot(fig_growth)
         st.markdown("*Note:* an annual growth rate of 2.77 corresponds to doubling every 3 months.")
 
-        st.session_state.initial_run_done = True
-    elif not st.session_state.initial_run_done:
-        run_the_simulation()
-        st.session_state.initial_run_done = True
-    else:
-        st.write("Press **Run Simulation** (in the sidebar) to generate new results.")
-
 if __name__ == "__main__":
     run()
-
-
