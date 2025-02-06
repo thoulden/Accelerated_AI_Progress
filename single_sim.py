@@ -146,7 +146,7 @@ def run():
                 # Check for breakthrough:
                 # If size exceeds exp(2.77*(time_elapsed/12)) for the first time,
                 # set max_time to first_crossing_time + 3.
-                if first_crossing_time is None and (size > np.exp(2.77 * (time_elapsed / 12))):
+                if first_crossing_time is None and (size < np.exp(2.77 * (time_elapsed / 12))):
                     first_crossing_time = time_elapsed
                     max_time = first_crossing_time + 3
 
