@@ -82,7 +82,6 @@ def run():
                                             help="If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double? ")
 
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
-    # (Other checkboxes commented out)
 
     def run_the_simulation():
         def choose_parameters():
@@ -117,9 +116,10 @@ def run():
                                        compute_max, factor_increase, lambda_factor=0.5, baseline_max_time=72):
             """
             Simulate the dynamics until time_elapsed reaches the maximum time.
-            If a breakthrough occurs—i.e. when size > exp(2.77*(time_elapsed/12))—
-            we stop 3 months after that breakthrough.
-            Otherwise, we run until baseline_max_time (72 months).
+            Once time_elapsed > 12 months, check if size < exp(2.77*(time_elapsed/12)).
+            If that is true for the first time, set the maximum simulation time to be
+            min(first_crossing_time + 3, 72) months (i.e. allow at most 3 additional months,
+            but never beyond 72 months).
             """
             ceiling = 256 ** limit_years
             r = r_initial
@@ -143,12 +143,13 @@ def run():
 
             time_elapsed = 0
             while time_elapsed < max_time and size < ceiling and r > 0:
-                # Check for breakthrough:
-                # If size exceeds exp(2.77*(time_elapsed/12)) for the first time,
-                # set max_time to first_crossing_time + 3.
-                if first_crossing_time is None and (size < np.exp(2.77 * (time_elapsed / 12))):
-                    first_crossing_time = time_elapsed
-                    max_time = first_crossing_time + 3
+                # Only start checking after 12 months.
+                if time_elapsed > 12 and first_crossing_time is None:
+                    # Check if the current size is below the recent pace curve.
+                    if size < np.exp(2.77 * (time_elapsed / 12)):
+                        first_crossing_time = time_elapsed
+                        # Allow at most 3 additional months, but never past 72 months.
+                        max_time = min(first_crossing_time + 3, 72)
 
                 f_old = f
 
@@ -267,3 +268,4 @@ def run():
 
 if __name__ == "__main__":
     run()
+
