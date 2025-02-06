@@ -15,10 +15,10 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     Plot a single simulation with transformed sizes.
     
     Parameters:
-        times: list of time points in months
-        sizes: list of raw sizes
-        label: label for the curve
-        Yr_Left_sample: a reference ceiling (in years) to plot
+      - times: list of time points in months
+      - sizes: list of raw sizes
+      - label: label for the curve
+      - Yr_Left_sample: a reference ceiling (in years) to plot
     """
     transformed_sizes = transform_sizes_to_years(sizes)
     times_in_years = [t / 12 for t in times]
@@ -37,17 +37,16 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     ax.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
     ax.legend(fontsize=10)
     st.pyplot(fig)
-    st.markdown("*Note:* 3 years of progress was roughly the time from GPT-2 to ChatGPT")
+    st.markdown("*Note:* 3 years of progress at the old rate corresponds to 1 GPT‑sized jump")
 
 def run():
-    # Initialize session state for auto-run:
+    # Initialize session state if not already set.
     if "initial_run_done" not in st.session_state:
         st.session_state.initial_run_done = False
+    if "simulation_result" not in st.session_state:
+        st.session_state.simulation_result = None
 
-    # The "Run Simulation" button.
-    run_simulation = st.sidebar.button('Run Simulation')
-
-    # Simulation parameters
+    # Simulation parameters (these inputs may change, but we won’t update results until the button is pressed)
     compute_growth = st.sidebar.checkbox('Gradual Boost')
     if compute_growth:
         f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0,
@@ -73,6 +72,9 @@ def run():
                                             value=0.3, step=0.01,
                                             help="How many times does the pace double if R&D inputs double?")
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
+
+    # "Run Simulation" button.
+    run_simulation = st.sidebar.button('Run Simulation')
 
     def run_the_simulation():
         def choose_parameters():
@@ -170,65 +172,70 @@ def run():
                               max_time_months=72)
 
     # --- Auto-run Logic ---
-    # If the user presses the button OR if the simulation has never been run before, run it.
-    if run_simulation:
+    # If the simulation has never been run or if the button is pressed, update the simulation.
+    if run_simulation or st.session_state.simulation_result is None:
         times, sizes, rs, ceiling, compute_sizes, f_values = run_the_simulation()
+        st.session_state.simulation_result = {
+            "times": times,
+            "sizes": sizes,
+            "rs": rs,
+            "ceiling": ceiling,
+            "compute_sizes": compute_sizes,
+            "f_values": f_values
+        }
         st.session_state.initial_run_done = True
-    elif not st.session_state.initial_run_done:
-        times, sizes, rs, ceiling, compute_sizes, f_values = run_the_simulation()
-        st.session_state.initial_run_done = True
-    else:
-        st.write("Press **Run Simulation** (in the sidebar) to generate new results.")
 
-    # Display the simulation outputs (if they exist).
-    if "initial_run_done" in st.session_state and st.session_state.initial_run_done:
-        plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation", 
-                                           Yr_Left_sample=Yr_Left_sample)
+    # Use the stored simulation result for plotting.
+    result = st.session_state.simulation_result
 
-        times_in_years = [t / 12 for t in times]
-        fig_r, ax_r = plt.subplots(figsize=(10, 5))
-        ax_r.plot(times_in_years, rs, label='r(t)', color='magenta')
-        ax_r.set_xlabel('Time (years)')
-        ax_r.set_ylabel('r')
-        ax_r.set_title('r Over Time')
-        ax_r.grid(True, which='both', linestyle='--', linewidth=0.5)
-        ax_r.legend()
-        st.pyplot(fig_r)
+    plot_single_transformed_simulation(result["times"], result["sizes"], label="AI Capabilities Simulation", 
+                                       Yr_Left_sample=Yr_Left_sample)
 
-        if compute_growth:
-            fig_f, ax_f = plt.subplots(figsize=(10, 5))
-            ax_f.plot(times_in_years, f_values, label='f(t)', color='green')
-            ax_f.set_xlabel('Time (years)')
-            ax_f.set_ylabel('f')
-            ax_f.set_title('Acceleration Factor Over Time')
-            ax_f.grid(True, which='both', linestyle='--', linewidth=0.5)
-            ax_f.legend()
-            st.pyplot(fig_f)
+    times_in_years = [t / 12 for t in result["times"]]
+    fig_r, ax_r = plt.subplots(figsize=(10, 5))
+    ax_r.plot(times_in_years, result["rs"], label='r(t)', color='magenta')
+    ax_r.set_xlabel('Time (years)')
+    ax_r.set_ylabel('r')
+    ax_r.set_title('r Over Time')
+    ax_r.grid(True, which='both', linestyle='--', linewidth=0.5)
+    ax_r.legend()
+    st.pyplot(fig_r)
 
-        growth_rates = []
-        for i in range(1, len(sizes)):
-            dt = times_in_years[i] - times_in_years[i-1]
-            if dt > 0:
-                rate = (np.log(sizes[i]) - np.log(sizes[i-1])) / dt
-                growth_rates.append(rate)
-            else:
-                growth_rates.append(np.nan)
-        growth_times = times_in_years[1:]
-        g = 2.77
-        multipliers = [3, 10, 30]
-        fig_growth, ax_growth = plt.subplots(figsize=(10, 5))
-        ax_growth.plot(growth_times, growth_rates, label='Annualized Growth Rate', color='blue')
-        ax_growth.axhline(y=g, color='red', linestyle='--', label=f'g = {g}')
-        colors = ['green', 'orange', 'purple']
-        for m, c in zip(multipliers, colors):
-            ax_growth.axhline(y=m * g, color=c, linestyle=':', label=f'{m}x g = {m * g}')
-        ax_growth.set_xlabel('Time (years)')
-        ax_growth.set_ylabel('Annualized Growth Rate')
-        ax_growth.set_title('Annualized Software Growth Rate Over Time')
-        ax_growth.grid(True, which='both', linestyle='--', linewidth=0.5)
-        ax_growth.legend()
-        st.pyplot(fig_growth)
-        st.markdown("*Note:* an annual growth rate of 2.77 corresponds to doubling every 3 months.")
+    if compute_growth:
+        fig_f, ax_f = plt.subplots(figsize=(10, 5))
+        ax_f.plot(times_in_years, result["f_values"], label='f(t)', color='green')
+        ax_f.set_xlabel('Time (years)')
+        ax_f.set_ylabel('f')
+        ax_f.set_title('Acceleration Factor Over Time')
+        ax_f.grid(True, which='both', linestyle='--', linewidth=0.5)
+        ax_f.legend()
+        st.pyplot(fig_f)
+
+    growth_rates = []
+    for i in range(1, len(result["sizes"])):
+        dt = times_in_years[i] - times_in_years[i-1]
+        if dt > 0:
+            rate = (np.log(result["sizes"][i]) - np.log(result["sizes"][i-1])) / dt
+            growth_rates.append(rate)
+        else:
+            growth_rates.append(np.nan)
+    growth_times = times_in_years[1:]
+    g = 2.77
+    multipliers = [3, 10, 30]
+    fig_growth, ax_growth = plt.subplots(figsize=(10, 5))
+    ax_growth.plot(growth_times, growth_rates, label='Annualized Growth Rate', color='blue')
+    ax_growth.axhline(y=g, color='red', linestyle='--', label=f'g = {g}')
+    colors = ['green', 'orange', 'purple']
+    for m, c in zip(multipliers, colors):
+        ax_growth.axhline(y=m * g, color=c, linestyle=':', label=f'{m}x g = {m * g}')
+    ax_growth.set_xlabel('Time (years)')
+    ax_growth.set_ylabel('Annualized Growth Rate')
+    ax_growth.set_title('Annualized Software Growth Rate Over Time')
+    ax_growth.grid(True, which='both', linestyle='--', linewidth=0.5)
+    ax_growth.legend()
+    st.pyplot(fig_growth)
+    st.markdown("*Note:* an annual growth rate of 2.77 corresponds to doubling every 3 months.")
 
 if __name__ == "__main__":
     run()
+
