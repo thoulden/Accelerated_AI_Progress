@@ -28,6 +28,8 @@ It offers two simulation options:
 
 - **Multiple Simulations:** Run several simulations with uncertainty over key parameters. The output is a plot showing the fraction of simulations where the growth rate of software exceeds a specified threshold over some number of years.
 - **Single Simulation:** Run a single simulation under specific parameter values to illustrate the path of AI progress, including the evolution of diminishing research productivity and growth rates over time.
+
+The simulation assumes that compute remains constant over time
 """)
 
 st.markdown("### Results")
