@@ -155,7 +155,7 @@ def run():
                 time_elapsed += time_step
                 times.append(time_elapsed)
                 size *= factor_increase
-                    if size > ceiling:
+                if size > ceiling:
                     size = ceiling
                 sizes.append(size)
                 r -= k
