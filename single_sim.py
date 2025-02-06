@@ -134,7 +134,7 @@ def run():
 
         def dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years,
                                        compute_growth_monthly_rate, f_0, f_max, compute_size_start,
-                                       compute_max, factor_increase, lambda_factor=0.5, max_time_months=60):
+                                       compute_max, factor_increase, lambda_factor=0.5, max_time_months=72):
             ceiling = 256 ** limit_years
             r = r_initial
             factor_increase_time = initial_factor_increase_time
