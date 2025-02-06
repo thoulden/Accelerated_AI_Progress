@@ -147,7 +147,7 @@ def run():
             k = r_initial / total_factor_increasings
 
             time_elapsed = 0
-            while time_elapsed < max_time_months and size < ceiling and r > 0:
+            while time_elapsed < max_time_months:
                 # Store previous f for updates
                 f_old = f
                 
