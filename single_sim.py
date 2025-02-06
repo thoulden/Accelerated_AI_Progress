@@ -117,7 +117,7 @@ def run():
             doubling_time_starting = 3  # months
             implied_month_growth_rate = np.log(2) / doubling_time_starting
             time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
-            initial_factor_increase_time = time_takes_to_factor_increase / (1 + f_0)
+            initial_factor_increase_time = time_takes_to_factor_increase / (f_0)
 
             return (
                 factor_increase,
