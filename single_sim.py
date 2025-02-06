@@ -155,50 +155,43 @@ def run():
 
             time_elapsed = 0
             while time_elapsed < max_time_months and size < ceiling and r > 0:
-                # Save the previous acceleration factor value
                 f_old = f
 
-                # Check if adding the next time step overshoots max_time_months
+                # Check if the next full time step overshoots max_time_months
                 if time_elapsed + factor_increase_time > max_time_months:
-                    time_step = max_time_months - time_elapsed
-                    time_elapsed += time_step
+                    # Only take the fractional time step needed to hit max_time_months
+                    delta_t = max_time_months - time_elapsed
+                    # Scale the growth factor proportionally to the fraction of the full step
+                    size *= factor_increase ** (delta_t / factor_increase_time)
+                    time_elapsed += delta_t
                     times.append(time_elapsed)
-
-                    # Update size and clamp it to the ceiling if needed
-                    size *= factor_increase
                     if size > ceiling:
                         size = ceiling
                     sizes.append(size)
-
                     r -= k
                     rs.append(r)
-
                     compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
                     compute_sizes.append(compute_size)
-
                     if compute_size < compute_max:
                         f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
                                                     np.log(compute_max / compute_size_start))
                     else:
                         f = f_max
                     f_values.append(f)
-                    break  # End simulation since we've reached the maximum time
+                    break
                 else:
+                    # Take the full time step as usual
                     time_step = factor_increase_time
                     time_elapsed += time_step
                     times.append(time_elapsed)
-
                     size *= factor_increase
                     if size > ceiling:
                         size = ceiling
                     sizes.append(size)
-
                     r -= k
                     rs.append(r)
-
                     compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
                     compute_sizes.append(compute_size)
-
                     if compute_size < compute_max:
                         f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
                                                     np.log(compute_max / compute_size_start))
@@ -206,6 +199,7 @@ def run():
                         f = f_max
                     f_values.append(f)
 
+                    # Update the time step for the next iteration
                     if r > 0:
                         if retraining_cost:
                             accel_factor = ((lambda_factor * ((1 / r) - 1)) /
@@ -268,14 +262,14 @@ def run():
         ax_growth.axhline(y=g, color='red', linestyle='--', label=f'g = {g}')
         colors = ['green', 'orange', 'purple']
         for m, c in zip(multipliers, colors):
-            ax_growth.axhline(y=m*g, color=c, linestyle=':', label=f'{m}x g = {m*g}')
+            ax_growth.axhline(y=m * g, color=c, linestyle=':', label=f'{m}x g = {m * g}')
         ax_growth.set_xlabel('Time (years)')
         ax_growth.set_ylabel('Annualized Growth Rate')
         ax_growth.set_title('Annualized Software Growth Rate Over Time')
         ax_growth.grid(True, which='both', linestyle='--', linewidth=0.5)
         ax_growth.legend()
         st.pyplot(fig_growth)
-        st.markdown("*Note:* an annual growth rate of 2.77 corresponds to doubling every 3 months. ")
+        st.markdown("*Note:* an annual growth rate of 2.77 corresponds to doubling every 3 months.")
 
     if run_simulation:
         run_the_simulation()
@@ -288,4 +282,5 @@ def run():
 
 if __name__ == "__main__":
     run()
+
 
