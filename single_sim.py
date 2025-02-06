@@ -44,7 +44,7 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(times_in_years, transformed_sizes, label=label, color='blue', linestyle='-')
 
-    # Add a reference line for the recent pace of progress
+    # Add a reference line for the recent pace of progress (y=x in years)
     ax.plot(times_in_years, times_in_years, label='Recent pace of progress', color='black', linestyle=':')
 
     # Add ceiling line
@@ -57,7 +57,7 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     ax.grid(visible=True, which='major', linestyle='--', linewidth=0.5, alpha=0.7)
     ax.legend(fontsize=10)
     st.pyplot(fig)
-    st.markdown("*Note:* 3 years of progress was roughly the time from GPT-2 to ChatGPT")
+    st.markdown("*Note:* 3 years of progress at the old rate corresponds to 1 GPT-sized jump")
 
 def run():
     if "initial_run_done" not in st.session_state:
@@ -70,7 +70,7 @@ def run():
     # Parameters for the simulation
     compute_growth = st.sidebar.checkbox('Gradual Boost')
     if compute_growth:
-        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0, value=1.0, step=0.1,
+        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=0.0, max_value=1000.0, value=0.10, step=0.1,
                                                help="After ASARA is deployed, how many times faster does software progress become immediately (compared to the recent pace of software progress)?")
         f_sample_max = st.sidebar.number_input('Max speed-up ($f_{max}$)', min_value=f_sample_min, max_value=1000.0, value=32.0, step=0.1,
                                                help="After ASARA is deployed, how many times faster does software progress reach after 5 years (compared to the recent pace of software progress)?")
@@ -117,7 +117,7 @@ def run():
             doubling_time_starting = 3  # months
             implied_month_growth_rate = np.log(2) / doubling_time_starting
             time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
-            initial_factor_increase_time = time_takes_to_factor_increase / (1+f_0)
+            initial_factor_increase_time = time_takes_to_factor_increase / (1 + f_0)
 
             return (
                 factor_increase,
@@ -134,7 +134,15 @@ def run():
 
         def dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years,
                                        compute_growth_monthly_rate, f_0, f_max, compute_size_start,
-                                       compute_max, factor_increase, lambda_factor=0.5, max_time_months=72):
+                                       compute_max, factor_increase, lambda_factor=0.5, baseline_max_time=72):
+            """
+            Simulate the dynamics until time_elapsed reaches the current maximum time.
+            The maximum time is updated as follows:
+              - It is initially set to baseline_max_time (72 months).
+              - If for the first time the transformed size (np.log2(size)/8) exceeds the recent
+                pace (time_elapsed/12), then the maximum time is updated to be the larger of
+                the current maximum or the crossing time plus 3 months.
+            """
             ceiling = 256 ** limit_years
             r = r_initial
             factor_increase_time = initial_factor_increase_time
@@ -149,26 +157,38 @@ def run():
             f_values = [f_0]
             f = f_0
 
-            # Calculate total factor increasings
+            # Calculate total factor increasings (used for decrementing r)
             total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
             k = r_initial / total_factor_increasings
 
+            # Set up the dynamic maximum time:
+            current_max_time = baseline_max_time  # in months
+            first_crossing_time = None  # will record the first time when transformed size > recent pace
+
             time_elapsed = 0
-            while time_elapsed < max_time_months and size < ceiling and r > 0:
+            while time_elapsed < current_max_time and size < ceiling and r > 0:
+                # Check if we have crossed the recent pace line.
+                # The recent pace line in transformed units is: time_elapsed/12 (years)
+                # and transformed size is np.log2(size)/8.
+                if first_crossing_time is None and (np.log2(size) / 8 > time_elapsed / 12):
+                    first_crossing_time = time_elapsed
+                    # Update the maximum allowed time to be the larger of the current maximum
+                    # or 3 months after the first crossing.
+                    current_max_time = max(current_max_time, first_crossing_time + 3)
+
                 f_old = f
 
-                # Check if the next full time step overshoots max_time_months
-                if time_elapsed + factor_increase_time > max_time_months:
-                    # Only take the fractional time step needed to hit max_time_months
-                    delta_t = max_time_months - time_elapsed
-                    # Scale the growth factor for size proportionally
+                # Check if the next full time step overshoots the current maximum time
+                if time_elapsed + factor_increase_time > current_max_time:
+                    delta_t = current_max_time - time_elapsed
+                    # Scale the growth for size (and r) proportionally to the fractional step.
                     size *= factor_increase ** (delta_t / factor_increase_time)
                     time_elapsed += delta_t
                     times.append(time_elapsed)
                     if size > ceiling:
                         size = ceiling
                     sizes.append(size)
-                    # Scale the update for r proportionally as well
+                    # Scale the decrement in r proportionally.
                     r -= k * (delta_t / factor_increase_time)
                     rs.append(r)
                     compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
@@ -179,9 +199,9 @@ def run():
                     else:
                         f = f_max
                     f_values.append(f)
-                    break
+                    break  # end simulation since we've reached the current max time
                 else:
-                    # Take the full time step as usual
+                    # Take the full time step as usual.
                     time_step = factor_increase_time
                     time_elapsed += time_step
                     times.append(time_elapsed)
@@ -200,7 +220,7 @@ def run():
                         f = f_max
                     f_values.append(f)
 
-                    # Update the time step for the next iteration
+                    # Update the time step for the next iteration.
                     if r > 0:
                         if retraining_cost:
                             accel_factor = ((lambda_factor * ((1 / r) - 1)) /
@@ -208,22 +228,23 @@ def run():
                         else:
                             accel_factor = (lambda_factor * (1 / r - 1))
                         factor_increase_time *= ((factor_increase ** accel_factor) /
-                                                 ((1+f) / (1+f_old)))
+                                                 ((1 + f) / (1 + f_old)))
             return times, sizes, rs, ceiling, compute_sizes, f_values
 
-        # Set up initial parameters
+        # Set up initial parameters.
         (factor_increase, r_initial, initial_factor_increase_time, limit_years,
          lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start,
          compute_max) = choose_parameters()
 
         times, sizes, rs, ceiling, compute_sizes, f_values = dynamic_system_with_lambda(
             r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
-            f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=lambda_factor)
+            f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=lambda_sample,
+            baseline_max_time=72)
 
-        # Plot the transformed simulation
+        # Plot the transformed simulation.
         plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation", Yr_Left_sample=Yr_Left_sample)
 
-        # Plot r over time
+        # Plot r over time.
         times_in_years = [t / 12 for t in times]
         fig_r, ax_r = plt.subplots(figsize=(10, 5))
         ax_r.plot(times_in_years, rs, label='r(t)', color='magenta')
@@ -234,7 +255,7 @@ def run():
         ax_r.legend()
         st.pyplot(fig_r)
 
-        # Optionally, plot f over time if compute growth is enabled
+        # Optionally, plot f over time if compute growth is enabled.
         if compute_growth:
             fig_f, ax_f = plt.subplots(figsize=(10, 5))
             ax_f.plot(times_in_years, f_values, label='f(t)', color='green')
@@ -245,7 +266,7 @@ def run():
             ax_f.legend()
             st.pyplot(fig_f)
 
-        # Calculate and plot growth rates
+        # Calculate and plot growth rates.
         growth_rates = []
         for i in range(1, len(sizes)):
             dt = times_in_years[i] - times_in_years[i-1]
@@ -283,5 +304,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
-
