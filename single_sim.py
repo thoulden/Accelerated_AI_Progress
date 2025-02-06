@@ -174,7 +174,7 @@ def run():
                     compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
                     compute_sizes.append(compute_size)
                     if compute_size < compute_max:
-                        f = 1+ f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
+                        f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
                                                     np.log(compute_max / compute_size_start))
                     else:
                         f = f_max
@@ -194,7 +194,7 @@ def run():
                     compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
                     compute_sizes.append(compute_size)
                     if compute_size < compute_max:
-                        f = 1+f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
+                        f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
                                                     np.log(compute_max / compute_size_start))
                     else:
                         f = f_max
@@ -208,7 +208,7 @@ def run():
                         else:
                             accel_factor = (lambda_factor * (1 / r - 1))
                         factor_increase_time *= ((factor_increase ** accel_factor) /
-                                                 (( f) / ( f_old)))
+                                                 ((1+f) / (1+f_old)))
             return times, sizes, rs, ceiling, compute_sizes, f_values
 
         # Set up initial parameters
