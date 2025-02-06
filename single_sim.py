@@ -45,29 +45,29 @@ def run():
 
     run_simulation = st.sidebar.button('Run Simulation')
 
-    # Parameters for the simulation:
+    # Simulation parameters
     compute_growth = st.sidebar.checkbox('Gradual Boost')
     if compute_growth:
-        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0, 
+        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0,
                                                value=1.0, step=0.1,
                                                help="How many times faster does software progress become immediately?")
-        f_sample_max = st.sidebar.number_input('Max speed-up ($f_{max}$)', min_value=f_sample_min, 
+        f_sample_max = st.sidebar.number_input('Max speed-up ($f_{max}$)', min_value=f_sample_min,
                                                max_value=1000.0, value=32.0, step=0.1,
                                                help="Max speed-up after 5 years.")
     else:
-        f_sample = st.sidebar.number_input('Initial speed-up ($f$)', min_value=0.0, max_value=1000.0, 
+        f_sample = st.sidebar.number_input('Initial speed-up ($f$)', min_value=0.0, max_value=1000.0,
                                            value=8.0, step=0.1,
                                            help="How many times faster does software progress become?")
         f_sample_max = f_sample
         f_sample_min = f_sample
 
-    r_0_sample = st.sidebar.number_input('$r$', min_value=0.0, max_value=5.0, 
+    r_0_sample = st.sidebar.number_input('$r$', min_value=0.0, max_value=5.0,
                                          value=1.2, step=0.1,
                                          help="Controls diminishing returns to research.")
-    Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software', 
+    Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
                                               min_value=1.0, max_value=50.0, value=9.0, step=0.5,
                                               help="How far is software from effective limits (in years)?")
-    lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, 
+    lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0,
                                             value=0.3, step=0.01,
                                             help="How many times does the pace double if R&D inputs double?")
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
@@ -76,7 +76,7 @@ def run():
         def choose_parameters():
             """
             Set initial parameters and compute the initial time step.
-            Returns a tuple:
+            Returns:
               (factor_increase, r_initial, initial_factor_increase_time, limit_years,
                lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max)
             """
@@ -93,6 +93,7 @@ def run():
             compute_growth_monthly_rate = np.log(2) / compute_doubling_time
             limit_years = Yr_Left_sample
             lambda_factor = lambda_sample
+            # For the initial time step:
             doubling_time_starting = 3  # months
             implied_month_growth_rate = np.log(2) / doubling_time_starting
             time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
@@ -106,13 +107,10 @@ def run():
             """
             Run the simulation.
             The simulation always runs for at least 72 months.
-            Then, if at 72 months the model's size is above:
-                  recent_pace = exp(2.77 * (time_elapsed/12))
-            it continues until the recent pace overtakes the size.
-            
-            (That is, while time_elapsed < 72, always continue.
-             Once time_elapsed >= 72, continue only while 
-                 exp(2.77*(time_elapsed/12)) <= size.)
+            Then, if at 72 months the model's size is still above the recent pace curve,
+            continue using a fixed small time step (0.1 months) until the recent pace
+            overtakes the model's size.
+            The recent pace is defined as: exp(2.77*(t/12)).
             """
             ceiling = 256 ** limit_years
             r = r_initial
@@ -132,37 +130,34 @@ def run():
 
             time_elapsed = 0
 
-            # We'll use a loop that continues until either the simulation reaches the ceiling,
-            # r becomes nonpositive, or (if t >= 72) the recent pace exceeds the model size.
-            while size < ceiling and r > 0 and (time_elapsed < 72 or np.exp(2.77 * (time_elapsed/12)) <= size):
-                f_old = f
-                # Decide on the time step delta_t.
-                # If we are before 72 months, ensure we do not overshoot 72.
+            while size < ceiling and r > 0:
+                # Determine the time step.
                 if time_elapsed < 72:
-                    if time_elapsed + factor_increase_time > 72:
-                        delta_t = 72 - time_elapsed
-                    else:
-                        delta_t = factor_increase_time
+                    # Use the normal adaptive time step, but do not overshoot 72 months.
+                    dt = min(factor_increase_time, 72 - time_elapsed)
                 else:
-                    # Now time_elapsed >= 72; we want to stop when exp(2.77*(t/12)) just exceeds size.
-                    # Let stop_time be the t value for which exp(2.77*(t/12)) == size.
-                    # Taking logs: 2.77*(t/12) = ln(size)  --> t = (12/2.77)*ln(size)
-                    stop_time = (12/2.77) * np.log(size)
-                    if time_elapsed + factor_increase_time > stop_time:
-                        delta_t = stop_time - time_elapsed
-                    else:
-                        delta_t = factor_increase_time
+                    # Post-72 regime: check the recent pace condition.
+                    # Compute the recent pace at current time.
+                    recent_pace = np.exp(2.77 * (time_elapsed / 12))
+                    # If the recent pace already overtakes the model's size, stop.
+                    if recent_pace > size:
+                        break
+                    # Otherwise, use a small fixed time step (e.g., 0.1 months) for finer resolution.
+                    dt = 0.1
 
-                # Update simulation variables using a fractional step (if needed).
-                time_elapsed += delta_t
+                # Save the current f for the update below.
+                f_old = f
+
+                # Update simulation variables using the chosen dt.
+                time_elapsed += dt
                 times.append(time_elapsed)
                 # Scale the growth for size proportionally.
-                size *= factor_increase ** (delta_t / factor_increase_time)
+                size *= factor_increase ** (dt / factor_increase_time)
                 if size > ceiling:
                     size = ceiling
                 sizes.append(size)
                 # Update r proportionally.
-                r -= k * (delta_t / factor_increase_time)
+                r -= k * (dt / factor_increase_time)
                 rs.append(r)
                 compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
                 compute_sizes.append(compute_size)
@@ -173,12 +168,8 @@ def run():
                     f = f_max
                 f_values.append(f)
 
-                # If we are in the post-72-month regime and have reached the stopping time, break.
-                if time_elapsed >= 72 and time_elapsed >= (12/2.77)*np.log(size):
-                    break
-
-                # Update the time step (factor_increase_time) for the next iteration.
-                if r > 0:
+                # In the normal regime (t<72), update factor_increase_time adaptively.
+                if time_elapsed < 72 and r > 0:
                     if retraining_cost:
                         accel_factor = ((lambda_factor * ((1 / r) - 1)) /
                                         (abs(lambda_factor * ((1 / r) - 1)) + 1))
