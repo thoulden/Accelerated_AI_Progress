@@ -117,7 +117,7 @@ def run():
                                        compute_max, factor_increase, lambda_factor=0.5, baseline_max_time=72):
             """
             Simulate the dynamics until time_elapsed reaches the maximum time.
-            If a breakthrough occurs—i.e. when transformed size > recent pace—
+            If a breakthrough occurs—i.e. when size > exp(2.77*(time_elapsed/12))—
             we stop 3 months after that breakthrough.
             Otherwise, we run until baseline_max_time (72 months).
             """
@@ -137,20 +137,18 @@ def run():
             total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
             k = r_initial / total_factor_increasings
 
-            # Determine maximum simulation time.
-            # Initially, set max_time = baseline_max_time.
-            # If a breakthrough occurs, then max_time = first_crossing_time + 3.
-            max_time = baseline_max_time  # in months
+            # Set the initial maximum simulation time (in months)
+            max_time = baseline_max_time  
             first_crossing_time = None
 
             time_elapsed = 0
             while time_elapsed < max_time and size < ceiling and r > 0:
                 # Check for breakthrough:
-                # The recent pace (in transformed units) is time_elapsed/12 (years),
-                # and the current transformed size is np.log2(size)/8.
-                if first_crossing_time is None and (np.log2(size) / 8 > time_elapsed / 12):
+                # If size exceeds exp(2.77*(time_elapsed/12)) for the first time,
+                # set max_time to first_crossing_time + 3.
+                if first_crossing_time is None and (size > np.exp(2.77 * (time_elapsed / 12))):
                     first_crossing_time = time_elapsed
-                    max_time = first_crossing_time + 3  # stop 3 months after breakthrough
+                    max_time = first_crossing_time + 3
 
                 f_old = f
 
