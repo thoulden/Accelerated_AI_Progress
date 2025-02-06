@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+
 def transform_sizes_to_years(sizes):
     """
     Transform sizes such that 256^n -> n.
@@ -14,16 +15,16 @@ def transform_sizes_to_years(sizes):
     More explanation of why these assumptions are reasonable:
     - Compute will reach ceiling in 5 years according to Epoch.
     - Software algorithms have become twice as efficient every ~8 months, but this
-    excludes post-training enhancements so we reduce this to 6 months.
+      excludes post-training enhancements so we reduce this to 6 months.
     - That's a combined doubling time of 3 months for effective training compute
-    (incorporating compute and algorithms).
+      (incorporating compute and algorithms).
     - We estimate that each doubling of effective training compute is equivalent
-    to ~2 doublings in the parallel size of the AI population, because you
-    get smarter models. This model counts as doubling of "AI capabilities" as a doubling
-    of the size of the AI population. So we get two doublings of AI capabilities per
-    doubling of effective compute. (Search "Better capabilities" in gdoc appendix.)
+      to ~2 doublings in the parallel size of the AI population, because you
+      get smarter models. This model counts as doubling of "AI capabilities" as a doubling
+      of the size of the AI population. So we get two doublings of AI capabilities per
+      doubling of effective compute. (Search "Better capabilities" in gdoc appendix.)
     - So AI capabilities have recently been doubling every 1.5 months, according
-    to this model.
+      to this model.
     """
     return [np.log2(size) / 8 for size in sizes]  # log2(256) = 8
 
@@ -35,7 +36,7 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
         times: List of time points in months.
         sizes: List of sizes (pre-transformed).
         label: Label for the simulation line.
-        ceiling: Ceiling level to plot as a reference line.
+        Yr_Left_sample: The ceiling level (in years) used for reference.
     """
     transformed_sizes = transform_sizes_to_years(sizes)
     times_in_years = [t / 12 for t in times]  # Convert months to years
@@ -61,46 +62,49 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
 def run():
     if "initial_run_done" not in st.session_state:
         st.session_state.initial_run_done = False
-    
+
     # === Single Simulation Code ===
     # Run Simulation Button
     run_simulation = st.sidebar.button('Run Simulation')
-    
+
     # Parameters for the simulation
     compute_growth = st.sidebar.checkbox('Gradual Boost')
     if compute_growth:
-        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=0.0, max_value=1000.0, value=0.10, step=0.1, help="After ASARA is deployed, how many times faster does software progress become immediately (compared to the recent pace of software progress)?")
-        f_sample_max = st.sidebar.number_input('Max speed-up ($f_{max}$)', min_value=f_sample_min, max_value=1000.0, value=32.0, step=0.1, help="After ASARA is deployed, how many times faster does software progress reach after 5 years (compared to the recent pace of software progress)?")
+        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=0.0, max_value=1000.0, value=0.10, step=0.1,
+                                               help="After ASARA is deployed, how many times faster does software progress become immediately (compared to the recent pace of software progress)?")
+        f_sample_max = st.sidebar.number_input('Max speed-up ($f_{max}$)', min_value=f_sample_min, max_value=1000.0, value=32.0, step=0.1,
+                                               help="After ASARA is deployed, how many times faster does software progress reach after 5 years (compared to the recent pace of software progress)?")
     else:
-        f_sample = st.sidebar.number_input('Initial speed-up ($f$)', min_value=0.0, max_value=1000.0, value=8.0, step=0.1, help="After ASARA is deployed, how many times faster does software progress become (compared to the recent pace of software progress)?")
+        f_sample = st.sidebar.number_input('Initial speed-up ($f$)', min_value=0.0, max_value=1000.0, value=8.0, step=0.1,
+                                           help="After ASARA is deployed, how many times faster does software progress become (compared to the recent pace of software progress)?")
         f_sample_max = f_sample
         f_sample_min = f_sample
 
-    r_0_sample = st.sidebar.number_input('$r$', min_value=0.0, max_value=5.0, value=1.2, step=0.1, help="Controls diminishing returns to research. Each time cognitive inputs to software R&D double, how many times does software double? (Note, this parameter falls over time.) ")
-    Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software', min_value=1.0, max_value=50.0, value=9.0, step=0.5, help="At the start of the simulation, how far is software from effective limits? (Measured in the years of AI progress at recent rates of progress.")
-    lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, value=0.3, step=0.01, help="If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double? ")
-    # Option to compute growth
-    
+    r_0_sample = st.sidebar.number_input('$r$', min_value=0.0, max_value=5.0, value=1.2, step=0.1,
+                                         help="Controls diminishing returns to research. Each time cognitive inputs to software R&D double, how many times does software double? (Note, this parameter falls over time.)")
+    Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software', min_value=1.0, max_value=50.0, value=9.0, step=0.5,
+                                             help="At the start of the simulation, how far is software from effective limits? (Measured in the years of AI progress at recent rates of progress.)")
+    lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0, value=0.3, step=0.01,
+                                            help="If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double? ")
+
     # Checkbox for retraining cost
-    
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
-    #size_adjustment = st.sidebar.checkbox('size_adjustment') # old code to test the impact of a size adjustment term to match to a SEG model, not used anymore
-   
+    # size_adjustment = st.sidebar.checkbox('size_adjustment')  # Old code, not used anymore
+
     def run_the_simulation():
         def choose_parameters():
             """
             Choose initial parameters manually.
             Returns:
                 r_initial: The initial value of r (diminishing returns).
-                initial_doubling_time: Initial doubling time in months.
-                D: The ceiling level for size.
+                initial_factor_increase_time: Initial time step for updating factors.
+                limit_years: The ceiling level in years (used to compute the size ceiling).
                 lambda_factor: The lambda factor for adjusting doubling time.
             """
-            # Set the parameters to your desired values here:
             if compute_growth:
-                factor_increase = 1.1  # Set the desired factor increase (e.g., 1.1 for 10% increases) this ensures that figures are smooth in the compute growth scenario.
-            else: 
-                factor_increase = 2 # when not doing compute growing just use doublings
+                factor_increase = 1.1  # For smooth increases in the compute growth scenario.
+            else:
+                factor_increase = 2   # Use doublings when not growing compute.
             r_initial = r_0_sample
             f_0 = f_sample_min
             f_max = f_sample_max
@@ -110,10 +114,10 @@ def run():
             compute_growth_monthly_rate = np.log(2) / compute_doubling_time
             limit_years = Yr_Left_sample
             lambda_factor = lambda_sample
-            doubling_time_starting = 3 #months
-            implied_month_growth_rate = np.log(2)/doubling_time_starting
-            time_takes_to_factor_increase = np.log(factor_increase)/implied_month_growth_rate
-            initial_factor_increase_time = time_takes_to_factor_increase / (1+f_0)
+            doubling_time_starting = 3  # months
+            implied_month_growth_rate = np.log(2) / doubling_time_starting
+            time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
+            initial_factor_increase_time = time_takes_to_factor_increase / (1 + f_0)
 
             return (
                 factor_increase,
@@ -128,7 +132,9 @@ def run():
                 compute_max,
             )
 
-        def dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5, max_time_months=48):
+        def dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years,
+                                       compute_growth_monthly_rate, f_0, f_max, compute_size_start,
+                                       compute_max, factor_increase, lambda_factor=0.5, max_time_months=48):
             ceiling = 256 ** limit_years
             r = r_initial
             factor_increase_time = initial_factor_increase_time
@@ -141,51 +147,85 @@ def run():
             rs = [r]
             compute_sizes = [compute_size]
             f_values = [f_0]
-            f=f_0
+            f = f_0
+
             # Calculate total factor increasings
             total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
             k = r_initial / total_factor_increasings
 
             time_elapsed = 0
             while time_elapsed < max_time_months and size < ceiling and r > 0:
-                # Store previous f for updates
+                # Save the previous acceleration factor value
                 f_old = f
-                
-                time_step = factor_increase_time
-                time_elapsed += time_step
-                times.append(time_elapsed)
-                size *= factor_increase
-                if size > ceiling:
-                    size = ceiling
-                sizes.append(size)
-                r -= k
-                rs.append(r)
 
-                # Update compute size
-                compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
-                compute_sizes.append(compute_size)
+                # Check if adding the next time step overshoots max_time_months
+                if time_elapsed + factor_increase_time > max_time_months:
+                    time_step = max_time_months - time_elapsed
+                    time_elapsed += time_step
+                    times.append(time_elapsed)
 
-                # Update acceleration factor f
-                if compute_size < compute_max:
-                    f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) / np.log(compute_max / compute_size_start))
+                    # Update size and clamp it to the ceiling if needed
+                    size *= factor_increase
+                    if size > ceiling:
+                        size = ceiling
+                    sizes.append(size)
+
+                    r -= k
+                    rs.append(r)
+
+                    compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
+                    compute_sizes.append(compute_size)
+
+                    if compute_size < compute_max:
+                        f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
+                                                    np.log(compute_max / compute_size_start))
+                    else:
+                        f = f_max
+                    f_values.append(f)
+                    break  # End simulation since we've reached the maximum time
                 else:
-                    f = f_max
-                f_values.append(f)
+                    time_step = factor_increase_time
+                    time_elapsed += time_step
+                    times.append(time_elapsed)
 
-                # Set factor increasing factor
-                if r > 0:
-                    if retraining_cost:
-                        accel_factor = ((lambda_factor * ((1 / r) - 1))/(abs(lambda_factor * ((1 / r) - 1)) + 1))
-                    else: 
-                        accel_factor = (lambda_factor * (1 / r - 1)) 
-                    factor_increase_time *= ((factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))) #TD's method
+                    size *= factor_increase
+                    if size > ceiling:
+                        size = ceiling
+                    sizes.append(size)
+
+                    r -= k
+                    rs.append(r)
+
+                    compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
+                    compute_sizes.append(compute_size)
+
+                    if compute_size < compute_max:
+                        f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
+                                                    np.log(compute_max / compute_size_start))
+                    else:
+                        f = f_max
+                    f_values.append(f)
+
+                    if r > 0:
+                        if retraining_cost:
+                            accel_factor = ((lambda_factor * ((1 / r) - 1)) /
+                                            (abs(lambda_factor * ((1 / r) - 1)) + 1))
+                        else:
+                            accel_factor = (lambda_factor * (1 / r - 1))
+                        factor_increase_time *= ((factor_increase ** accel_factor) /
+                                                 ((1 + f) / (1 + f_old)))
             return times, sizes, rs, ceiling, compute_sizes, f_values
 
-        # Run the simulation
-        factor_increase, r_initial, initial_factor_increase_time, limit_years, lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max = choose_parameters()
-        times, sizes, rs, ceiling, compute_sizes, f_values = dynamic_system_with_lambda(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=lambda_factor)
+        # Set up initial parameters
+        (factor_increase, r_initial, initial_factor_increase_time, limit_years,
+         lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start,
+         compute_max) = choose_parameters()
 
-        # Plot transformed simulation
+        times, sizes, rs, ceiling, compute_sizes, f_values = dynamic_system_with_lambda(
+            r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
+            f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=lambda_factor)
+
+        # Plot the transformed simulation
         plot_single_transformed_simulation(times, sizes, label="AI Capabilities Simulation", Yr_Left_sample=Yr_Left_sample)
 
         # Plot r over time
@@ -199,6 +239,7 @@ def run():
         ax_r.legend()
         st.pyplot(fig_r)
 
+        # Optionally, plot f over time if compute growth is enabled
         if compute_growth:
             fig_f, ax_f = plt.subplots(figsize=(10, 5))
             ax_f.plot(times_in_years, f_values, label='f(t)', color='green')
@@ -208,7 +249,7 @@ def run():
             ax_f.grid(True, which='both', linestyle='--', linewidth=0.5)
             ax_f.legend()
             st.pyplot(fig_f)
-        
+
         # Calculate and plot growth rates
         growth_rates = []
         for i in range(1, len(sizes)):
@@ -237,15 +278,14 @@ def run():
         st.markdown("*Note:* an annual growth rate of 2.77 corresponds to doubling every 3 months. ")
 
     if run_simulation:
-        # User explicitly clicked "Run Simulation"
         run_the_simulation()
         st.session_state.initial_run_done = True
-
     elif not st.session_state.initial_run_done:
-        # First time page load -> auto-run with the defaults
         run_the_simulation()
         st.session_state.initial_run_done = True
-
     else:
-        # We've run once, but user hasn't pressed the button again
         st.write("Press **Run Simulation** (in the sidebar) to generate new results.")
+
+if __name__ == "__main__":
+    run()
+
