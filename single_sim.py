@@ -11,7 +11,7 @@ def transform_sizes_to_years(sizes):
     which leaves a doubling time of 1.5 months. That's 8 doublings per year so 256X
     per year.
 
-    More explanation of why these assumptions are reasonable:
+    More explanation of why these assumptions are reasonable:3
     - Compute will reach ceiling in 5 years according to Epoch.
     - Software algorithms have become twice as efficient every ~8 months, but this
     excludes post-training enhancements so we reduce this to 6 months.
