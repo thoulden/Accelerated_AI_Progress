@@ -161,14 +161,15 @@ def run():
                 if time_elapsed + factor_increase_time > max_time_months:
                     # Only take the fractional time step needed to hit max_time_months
                     delta_t = max_time_months - time_elapsed
-                    # Scale the growth factor proportionally to the fraction of the full step
+                    # Scale the growth factor for size proportionally
                     size *= factor_increase ** (delta_t / factor_increase_time)
                     time_elapsed += delta_t
                     times.append(time_elapsed)
                     if size > ceiling:
                         size = ceiling
                     sizes.append(size)
-                    r -= k
+                    # Scale the update for r proportionally as well
+                    r -= k * (delta_t / factor_increase_time)
                     rs.append(r)
                     compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
                     compute_sizes.append(compute_size)
