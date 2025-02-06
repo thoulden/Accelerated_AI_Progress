@@ -8,14 +8,14 @@ def transform_sizes_to_years(sizes):
     We display AI capabilities in units of "years of progress at recent rates."
     (Assumes that effective AI capabilities are equivalent to a 256× jump per year.)
     """
-    return [np.log2(size) / 8 for size in sizes]  # since log2(256) = 8
+    return [np.log2(size) / 8 for size in sizes]  # since log2(256)=8
 
 def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     """
     Plot a single simulation with transformed sizes.
     
     Parameters:
-        times: list of time points (months)
+        times: list of time points in months
         sizes: list of raw sizes
         label: label for the curve
         Yr_Left_sample: a reference ceiling (in years) to plot
@@ -76,7 +76,7 @@ def run():
         def choose_parameters():
             """
             Set initial parameters and compute the initial time step.
-            Returns:
+            Returns a tuple:
               (factor_increase, r_initial, initial_factor_increase_time, limit_years,
                lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max)
             """
@@ -93,8 +93,8 @@ def run():
             compute_growth_monthly_rate = np.log(2) / compute_doubling_time
             limit_years = Yr_Left_sample
             lambda_factor = lambda_sample
-            # For the initial time step:
-            doubling_time_starting = 3  # months
+            # Use a starting time step computed from a doubling time of 3 months:
+            doubling_time_starting = 3
             implied_month_growth_rate = np.log(2) / doubling_time_starting
             time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
             initial_factor_increase_time = time_takes_to_factor_increase / (1 + f_0)
@@ -105,12 +105,13 @@ def run():
                                        compute_growth_monthly_rate, f_0, f_max, compute_size_start,
                                        compute_max, factor_increase, lambda_factor=0.5):
             """
-            Run the simulation.
-            The simulation always runs for at least 72 months.
-            Then, if at 72 months the model's size is still above the recent pace curve,
-            continue using a fixed small time step (0.1 months) until the recent pace
-            overtakes the model's size.
-            The recent pace is defined as: exp(2.77*(t/12)).
+            Run the simulation with three phases:
+              Phase 1: Always run until 6 years (72 months).
+              Phase 2: At 6 years, if size > exp(2.77*(6)), continue simulation until 8 years (96 months);
+                       otherwise, stop at 6 years.
+              Phase 3: At 8 years, if size > exp(2.77*(8)), then continue simulation until
+                       t_final = (ln(ceiling)/2.77)*12 months (i.e. until the theoretical limit),
+                       otherwise stop at 8 years.
             """
             ceiling = 256 ** limit_years
             r = r_initial
@@ -129,53 +130,76 @@ def run():
             k = r_initial / total_factor_increasings
 
             time_elapsed = 0
+            phase = 1
+            # Set the current phase target (in months)
+            current_max_time = 72  # Phase 1: 6 years
 
-            while size < ceiling and r > 0:
-                # Determine the time step.
-                if time_elapsed < 72:
-                    # Use the normal adaptive time step, but do not overshoot 72 months.
-                    dt = min(factor_increase_time, 72 - time_elapsed)
-                else:
-                    # Post-72 regime: check the recent pace condition.
-                    # Compute the recent pace at current time.
-                    recent_pace = np.exp(2.77 * (time_elapsed / 12))
-                    # If the recent pace already overtakes the model's size, stop.
-                    if recent_pace > size:
-                        break
-                    # Otherwise, use a small fixed time step (e.g., 0.1 months) for finer resolution.
-                    dt = 0.1
-
-                # Save the current f for the update below.
+            while size < ceiling and r > 0 and time_elapsed < current_max_time:
+                # Use dt as the minimum of the adaptive time step and the time remaining in the phase
+                dt = min(factor_increase_time, current_max_time - time_elapsed)
                 f_old = f
 
-                # Update simulation variables using the chosen dt.
+                # Update simulation variables proportionally:
                 time_elapsed += dt
                 times.append(time_elapsed)
-                # Scale the growth for size proportionally.
                 size *= factor_increase ** (dt / factor_increase_time)
                 if size > ceiling:
                     size = ceiling
                 sizes.append(size)
-                # Update r proportionally.
                 r -= k * (dt / factor_increase_time)
                 rs.append(r)
                 compute_size = compute_size_start * np.exp(compute_growth_monthly_rate * time_elapsed)
                 compute_sizes.append(compute_size)
                 if compute_size < compute_max:
-                    f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) / 
+                    f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
                                                np.log(compute_max / compute_size_start))
                 else:
                     f = f_max
                 f_values.append(f)
 
-                # In the normal regime (t<72), update factor_increase_time adaptively.
+                # At the phase boundaries, check the conditions and update the target time.
+                if phase == 1 and time_elapsed >= 72:
+                    # At 6 years: check if size > exp(2.77*(6))
+                    threshold_6yr = np.exp(2.77 * (72/12))  # 72/12 = 6
+                    if size > threshold_6yr:
+                        current_max_time = 96  # move to Phase 2 (8 years)
+                        phase = 2
+                    else:
+                        break  # stop at 6 years
+
+                elif phase == 2 and time_elapsed >= 96:
+                    # At 8 years: check if size > exp(2.77*(96/12)) i.e. exp(2.77*8)
+                    threshold_8yr = np.exp(2.77 * (96/12))  # 96/12 = 8
+                    if size > threshold_8yr:
+                        # Final phase: run until t_final (in months) = (ln(ceiling)/2.77)*12
+                        final_time = (np.log(ceiling) / 2.77) * 12
+                        current_max_time = final_time
+                        phase = 3
+                    else:
+                        break  # stop at 8 years
+
+                # In phase 3, once we reach the final target, we break.
+                if phase == 3 and time_elapsed >= current_max_time:
+                    break
+
+                # In the normal (phase 1 and 2) regimes, update factor_increase_time adaptively.
                 if time_elapsed < 72 and r > 0:
+                    # Phase 1 adaptive update.
                     if retraining_cost:
                         accel_factor = ((lambda_factor * ((1 / r) - 1)) /
                                         (abs(lambda_factor * ((1 / r) - 1)) + 1))
                     else:
                         accel_factor = (lambda_factor * (1 / r - 1))
                     factor_increase_time *= ((factor_increase ** accel_factor) / ((1 + f) / (1 + f_old)))
+                elif phase == 2 and time_elapsed < 96 and r > 0:
+                    # Phase 2 adaptive update.
+                    if retraining_cost:
+                        accel_factor = ((lambda_factor * ((1 / r) - 1)) /
+                                        (abs(lambda_factor * ((1 / r) - 1)) + 1))
+                    else:
+                        accel_factor = (lambda_factor * (1 / r - 1))
+                    factor_increase_time *= ((factor_increase ** accel_factor) / ((1 + f) / (1 + f_old)))
+                # (In Phase 3 we use a fixed small time step if desired; here we continue with the current dt.)
             return times, sizes, rs, ceiling, compute_sizes, f_values
 
         (factor_increase, r_initial, initial_factor_increase_time, limit_years,
@@ -244,3 +268,4 @@ def run():
 
 if __name__ == "__main__":
     run()
+
