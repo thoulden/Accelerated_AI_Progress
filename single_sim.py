@@ -70,7 +70,7 @@ def run():
     # Parameters for the simulation
     compute_growth = st.sidebar.checkbox('Gradual Boost')
     if compute_growth:
-        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0, value=0.10, step=0.1,
+        f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0, value=1.0, step=0.1,
                                                help="After ASARA is deployed, how many times faster does software progress become immediately (compared to the recent pace of software progress)?")
         f_sample_max = st.sidebar.number_input('Max speed-up ($f_{max}$)', min_value=f_sample_min, max_value=1000.0, value=32.0, step=0.1,
                                                help="After ASARA is deployed, how many times faster does software progress reach after 5 years (compared to the recent pace of software progress)?")
