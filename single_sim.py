@@ -5,13 +5,11 @@ import matplotlib.pyplot as plt
 def transform_sizes_to_years(sizes):
     """
     Transform sizes such that 256^n -> n.
-
     We will display AI capabilities in units of "years of progress at recent rates."
     The sims assume that software has recently doubled every 3 months. We assume
     hardware has recently been contributing an equal amount to AI progress,
     which leaves a doubling time of 1.5 months. That's 8 doublings per year so 256X
     per year.
-
     More explanation of why these assumptions are reasonable:
     - Compute will reach ceiling in 5 years according to Epoch.
     - Software algorithms have become twice as efficient every ~8 months, but this
@@ -31,7 +29,6 @@ def transform_sizes_to_years(sizes):
 def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     """
     Plot a single simulation with transformed sizes.
-
     Parameters:
         times: List of time points in months.
         sizes: List of sizes (pre-transformed).
@@ -137,14 +134,11 @@ def run():
                                        compute_max, factor_increase, lambda_factor=0.5, baseline_max_time=72):
             """
             Simulate the dynamics until time_elapsed reaches the current maximum time.
-            
-            The maximum time is determined as follows:
-              - By default, it is set to baseline_max_time (72 months).
-              - However, if for the first time the transformed size (np.log2(size)/8)
-                exceeds the recent pace (time_elapsed/12), then we immediately set
-                the maximum time to be 3 months after that crossing.
-            
-            (In other words, if a breakthrough occurs, the simulation stops at breakthrough_time + 3.)
+            The maximum time is updated as follows:
+              - It is initially set to baseline_max_time (72 months).
+              - If for the first time the transformed size (np.log2(size)/8) exceeds the recent
+                pace (time_elapsed/12), then the maximum time is updated to be the larger of
+                the current maximum or the crossing time plus 3 months.
             """
             ceiling = 256 ** limit_years
             r = r_initial
@@ -164,28 +158,25 @@ def run():
             total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
             k = r_initial / total_factor_increasings
 
-            # Set up the dynamic maximum time.
-            # (By default, it is baseline_max_time, but if a breakthrough occurs,
-            #  we update it to be breakthrough_time + 3.)
+            # Set up the dynamic maximum time:
             current_max_time = baseline_max_time  # in months
             first_crossing_time = None  # will record the first time when transformed size > recent pace
-
             time_elapsed = 0
             while time_elapsed < current_max_time and size < ceiling and r > 0:
-                # Check if we have a breakthrough.
-                # The recent pace line (in transformed units) is: time_elapsed/12 (years),
-                # and the transformed size is np.log2(size)/8.
+                # Check if we have crossed the recent pace line.
+                # The recent pace line in transformed units is: time_elapsed/12 (years)
+                # and transformed size is np.log2(size)/8.
                 if first_crossing_time is None and (np.log2(size) / 8 > time_elapsed / 12):
                     first_crossing_time = time_elapsed
-                    # Here we immediately set the maximum time to be 3 months after the breakthrough.
-                    current_max_time = first_crossing_time + 3
-
+                    # Update the maximum allowed time to be the larger of the current maximum
+                    # or 3 months after the first crossing.
+                    current_max_time = max(current_max_time, first_crossing_time + 3)
                 f_old = f
 
-                # Check if the next full time step overshoots the current maximum time.
+                # Check if the next full time step overshoots the current maximum time
                 if time_elapsed + factor_increase_time > current_max_time:
                     delta_t = current_max_time - time_elapsed
-                    # Scale the growth for size proportionally.
+                    # Scale the growth for size (and r) proportionally to the fractional step.
                     size *= factor_increase ** (delta_t / factor_increase_time)
                     time_elapsed += delta_t
                     times.append(time_elapsed)
@@ -308,4 +299,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
