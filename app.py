@@ -23,7 +23,7 @@ def get_parameters_table_markdown():
 st.title('Simulation of Accelerated AI Progress')
 
 st.markdown(r"""
-This tool complements the post on the pace of software progress once AI can fully replace humans in AI research.
+This tool allows users to enter their own parameterizations for the accompanying post on the pace of AI progress.
 It offers two simulation options:
 
 - **Multiple Simulations:** Run several simulations with uncertainty over key parameters. The output is a plot showing the fraction of simulations where the growth rate of software exceeds a specified threshold over some number of years.
