@@ -72,7 +72,7 @@ def run():
                                             value=0.3, step=0.01,
                                             help="How many times does the pace double if R&D inputs double?")
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
-    constant_r = st.sidebar.checkbox('Constant diminishing returns')
+    constant_r = st.sidebar.checkbox('Constant Diminishing Returns')
 
     # "Run Simulation" button.
     run_simulation = st.sidebar.button('Run Simulation')
