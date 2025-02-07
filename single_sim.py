@@ -72,6 +72,7 @@ def run():
                                             value=0.3, step=0.01,
                                             help="How many times does the pace double if R&D inputs double?")
     retraining_cost = st.sidebar.checkbox('Retraining Cost')
+    constant_r = st.sidebar.checkbox('Constant diminishing returns')
 
     # "Run Simulation" button.
     run_simulation = st.sidebar.button('Run Simulation')
@@ -125,7 +126,10 @@ def run():
             f = f_0
 
             total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
-            k = r_initial / total_factor_increasings
+            if costant_r:
+                k = 0
+            else:
+                k = r_initial / total_factor_increasings
 
             time_elapsed = 0
             while time_elapsed < max_time_months and size < ceiling and r > 0:
