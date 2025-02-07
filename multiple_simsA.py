@@ -46,7 +46,7 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
         lambda_factor                  # 8
     ))
 
-def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost, max_time_months=48):
+def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost, constant_r, max_time_months=48):
     ceiling = 256 ** limit_years
     size = 1.0
     r = r_initial
