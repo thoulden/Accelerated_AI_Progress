@@ -47,7 +47,7 @@ def run():
         st.session_state.simulation_result = None
 
     # Simulation parameters (these inputs may change, but we won’t update results until the button is pressed)
-    compute_growth = st.sidebar.checkbox('Gradual Boost')
+    compute_growth = st.sidebar.checkbox('Gradual Boost', help="Spreads the initial acceleration evenly over 5 years.")
     if compute_growth:
         f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0,
                                                value=1.0, step=0.1,
@@ -71,8 +71,8 @@ def run():
     lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0,
                                             value=0.3, step=0.01,
                                             help="How many times does the pace double if R&D inputs double?")
-    retraining_cost = st.sidebar.checkbox('Retraining Cost')
-    constant_r = st.sidebar.checkbox('Constant Diminishing Returns')
+    retraining_cost = st.sidebar.checkbox('Retraining Cost', help="Imposes a penalty on growth by allocating some progress toward increasing the model training rate.")
+    constant_r = st.sidebar.checkbox('Constant Diminishing Returns', help="Sets diminishing returns to the value selected for the initial period.")
 
     # "Run Simulation" button.
     run_simulation = st.sidebar.button('Run Simulation')
