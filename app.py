@@ -58,7 +58,7 @@ st.markdown(r"""
 In addition to model parameters, you can select whether to enable additional model specifications:
 - **Retraining Cost:** Imposes a penalty on growth by allocating some progress toward increasing the model training rate.
 - **Gradual Boost:** Spreads the initial acceleration evenly over 5 years.
-- **Constant Diminishing Returns:** Assumes that $r$ is fixed at the starting $r_0$ over time.
+- **Constant Diminishing Returns:** Assumes that $r$ is fixed at its initial value over time.
 """)
 
 st.markdown("### Sampling")
