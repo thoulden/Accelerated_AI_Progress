@@ -168,9 +168,9 @@ def run():
     #multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
     multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30", help="These are the comparisson multiples (of the current growth rate) that are reported in the results.")
 
-    compute_growth = st.sidebar.checkbox("Gradual Boost")
-    retraining_cost = st.sidebar.checkbox("Retraining Cost")
-    constant_r = st.sidebar.checkbox("Constant Diminishing Returns")
+    compute_growth = st.sidebar.checkbox("Gradual Boost", help = "Spreads the initial acceleration evenly over 5 years.")
+    retraining_cost = st.sidebar.checkbox("Retraining Cost", help = "Imposes a penalty on growth by allocating some progress toward increasing the model training rate.")
+    constant_r = st.sidebar.checkbox("Constant Diminishing Returns", help = "Sets diminishing returns to the value selected for the initial period.")
     # size_adjustment = st.sidebar.checkbox("size_adjustment") # old code for size adjustment to match SEG results
     # size_adjustment = 'false'
     
