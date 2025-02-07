@@ -55,9 +55,10 @@ parameters_table_md = get_parameters_table_markdown()
 st.markdown(parameters_table_md)
 
 st.markdown(r"""
-In addition to model parameters, you can select whether to enable compute growth or retraining costs:
+In addition to model parameters, you can select whether to enable additional model specifications:
 - **Retraining Cost:** Imposes a penalty on growth by allocating some progress toward increasing the model training rate.
 - **Gradual Boost:** Spreads the initial acceleration evenly over 5 years.
+- **Constant Diminishing Returns:** Assumes that $r$ is fixed at the starting $r_0$ over time.
 """)
 
 st.markdown("### Sampling")
