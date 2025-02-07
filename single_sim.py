@@ -126,7 +126,7 @@ def run():
             f = f_0
 
             total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
-            if costant_r:
+            if constant_r:
                 k = 0
             else:
                 k = r_initial / total_factor_increasings
