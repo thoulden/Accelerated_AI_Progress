@@ -54,7 +54,10 @@ def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increa
 
     times, sizes, rs, compute_sizes, f_values = [0], [size], [r], [1], [f]
     time_elapsed = 0
-    k = r_initial / (np.log(ceiling) / np.log(factor_increase))
+    if constant_r:
+        k = 0
+    else:
+        k = r_initial / (np.log(ceiling) / np.log(factor_increase))
 
     while time_elapsed < max_time_months and size < ceiling and r > 0:
         f_old = f
@@ -167,6 +170,7 @@ def run():
 
     compute_growth = st.sidebar.checkbox("Gradual Boost")
     retraining_cost = st.sidebar.checkbox("Retraining Cost")
+    constant_r = st.sidebar.checkbox("Constant Diminishing Returns")
     # size_adjustment = st.sidebar.checkbox("size_adjustment") # old code for size adjustment to match SEG results
     # size_adjustment = 'false'
     
