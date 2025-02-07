@@ -179,7 +179,7 @@ def run():
     conditions = list(product([1, 4, 12, 36], multiples))
 
     if run_button:
-        probabilities, times_matrix, sizes_matrix, params_list = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth)
+        probabilities, times_matrix, sizes_matrix, params_list = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth, constant_r)
 
         data = []
         for time_period in sorted(set(c[0] for c in probabilities.keys())):
