@@ -97,7 +97,7 @@ def calculate_summary_statistics_binary(times, conditions):
 
     return results
 
-def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth):
+def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth, constant_r):
     params_batch = sample_parameters_batch(num_sims, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, compute_growth)
     times_matrix = []
     sizes_matrix = []
@@ -108,7 +108,7 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
     for i, params in enumerate(params_batch):
         r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor = params
         times, sizes, rs, compute_sizes, f_values = dynamic_system_with_lambda(
-         r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost)
+         r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost, constant_r)
         times_matrix.append(times)
         sizes_matrix.append(sizes)
         params_list.append({
