@@ -237,6 +237,7 @@ def run():
     ax_growth.set_title('Annualized Software Growth Rate Over Time')
     ax_growth.grid(True, which='both', linestyle='--', linewidth=0.5)
     ax_growth.legend()
+    ax_growth.set_yscale('log')
     st.pyplot(fig_growth)
     st.markdown("*Note:* an annual growth rate of 2.77 corresponds to doubling every 3 months.")
 
