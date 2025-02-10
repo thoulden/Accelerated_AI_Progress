@@ -224,6 +224,8 @@ def run():
         else:
             growth_rates.append(np.nan)
     growth_times = times_in_years[1:]
+    growth_times = growth_times[:-1] # drop last obs to avoid some timing issues
+    growth_rates = growth_rates[:-1]
     g = 2.77
     multipliers = [3, 10, 30]
     fig_growth, ax_growth = plt.subplots(figsize=(10, 5))
