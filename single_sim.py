@@ -153,8 +153,10 @@ def run():
                 compute_sizes.append(compute_size)
 
                 if compute_size < compute_max:
-                    f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
-                                               np.log(compute_max / compute_size_start))
+                    f = f_0 + (f_max - f_0) * (compute_size / compute_max) 
+                                               
+                    #f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
+                                               #np.log(compute_max / compute_size_start))
                 else:
                     f = f_max
                 f_values.append(f)
