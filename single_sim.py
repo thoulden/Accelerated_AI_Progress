@@ -221,7 +221,8 @@ def run():
     for i in range(1, len(result["sizes"])):
         dt = times_in_years[i] - times_in_years[i-1]
         if dt > 0:
-            rate = (np.log(result["sizes"][i]) - np.log(result["sizes"][i-1])) / dt
+            rate = (result["sizes"][i] - result["sizes"][i-1])/(result["sizes"][i] * dt)
+            #rate = (np.log(result["sizes"][i]) - np.log(result["sizes"][i-1])) / dt
             growth_rates.append(rate)
         else:
             growth_rates.append(np.nan)
