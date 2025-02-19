@@ -124,7 +124,6 @@ def run():
             compute_sizes = [compute_size]
             f_values = [f_0]
             f = f_0
-
             total_factor_increasings = np.log(ceiling) / np.log(factor_increase)
             if constant_r:
                 k = 0
@@ -153,7 +152,9 @@ def run():
                 compute_sizes.append(compute_size)
 
                 if compute_size < compute_max:
-                    f = f_0 + (f_max - f_0) * (compute_size / compute_max) 
+                    f_growth_rate = np.log(f_max/f_0)/(5*12) #reaches ceiling in 5 years
+                    f =  f_0*np.exp(time_elapsed*f_growth_rate)
+                    #f = f_0 + (f_max - f_0) * (compute_size / compute_max) 
                                                
                     #f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
                                                #np.log(compute_max / compute_size_start))
