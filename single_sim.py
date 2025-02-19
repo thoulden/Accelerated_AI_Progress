@@ -153,7 +153,7 @@ def run():
 
                 if compute_size < compute_max:
                     f_growth_rate = np.log(f_max/f_0)/(5*12) #reaches ceiling in 5 years
-                    f =  f_0*np.exp(time_elapsed*f_growth_rate)
+                    f =  f_0*np.exp(time_elapsed*f_growth_rate) #ensures exponential growth in f; options below are for old linear f approach
                     #f = f_0 + (f_max - f_0) * (compute_size / compute_max) 
                                                
                     #f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
@@ -212,7 +212,7 @@ def run():
         fig_f, ax_f = plt.subplots(figsize=(10, 5))
         ax_f.plot(times_in_years, result["f_values"], label='f(t)', color='green')
         ax_f.set_xlabel('Time (years)')
-        ax_f.set_ylabel('f')
+        ax_f.set_ylabel('f (log scale)')
         ax_f.set_title('Acceleration Factor Over Time')
         ax_f.grid(True, which='both', linestyle='--', linewidth=0.5)
         ax_f.set_yscale('log')
