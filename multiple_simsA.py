@@ -66,7 +66,9 @@ def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increa
         compute_size = compute_sizes[-1] * np.exp(compute_growth_monthly_rate * initial_factor_increase_time)
 
         if compute_size < 4096:
-            f = f_0 + (f_max - f_0) * (compute_size / 4096) #for exponential f growth
+            f_growth_rate = np.log(f_max/f_0)/(5*12) #reaches ceiling in 5 years
+            f =  f_0*np.exp(time_elapsed*f_growth_rate) #ensures exponential growth in f; options below are for old linear f approach       
+            #f = f_0 + (f_max - f_0) * (compute_size / 4096) #for exponential f growth
             #f = f_0 + (f_max - f_0) * (np.log(compute_size) / np.log(4096)) # 12 doublings, for linear f growth
         else:
             f = f_max
