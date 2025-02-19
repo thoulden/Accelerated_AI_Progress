@@ -214,7 +214,7 @@ def run():
         ax_f.set_ylabel('f')
         ax_f.set_title('Acceleration Factor Over Time')
         ax_f.grid(True, which='both', linestyle='--', linewidth=0.5)
-        ax_growth.set_yscale('log')
+        ax_f.set_yscale('log')
         ax_f.legend()
         st.pyplot(fig_f)
 
