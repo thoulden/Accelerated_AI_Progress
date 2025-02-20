@@ -10,7 +10,7 @@ import single_sim
 # Parameters table in Markdown format
 st.set_page_config(
     page_title="AI Progress Sim",
-    page_icon=":smiley:",  # You can also use an image file or URL
+    page_icon="🤖:",  # You can also use an image file or URL
     layout="wide",  # Other options: "centered"
     initial_sidebar_state="expanded"  # Other options: "collapsed", "auto"
 )
