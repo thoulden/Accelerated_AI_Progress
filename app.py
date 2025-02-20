@@ -8,6 +8,12 @@ import multiple_simsA
 import single_sim
 
 # Parameters table in Markdown format
+st.set_page_config(
+    page_title="Your App Title",
+    page_icon=":smiley:",  # You can also use an image file or URL
+    layout="wide",  # Other options: "centered"
+    initial_sidebar_state="expanded"  # Other options: "collapsed", "auto"
+)
 def get_parameters_table_markdown():
     table_markdown = r'''
 | Parameter                                  | Description                                                         | Low Estimate  | Median Estimate | High Estimate |
