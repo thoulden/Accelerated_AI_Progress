@@ -3,6 +3,7 @@ name: Keep Streamlit Awake
 on:
   schedule:
     - cron: '0 */10 * * *'  # Every 10 hours, at minute 0
+  workflow_dispatch:
 
 jobs:
   ping:
