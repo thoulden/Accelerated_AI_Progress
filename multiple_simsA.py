@@ -208,10 +208,10 @@ def run():
                 simulation_results.append({
                     "Simulation": i + 1,
                     "r_initial": sim_params["r_initial"],
-                    "factor_increase": sim_params["factor_increase"],
+                    # "factor_increase": sim_params["factor_increase"],
                     "initial_factor_increase_time": sim_params["initial_factor_increase_time"],
                     "limit_years": sim_params["limit_years"],
-                    "compute_growth_monthly_rate": sim_params["compute_growth_monthly_rate"],
+                    # "compute_growth_monthly_rate": sim_params["compute_growth_monthly_rate"],
                     "f_0": sim_params["f_0"],
                     "f_max": sim_params["f_max"],
                     "lambda_factor": sim_params["lambda_factor"],
