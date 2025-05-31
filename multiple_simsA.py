@@ -164,8 +164,8 @@ def run():
     r_high = st.sidebar.number_input(r"$r$; upper bound", min_value=r_low, value=3.6)
     ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=5.0, help="At the start of the simulation, how far is software from effective limits? Measured in the years of AI progress at recent rates of progress.")
     ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=13.0)
-    lf_low = st.sidebar.number_input(r"Parallelizability ($\lambda$); lower bound", min_value=0.01, value=0.15, help="If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double?")
-    lf_high = st.sidebar.number_input(r"Parallelizability ($\lambda$); upper bound", min_value=lf_low, value=0.6)
+    lf_low = st.sidebar.number_input(r"Parallelizability ($p$); lower bound", min_value=0.01, value=0.15, help="If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double?")
+    lf_high = st.sidebar.number_input(r"Parallelizability ($p$); upper bound", min_value=lf_low, value=0.6)
 
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
     #multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
