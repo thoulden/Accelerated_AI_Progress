@@ -68,7 +68,7 @@ def run():
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
                                               min_value=1.0, max_value=50.0, value=9.0, step=0.5,
                                               help="How far is software from effective limits (in years)?")
-    lambda_sample = st.sidebar.number_input('Parallelizability (λ)', min_value=0.01, max_value=1.0,
+    lambda_sample = st.sidebar.number_input('Parallelizability ($p$)', min_value=0.01, max_value=1.0,
                                             value=0.3, step=0.01,
                                             help="How many times does the pace double if R&D inputs double?")
     retraining_cost = st.sidebar.checkbox('Retraining Cost', help="Imposes a penalty on growth by allocating some progress toward increasing the model training rate.")
