@@ -24,7 +24,6 @@ def get_parameters_table_markdown():
 | Parallelizability of research, $p$   | If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double?                           | 0.15          | 0.3             | 0.6           |
     '''
     return table_markdown
-st.markdown(r"""Note: relative to standard calibrations of parallelizability and diminishing returns to research effort, both $r$ and $p$ are deflated by the degree of diminishing returns to cognitive labour in software research effort which we take to be 0.5.""")
 
 # Main Page content
 st.title('Simulation of Accelerated AI Progress')
@@ -60,6 +59,7 @@ The table below summarizes the model parameters:
 # Display the parameters table
 parameters_table_md = get_parameters_table_markdown()
 st.markdown(parameters_table_md)
+st.markdown(r"""Note: relative to standard calibrations of parallelizability and diminishing returns to research effort, both $r$ and $p$ are deflated by the degree of diminishing returns to cognitive labour in software research effort which we take to be 0.5.""")
 
 st.markdown(r"""
 In addition to model parameters, you can select whether to enable additional model specifications:
