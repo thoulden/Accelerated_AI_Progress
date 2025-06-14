@@ -63,8 +63,8 @@ st.markdown(r"""Note: relative to standard calibrations of parallelizability and
 
 st.markdown(r"""
 In addition to model parameters, you can select whether to enable additional model specifications:
-- **Retraining Cost:** Imposes a penalty on growth by allocating some progress toward increasing the model training rate.
-- **Gradual Boost:** Spreads the initial acceleration evenly over 5 years.
+- **Retraining Cost:** Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly. 
+- **Gradual Boost:** The initial speed-up from ASARA ramps up gradually over 5 years.
 - **Constant Diminishing Returns:** Assumes that $r$ is fixed at its initial value over time.
 """)
 
