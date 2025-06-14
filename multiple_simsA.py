@@ -157,22 +157,21 @@ def run():
     run_button = st.sidebar.button("Run Simulations")
 
     st.sidebar.markdown("### Key Parameter Sampling Bounds")
-    ib_low = st.sidebar.number_input(r"Initial speed-up ($f$); lower bound", min_value=0.1, value=2.0, help="After ASARA is deployed, how many times faster does software progress become (compared to the recent pace of software progress)?")
+    ib_low = st.sidebar.number_input(r"Initial speed-up ($f$); lower bound", min_value=0.1, value=2.0, help="After ASARA is deployed, how much faster is software progress compared to the recent pace of software progress?")
     ib_high = st.sidebar.number_input(r"Initial speed-up ($f$); upper bound)", min_value=ib_low, value=32.0)
-    r_low = st.sidebar.number_input(r"$r$; lower bound", min_value=0.01, value=0.4, help="Controls diminishing returns to research. Each time cognitive inputs to software R&D double, how many times does software double? (Note this parameter falls over time.)")
+    r_low = st.sidebar.number_input(r"$r$; lower bound", min_value=0.01, value=0.4, help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
     r_high = st.sidebar.number_input(r"$r$; upper bound", min_value=r_low, value=3.6)
-    ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=5.0, help="At the start of the simulation, how far is software from effective limits? Measured in the years of AI progress at recent rates of progress.")
+    ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=5.0, help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of “years of AI progress at the recent rate of progress”.)")
     ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=13.0)
-    lf_low = st.sidebar.number_input(r"Parallelizability ($p$); lower bound", min_value=0.01, value=0.15, help="If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double?")
+    lf_low = st.sidebar.number_input(r"Parallelizability ($p$); lower bound", min_value=0.01, value=0.15, help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
     lf_high = st.sidebar.number_input(r"Parallelizability ($p$); upper bound", min_value=lf_low, value=0.6)
 
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
-    #multiples_input = st.sidebar.text_input("Multiples (comma-separated)", value="3,10,30")
     multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30", help="These are the comparisson multiples (of the current growth rate) that are reported in the results.")
 
-    compute_growth = st.sidebar.checkbox("Gradual Boost", help = "Spreads the initial acceleration evenly over 5 years.")
-    retraining_cost = st.sidebar.checkbox("Retraining Cost", help = "Imposes a penalty on growth by allocating some progress toward increasing the model training rate.")
-    constant_r = st.sidebar.checkbox("Constant Diminishing Returns", help = "Sets diminishing returns to the value selected for the initial period.")
+    compute_growth = st.sidebar.checkbox("Gradual Boost", help = "The initial speed-up from ASARA ramps up gradually over 5 years.")
+    retraining_cost = st.sidebar.checkbox("Retraining Cost", help = "Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
+    constant_r = st.sidebar.checkbox("Constant Diminishing Returns", help = "Assumes that $r$ is fixed at its initial value over time.")
     # size_adjustment = st.sidebar.checkbox("size_adjustment") # old code for size adjustment to match SEG results
     # size_adjustment = 'false'
     
