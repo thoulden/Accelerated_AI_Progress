@@ -172,9 +172,6 @@ def run():
     compute_growth = st.sidebar.checkbox("Gradual Boost", help = "The initial speed-up from ASARA ramps up gradually over 5 years.")
     retraining_cost = st.sidebar.checkbox("Retraining Cost", help = "Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
     constant_r = st.sidebar.checkbox("Constant Diminishing Returns", help = "Assumes that $r$ is fixed at its initial value over time.")
-    # size_adjustment = st.sidebar.checkbox("size_adjustment") # old code for size adjustment to match SEG results
-    # size_adjustment = 'false'
-    
     
     multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
     conditions = list(product([1, 4, 12, 36], multiples))
