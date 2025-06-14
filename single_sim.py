@@ -47,32 +47,32 @@ def run():
         st.session_state.simulation_result = None
 
     # Simulation parameters (these inputs may change, but we won’t update results until the button is pressed)
-    compute_growth = st.sidebar.checkbox('Gradual Boost', help="Spreads the initial acceleration evenly over 5 years.")
+    compute_growth = st.sidebar.checkbox('Gradual Boost', help="The initial speed-up from ASARA ramps up gradually over 5 years.")
     if compute_growth:
         f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0,
                                                value=1.0, step=0.1,
-                                               help="How many times faster does software progress become immediately?")
+                                               help="After ASARA is deployed, how much faster is software progress compared to the recent pace of software progress immediately?")
         f_sample_max = st.sidebar.number_input('Max speed-up ($f_{max}$)', min_value=f_sample_min,
                                                max_value=1000.0, value=32.0, step=0.1,
                                                help="Max speed-up after 5 years.")
     else:
         f_sample = st.sidebar.number_input('Initial speed-up ($f$)', min_value=0.0, max_value=1000.0,
                                            value=8.0, step=0.1,
-                                           help="How many times faster does software progress become?")
+                                           help="After ASARA is deployed, how much faster is software progress compared to the recent pace of software progress?")
         f_sample_max = f_sample
         f_sample_min = f_sample
 
     r_0_sample = st.sidebar.number_input('$r$', min_value=0.0, max_value=5.0,
                                          value=1.2, step=0.1,
-                                         help="Controls diminishing returns to research.")
+                                         help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
                                               min_value=1.0, max_value=50.0, value=9.0, step=0.5,
-                                              help="How far is software from effective limits (in years)?")
+                                              help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of “years of AI progress at the recent rate of progress”.)")
     lambda_sample = st.sidebar.number_input('Parallelizability ($p$)', min_value=0.01, max_value=1.0,
                                             value=0.3, step=0.01,
-                                            help="How many times does the pace double if R&D inputs double?")
-    retraining_cost = st.sidebar.checkbox('Retraining Cost', help="Imposes a penalty on growth by allocating some progress toward increasing the model training rate.")
-    constant_r = st.sidebar.checkbox('Constant Diminishing Returns', help="Sets diminishing returns to the value selected for the initial period.")
+                                            help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
+    retraining_cost = st.sidebar.checkbox('Retraining Cost', help="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
+    constant_r = st.sidebar.checkbox('Constant Diminishing Returns', help="Assumes that r is fixed at its initial value over time.")
 
     # "Run Simulation" button.
     run_simulation = st.sidebar.button('Run Simulation')
