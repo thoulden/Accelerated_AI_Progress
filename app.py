@@ -59,7 +59,6 @@ The table below summarizes the model parameters:
 # Display the parameters table
 parameters_table_md = get_parameters_table_markdown()
 st.markdown(parameters_table_md)
-st.markdown(r"""Note: relative to standard calibrations of parallelizability and diminishing returns to research effort, both $r$ and $p$ are deflated by the degree of diminishing returns to cognitive labour in software research effort which we take to be 0.5.""")
 
 st.markdown(r"""
 In addition to model parameters, you can select whether to enable additional model specifications:
@@ -72,4 +71,7 @@ st.markdown("### Sampling")
 st.markdown(
 r"When 'Multiple Simulations' is selected, randomization occurs over log-uniform distributions for $f$, $r_0$, and $p$, while the years until the ceiling are randomized over a uniform distribution. The bounds for these distributions come from the sidebar inputs."
 )
+
+st.markdown(r"### Clarifying the meaning of $r$ and $p$.")
+st.markdown(r"As described in BOX, we define $r$ and $p$ such that $r = \alpha \lambda / \beta$ and $p = \alpha \lambda$ from the semi-endogenous software progress frunction $g_S = (L^\alpha C^{1-\alpha})^\lambda S^{-\beta}$. ")
 
