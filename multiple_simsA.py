@@ -191,7 +191,7 @@ def run():
         # Example usage:
         md_table = to_markdown_table(df)
         st.write("###### What is the probability AI progress is X times faster for N months?")
-        st.write("(More precisely, what is the probability that there is an N year period where the average pace of AI software progress is X times faster than the recent pace of overall AI progress?)")
+        st.write("(More precisely, what is the probability that there is an N month period where the average pace of AI software progress is X times faster than the recent pace of overall AI progress?)")
         st.markdown(md_table)
 
         #Create DataFrame for times & sizes
