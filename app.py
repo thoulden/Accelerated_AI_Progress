@@ -32,7 +32,7 @@ st.markdown(r"""
 This tool allows users to enter their own parameterizations for the accompanying post on the pace of AI progress.
 It offers two simulation options:
 
-- **Multiple Simulations:** Run several simulations with uncertainty over key parameters. The output is a plot showing the fraction of simulations where the growth rate of software exceeds a specified threshold over some number of years.
+- **Multiple Simulations:** Run several simulations with uncertainty over key parameters. The output is a table showing the fraction of simulations where the average pace of software progress exceeds a specified threshold over some number of years.
 - **Single Simulation:** Run a single simulation under specific parameter values to illustrate the path of AI progress, including the evolution of diminishing research productivity and growth rates over time.
 
 The simulation assumes that compute remains constant over time.
