@@ -74,7 +74,7 @@ r"When 'Multiple Simulations' is selected, randomization occurs over log-uniform
 
 st.markdown(r"#### Deriving $r$ and $p$.")
 st.markdown(r"Consider the semi-endogenous software progress function:")
-st.markdown(r"""$Software Growth = (L^\alpha C^{1-\alpha})^\lambda S^{-\beta}$""")
+st.markdown(r"""$\text{Software Growth} = (L^\alpha C^{1-\alpha})^\lambda S^{-\beta}$""")
 st.markdown(r"""where:
 - Research investment combines human labor ($L$) and compute ($C$)
 - $L$ represents human labor input
