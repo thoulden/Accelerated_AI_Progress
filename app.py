@@ -83,8 +83,8 @@ st.markdown(r"""where:
 - α, λ, and β are parameters
 
 From these parameters, we define our two key model inputs:
-- r = λα/β
-- p = λα
+- $r$ = λα/β
+- $p$ = λα
 
 For additional details, see [LINK].""")
 
