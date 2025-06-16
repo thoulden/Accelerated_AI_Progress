@@ -68,7 +68,7 @@ def run():
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
                                               min_value=1.0, max_value=50.0, value=9.0, step=0.5,
                                               help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of “years of AI progress at the recent rate of progress”.)")
-    lambda_sample = st.sidebar.number_input('Parallelizability ($p$)', min_value=0.01, max_value=1.0,
+    lambda_sample = st.sidebar.number_input('Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
                                             value=0.3, step=0.01,
                                             help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
     retraining_cost = st.sidebar.checkbox('Retraining Cost', help="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
