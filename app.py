@@ -73,5 +73,16 @@ r"When 'Multiple Simulations' is selected, randomization occurs over log-uniform
 )
 
 st.markdown(r"#### Deriving $r$ and $p$.")
-st.markdown(r"Consider the semi-endogenous software progress function $g_S = (L^\alpha C^{1-\alpha})^\lambda S^{-\beta}$; where research investment combines both human labor, $L$, and compute, $C$. We define our two paramaters of interest, $r$ and $p$, in terms of exponents from the software progress function: $r = \lambda \alpha / \beta$ and $p = \lambda \alpha$. For further details, see LINK. ")
+st.markdown(r"Consider the semi-endogenous software progress function:")
+st.markdown(r"""$g_S = (L^\alpha C^{1-\alpha})^\lambda S^{-\beta}$""")
+st.markdown(r"""where:
+- **Research investment combines human labor (L) and compute (C)
+- **L represents human labor input
+- **C represents computational resources
+- **S represents the existing software stock
+- **α, λ, and β are parameters
+From these parameters, we define our two key model inputs:
+- **r = λα/β
+- **p = λα
+For additional details, see [LINK].""")
 
