@@ -163,8 +163,8 @@ def run():
     r_high = st.sidebar.number_input(r"$r$; upper bound", min_value=r_low, value=3.6)
     ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=6.0, help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of “years of AI progress at the recent rate of progress”.)")
     ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=16.0)
-    lf_low = st.sidebar.number_input(r"Parallelizability ($p$); lower bound", min_value=0.01, value=0.15, help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
-    lf_high = st.sidebar.number_input(r"Parallelizability ($p$); upper bound", min_value=lf_low, value=0.6)
+    lf_low = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); lower bound", min_value=0.01, value=0.15, help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
+    lf_high = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); upper bound", min_value=lf_low, value=0.6)
 
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
     multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30", help="These are the comparisson multiples (of the current growth rate) that are reported in the results.")
