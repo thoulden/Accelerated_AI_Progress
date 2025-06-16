@@ -73,5 +73,5 @@ r"When 'Multiple Simulations' is selected, randomization occurs over log-uniform
 )
 
 st.markdown(r"### Clarifying the meaning of $r$ and $p$.")
-st.markdown(r"As described in BOX, we define $r$ and $p$ such that $r = \alpha \lambda / \beta$ and $p = \alpha \lambda$ from the semi-endogenous software progress frunction $g_S = (L^\alpha C^{1-\alpha})^\lambda S^{-\beta}$. ")
+st.markdown(r"As described in BOX, we define $r$ and $p$ such that $r = \alpha \lambda / \beta$ and $p = \alpha \lambda$ from the semi-endogenous software progress frunction $g_S = (L^\alpha C^{1-\alpha})^\lambda S^{-\beta}$. TEST")
 
