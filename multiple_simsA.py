@@ -161,8 +161,8 @@ def run():
     ib_high = st.sidebar.number_input(r"Initial speed-up ($f$); upper bound)", min_value=ib_low, value=32.0)
     r_low = st.sidebar.number_input(r"$r$; lower bound", min_value=0.01, value=0.4, help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
     r_high = st.sidebar.number_input(r"$r$; upper bound", min_value=r_low, value=3.6)
-    ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=5.0, help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of “years of AI progress at the recent rate of progress”.)")
-    ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=13.0)
+    ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=6.0, help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of “years of AI progress at the recent rate of progress”.)")
+    ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=16.0)
     lf_low = st.sidebar.number_input(r"Parallelizability ($p$); lower bound", min_value=0.01, value=0.15, help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
     lf_high = st.sidebar.number_input(r"Parallelizability ($p$); upper bound", min_value=lf_low, value=0.6)
 
