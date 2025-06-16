@@ -72,7 +72,7 @@ st.markdown(
 r"When 'Multiple Simulations' is selected, randomization occurs over log-uniform distributions for $f$, $r_0$, and $p$, while the years until the ceiling are randomized over a uniform distribution. The bounds for these distributions come from the sidebar inputs."
 )
 
-st.markdown(r"#### Deriving $r$ and $p$")
+st.markdown(r"#### Defining the inputs $r$ and $p$")
 st.markdown(r"Consider the semi-endogenous software progress function:")
 st.markdown(r"""$\text{Software Growth} = (L^\alpha C^{1-\alpha})^\lambda S^{-\beta}$""")
 st.markdown(r"""where:
