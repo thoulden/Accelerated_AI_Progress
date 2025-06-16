@@ -76,13 +76,15 @@ st.markdown(r"#### Deriving $r$ and $p$.")
 st.markdown(r"Consider the semi-endogenous software progress function:")
 st.markdown(r"""$g_S = (L^\alpha C^{1-\alpha})^\lambda S^{-\beta}$""")
 st.markdown(r"""where:
-- **Research investment combines human labor (L) and compute (C)
-- **L represents human labor input
-- **C represents computational resources
-- **S represents the existing software stock
-- **α, λ, and β are parameters
+- Research investment combines human labor ($L$) and compute ($C$)
+- $L$ represents human labor input
+- $C$ represents computational resources
+- $S$ represents the existing software stock
+- α, λ, and β are parameters
+
 From these parameters, we define our two key model inputs:
-- **r = λα/β
-- **p = λα
+- r = λα/β
+- p = λα
+
 For additional details, see [LINK].""")
 
