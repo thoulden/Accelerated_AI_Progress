@@ -20,7 +20,7 @@ def get_parameters_table_markdown():
 |--------------------------------------------|---------------------------------------------------------------------|---------------|-----------------|---------------|
 | Initial Speed Up ($f$)                      | After AI Systems for AI R&D Automation (ASARA) is deployed, how many times faster does software progress become (compared to the recent pace of software progress)?  | 2             | 8               | 32            |
 | Returns to Software Research ($r$)                       | Controls the degree of diminishing returns to research. Each time cognitive inputs to software R&D double, how many times does software double? (Note this parameter falls over time.)                | 0.4           | 1.2             | 3.6           |
-| Distance to effective limits on software   | At the start of the simulation, how far is software from effective limits? Measured in the years of AI progress at recent rates of progress.         | 6             | 9.8               | 16            |
+| Distance to effective limits on software   | At the start of the simulation, how far is software from effective limits? Measured in the years of AI progress at recent rates of progress.         | 6             | 11               | 16            |
 | Diminishing returns to parallel labour ($p$)   | If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double?                           | 0.15          | 0.3             | 0.6           |
     '''
     return table_markdown
