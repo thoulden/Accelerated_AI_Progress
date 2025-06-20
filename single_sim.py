@@ -62,7 +62,7 @@ def run():
         f_sample_max = f_sample
         f_sample_min = f_sample
 
-    r_0_sample = st.sidebar.number_input('$r$', min_value=0.0, max_value=5.0,
+    r_0_sample = st.sidebar.number_input('Returns to Software R&D ($r$)', min_value=0.0, max_value=5.0,
                                          value=1.2, step=0.1,
                                          help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
