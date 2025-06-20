@@ -66,7 +66,7 @@ def run():
                                          value=1.2, step=0.1,
                                          help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
-                                              min_value=1.0, max_value=50.0, value=9, step=0.5,
+                                              min_value=1.0, max_value=50.0, value=9.0, step=0.5,
                                               help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of “years of AI progress at the recent rate of progress”.)")
     lambda_sample = st.sidebar.number_input('Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
                                             value=0.3, step=0.01,
@@ -250,4 +250,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
