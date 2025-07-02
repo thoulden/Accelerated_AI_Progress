@@ -71,9 +71,10 @@ def run():
     lambda_sample = st.sidebar.number_input('Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
                                         value=0.3, step=0.01,
                                         help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
-    software_contribution = st.sidebar.number_input('Fraction of total AI progress that's due to better software (rather than more compute)?', min_value=0.01, max_value=0.99,
-                                        value=0.5, step=0.01,
-                                        help="A higher fraction means that the software progress modelled contributes more to the overall AI progress.")
+    lambda_sample1 = st.sidebar.number_input('1Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
+                                        value=0.3, step=0.01,
+                                        help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
+    
                                                 
     retraining_cost = st.sidebar.checkbox('Retraining Cost', help="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
     constant_r = st.sidebar.checkbox('Constant Diminishing Returns', help="Assumes that r is fixed at its initial value over time.")
