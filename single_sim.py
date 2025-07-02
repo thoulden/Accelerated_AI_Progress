@@ -71,7 +71,7 @@ def run():
     lambda_sample = st.sidebar.number_input('Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
                                         value=0.3, step=0.01,
                                         help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
-    lambda_sample1 = st.sidebar.number_input('1Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
+    lambda_sample1 = st.sidebar.number_input('Fraction of total AI progress that's due to better software 1Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
                                         value=0.3, step=0.01,
                                         help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
     
