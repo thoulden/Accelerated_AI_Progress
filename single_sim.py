@@ -63,15 +63,17 @@ def run():
         f_sample_min = f_sample
 
     r_0_sample = st.sidebar.number_input('Returns to Software R&D ($r$)', min_value=0.0, max_value=5.0,
-                                         value=1.2, step=0.1,
-                                         help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
+                                        value=1.2, step=0.1,
+                                        help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
-                                              min_value=1.0, max_value=60.0, value=11.0, step=0.5,
-                                              help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of \“years of AI progress at the recent rate of progress\”.)")
+                                        min_value=1.0, max_value=60.0, value=11.0, step=0.5,
+                                        help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of \“years of AI progress at the recent rate of progress\”.)")
     lambda_sample = st.sidebar.number_input('Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
                                         value=0.3, step=0.01,
                                         help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
-                                   
+    software_contribution = st.sidebar.number_input('Fraction of total AI progress that's due to better software (rather than more compute)?', min_value=0.01, max_value=0.99,
+                                        value=0.5, step=0.01,
+                                        help="A higher fraction means that the software progress modelled contributes more to the overall AI progress.")
     retraining_cost = st.sidebar.checkbox('Retraining Cost', help="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
     constant_r = st.sidebar.checkbox('Constant Diminishing Returns', help="Assumes that r is fixed at its initial value over time.")
 
