@@ -165,6 +165,9 @@ def run():
     ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=16.0)
     lf_low = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); lower bound", min_value=0.01, value=0.15, help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
     lf_high = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); upper bound", min_value=lf_low, value=0.6)
+    software_contribution_param = st.sidebar.number_input('Fraction of total AI progress that is due to better software (rather than more compute)?', min_value=0.01, max_value=0.99,
+                                        value=0.5, step=0.01,
+                                        help="A larger fraction means that the software progress modelled contributes more to the overall AI progress.")
 
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
     multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30", help="These are the comparisson multiples (of the current growth rate) that are reported in the results.")
