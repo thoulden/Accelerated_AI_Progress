@@ -70,7 +70,7 @@ In addition to model parameters, you can select whether to enable additional mod
 
 st.markdown("#### Sampling")
 st.markdown(
-r"When 'Multiple Simulations' is selected, randomization occurs over log-uniform distributions for $f$, $r_0$, and $p$, while the years until the ceiling are randomized over a uniform distribution. The bounds for these distributions come from the sidebar inputs."
+r"When 'Multiple Simulations' is selected, randomization occurs over log-uniform distributions for $f$, $r_0$, and $p$, while the years until the ceiling are randomized over a uniform distribution. The bounds for these distributions come from the sidebar inputs. Note that we don't sample over the fraction of AI progress due to software progress, but instead leave this as a deterministic parameter."
 )
 
 st.markdown(r"#### Defining the inputs $r$ and $p$")
