@@ -2,13 +2,15 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
-def transform_sizes_to_years(sizes):
+def transform_sizes_to_years(sizes, software_contribution):
     """
     Transform sizes such that 256^n -> n.
     We display AI capabilities in units of "years of progress at recent rates."
     (Assumes that effective AI capabilities are equivalent to a 256× jump per year.)
     """
-    return [np.log2(size) / 8 for size in sizes]  # since log2(256) = 8
+    annual_software_doubles = 4 
+    normalizer = annual_software_doubles/software_contribution
+    return [np.log2(size) / normalizer for size in sizes]  # since log2(256) = 8
 
 def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     """
@@ -71,7 +73,7 @@ def run():
     lambda_sample = st.sidebar.number_input('Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
                                         value=0.3, step=0.01,
                                         help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
-    lambda_sample1 = st.sidebar.number_input('Fraction of total AI progress that is due to better software (rather than more compute)?', min_value=0.01, max_value=0.99,
+    software_contribution = st.sidebar.number_input('Fraction of total AI progress that is due to better software (rather than more compute)?', min_value=0.01, max_value=0.99,
                                         value=0.5, step=0.01,
                                         help="A larger fraction means that the software progress modelled contributes more to the overall AI progress.")
     
