@@ -195,15 +195,18 @@ def run():
             "rs": rs,
             "ceiling": ceiling,
             "compute_sizes": compute_sizes,
-            "f_values": f_values
+            "f_values": f_values,
+            "software_contribution": software_contribution
         }
         st.session_state.initial_run_done = True
 
     # Use the stored simulation result for plotting.
     result = st.session_state.simulation_result
 
+    # Pass software_contribution to the plotting function
     plot_single_transformed_simulation(result["times"], result["sizes"], label="AI Capabilities Simulation", 
-                                       Yr_Left_sample=Yr_Left_sample)
+                                       Yr_Left_sample=Yr_Left_sample, 
+                                       software_contribution=result["software_contribution"])
 
     times_in_years = [t / 12 for t in result["times"]]
     fig_r, ax_r = plt.subplots(figsize=(10, 5))
