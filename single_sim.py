@@ -184,7 +184,7 @@ def run():
 
         return dynamic_system(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
                               f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor,
-                              software_contribution, max_time_months=72)
+                              software_contribution=software_contribution, max_time_months=72)
 
     # --- Auto-run Logic ---
     # If the simulation has never been run or if the button is pressed, update the simulation.
