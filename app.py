@@ -4,13 +4,13 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 # Import simulation modules
-import multiple_simsB 
+import multiple_simsC 
 import single_sim
 
 # Parameters table in Markdown format
 st.set_page_config(
     page_title="AI Progress Sim",
-    page_icon="🤖:",  # You can also use an image file or URL
+    page_icon="🤖",  # You can also use an image file or URL
     layout="wide",  # Other options: "centered"
     initial_sidebar_state="expanded"  # Other options: "collapsed", "auto"
 )
@@ -50,7 +50,7 @@ simulation_mode = st.sidebar.selectbox(
 if simulation_mode == "Single Simulation":
     single_sim.run()  # Run the single simulation (placeholder)
 elif simulation_mode == "Multiple Simulations":
-    multiple_simsB.run()  # Run the multiple simulations (placeholder)
+    multiple_simsC.run()  # Run the multiple simulations (placeholder)
 
 st.markdown("### Model Parameters and Estimates")
 st.markdown(r"""
