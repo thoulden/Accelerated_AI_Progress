@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 from itertools import product
 
-def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, compute_growth):
+def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, software_contribution_param, compute_growth):
     """
     Sample n_samples sets of parameters in a vectorized manner, ensuring consistency in dimensions.
     Returns:
@@ -43,11 +43,12 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
         np.full(n_samples, compute_growth_monthly_rate),  # 5
         f_0,                           # 6
         f_max,                         # 7
-        lambda_factor                  # 8
+        lambda_factor,                 # 8
+        software_contribution_param    # 9
     ))
 
-def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost, constant_r, max_time_months=48):
-    ceiling = 256 ** limit_years
+def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, software_contribution_param, retraining_cost, constant_r, max_time_months=48):
+    ceiling = 2^(4/software_contribution_param) ** limit_years
     size = 1.0
     r = r_initial
     f = f_0
@@ -84,11 +85,11 @@ def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increa
             initial_factor_increase_time *= ((factor_increase ** accel_factor) / ((1 + f) / (1 + f_old))) 
     return times, sizes, rs, compute_sizes, f_values
 
-def calculate_summary_statistics_binary(times, conditions):
+def calculate_summary_statistics_binary(times, conditions, software_contribution_param):
     results = {condition: 'no' for condition in conditions}
 
     for time_period, speed_up_factor in conditions:
-        baseline_doublings = (time_period / 12) * 8
+        baseline_doublings = (time_period / 12) * (4/software_contribution_param)
         required_doublings = int(baseline_doublings * speed_up_factor)
 
         for i in range(len(times) - required_doublings):
@@ -99,8 +100,8 @@ def calculate_summary_statistics_binary(times, conditions):
 
     return results
 
-def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth, constant_r):
-    params_batch = sample_parameters_batch(num_sims, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, compute_growth)
+def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, software_contribution_param, retraining_cost, compute_growth, constant_r):
+    params_batch = sample_parameters_batch(num_sims, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, software_contribution_param, compute_growth)
     times_matrix = []
     sizes_matrix = []
     params_list = []
@@ -122,6 +123,7 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
             "f_0": f_0,
             "f_max": f_max,
             "lambda_factor": lambda_factor
+            "software_contribution_param": software_contribution_param
         })
         progress.progress((i + 1) / num_sims)
 
@@ -180,7 +182,7 @@ def run():
     conditions = list(product([1, 4, 12, 36], multiples))
 
     if run_button:
-        probabilities, times_matrix, sizes_matrix, params_list = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, retraining_cost, compute_growth, constant_r)
+        probabilities, times_matrix, sizes_matrix, params_list = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, software_contribution_param, retraining_cost, compute_growth, constant_r)
 
         data = []
         for time_period in sorted(set(c[0] for c in probabilities.keys())):
