@@ -10,7 +10,7 @@ def transform_sizes_to_years(sizes, software_contribution):
     """
     annual_software_doubles = 4 
     normalizer = annual_software_doubles/software_contribution
-    return [np.log2(size) / 8 for size in sizes]  # since log2(256) = 8
+    return [np.log2(size) / normalizer for size in sizes]  # since log2(256) = 8 and default normalizer is 8 (8 total doublings per year, 4 from software and 4 from hardware)
 
 def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample, software_contribution):
     """
