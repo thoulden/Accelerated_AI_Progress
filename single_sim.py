@@ -2,6 +2,9 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
+# ADD THIS LINE TO VERIFY NEW CODE IS RUNNING
+st.write("🚀 RUNNING UPDATED VERSION WITH SOFTWARE_CONTRIBUTION FIX")
+
 def transform_sizes_to_years(sizes, software_contribution):
     """
     Transform sizes such that 256^n -> n.
