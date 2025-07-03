@@ -10,7 +10,7 @@ def transform_sizes_to_years(sizes, software_contribution):
     """
     annual_software_doubles = 4 
     normalizer = annual_software_doubles/software_contribution
-    return [np.log2(size) / normalizer for size in sizes]  # since log2(256) = 8
+    return [np.log2(size) / 8 for size in sizes]  # since log2(256) = 8
 
 def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     """
@@ -111,7 +111,7 @@ def run():
             time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
             initial_factor_increase_time = time_takes_to_factor_increase / (1 + f_0)
             return (factor_increase, r_initial, initial_factor_increase_time, limit_years,
-                    lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max)
+                    lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, software_contribution)
 
         def dynamic_system(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
                            f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5,
