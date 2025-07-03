@@ -22,6 +22,7 @@ def get_parameters_table_markdown():
 | Returns to Software R&D ($r$)                       | Controls the degree of diminishing returns to research. Each time cognitive inputs to software R&D double, how many times does software double? (Note this parameter falls over time.)                | 0.4           | 1.2             | 3.6           |
 | Distance to effective limits on software   | At the start of the simulation, how far is software from effective limits? Measured in the years of AI progress at recent rates of progress.         | 6             | 11               | 16            |
 | Diminishing returns to parallel labour ($p$)   | If cognitive inputs to software R&D instantaneously double, how many times does the pace of software progress double?                           | 0.15          | 0.3             | 0.6           |
+| Fraction of total AI progress that is due to better software. | What fraction of observed progress in AI is due to software progress (rather than hardware improvements)?      | -          | 0.5             | -           |
     '''
     return table_markdown
 
