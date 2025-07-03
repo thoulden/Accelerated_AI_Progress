@@ -13,7 +13,7 @@ def transform_sizes_to_years(sizes, software_contribution_param):
     normalizer = software_doubles_per_year/software_contribution
     return [np.log2(size) / normalizer for size in sizes]  # since log2(256) = 8
 
-def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
+def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample, software_contribution_param):
     """
     Plot a single simulation with transformed sizes.
     
@@ -23,7 +23,7 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
       - label: label for the curve
       - Yr_Left_sample: a reference ceiling (in years) to plot
     """
-    transformed_sizes = transform_sizes_to_years(sizes)
+    transformed_sizes = transform_sizes_to_years(sizes, software_contribution_param)
     times_in_years = [t / 12 for t in times]
 
     fig, ax = plt.subplots(figsize=(12, 6))
@@ -48,7 +48,9 @@ def run():
         st.session_state.initial_run_done = False
     if "simulation_result" not in st.session_state:
         st.session_state.simulation_result = None
-
+    # "Run Simulation" button.
+    run_simulation = st.sidebar.button('Run Simulation')
+    
     # Simulation parameters (these inputs may change, but we won’t update results until the button is pressed)
     compute_growth = st.sidebar.checkbox('Gradual Boost', help="The initial speed-up from ASARA ramps up gradually over 5 years.")
     if compute_growth:
@@ -82,9 +84,6 @@ def run():
     retraining_cost = st.sidebar.checkbox('Retraining Cost', help="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
     constant_r = st.sidebar.checkbox('Constant Diminishing Returns', help="Assumes that r is fixed at its initial value over time.")
 
-    # "Run Simulation" button.
-    run_simulation = st.sidebar.button('Run Simulation')
-
     def run_the_simulation():
         def choose_parameters():
             """
@@ -105,6 +104,7 @@ def run():
             compute_doubling_time = 5  # months
             compute_growth_monthly_rate = np.log(2) / compute_doubling_time
             limit_years = Yr_Left_sample
+            software_contribution = software_contribution_param
             lambda_factor = lambda_sample
             # Compute an initial time step using a doubling time of 3 months:
             doubling_time_starting = 3  # months
@@ -112,15 +112,15 @@ def run():
             time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
             initial_factor_increase_time = time_takes_to_factor_increase / (1 + f_0)
             return (factor_increase, r_initial, initial_factor_increase_time, limit_years,
-                    lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max)
+                    lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, software_contribution)
 
         def dynamic_system(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
-                           f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5,
+                           f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5, software_contribution
                            max_time_months=72):
             """
             Run the simulation until time_elapsed reaches max_time_months (72 months).
             """
-            ceiling = 256 ** limit_years
+            ceiling = 2^(4/software_contribution) ** limit_years # 2^(4/software_contribution) is the annual number of doubles, fixing 4 doubles from software
             r = r_initial
             factor_increase_time = initial_factor_increase_time
             size = 1.0
