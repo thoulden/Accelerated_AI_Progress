@@ -9,7 +9,7 @@ def transform_sizes_to_years(sizes):
     (Assumes that effective AI capabilities are equivalent to a 256× jump per year.)
     """
     software_doubles_per_year = 4
-    software_contribution = 0.6
+    software_contribution = 0.8
     normalizer = software_doubles_per_year/software_contribution
     return [np.log2(size) / normalizer for size in sizes]  # since log2(256) = 8
 
