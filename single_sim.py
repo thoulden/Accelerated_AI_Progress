@@ -180,7 +180,7 @@ def run():
             return times, sizes, rs, ceiling, compute_sizes, f_values
 
         (factor_increase, r_initial, initial_factor_increase_time, limit_years,
-         lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max) = choose_parameters()
+         lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, software_contribution) = choose_parameters()
 
         return dynamic_system(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
                               f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor,
