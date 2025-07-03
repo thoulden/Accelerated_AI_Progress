@@ -2,18 +2,17 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
-def transform_sizes_to_years(sizes):
+def transform_sizes_to_years(sizes, software_contribution):
     """
     Transform sizes such that 256^n -> n.
     We display AI capabilities in units of "years of progress at recent rates."
     (Assumes that effective AI capabilities are equivalent to a 256× jump per year.)
     """
     annual_software_doubles = 4 
-    software_contribution = 0.5
     normalizer = annual_software_doubles/software_contribution
     return [np.log2(size) / 8 for size in sizes]  # since log2(256) = 8
 
-def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
+def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample, software_contribution):
     """
     Plot a single simulation with transformed sizes.
     
@@ -23,7 +22,7 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
       - label: label for the curve
       - Yr_Left_sample: a reference ceiling (in years) to plot
     """
-    transformed_sizes = transform_sizes_to_years(sizes)
+    transformed_sizes = transform_sizes_to_years(sizes, software_contribution)
     times_in_years = [t / 12 for t in times]
     
     fig, ax = plt.subplots(figsize=(12, 6))
