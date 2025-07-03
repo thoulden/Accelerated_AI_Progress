@@ -2,13 +2,14 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
-def transform_sizes_to_years(sizes, software_contribution):
+def transform_sizes_to_years(sizes):
     """
     Transform sizes such that 256^n -> n.
     We display AI capabilities in units of "years of progress at recent rates."
     (Assumes that effective AI capabilities are equivalent to a 256× jump per year.)
     """
     annual_software_doubles = 4 
+    software_contribution = 0.5
     normalizer = annual_software_doubles/software_contribution
     return [np.log2(size) / 8 for size in sizes]  # since log2(256) = 8
 
