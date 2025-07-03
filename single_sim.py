@@ -9,8 +9,8 @@ def transform_sizes_to_years(sizes, software_contribution):
     (Assumes that effective AI capabilities are equivalent to a 256× jump per year.)
     """
     annual_software_doubles = 4 
-    normalizer = annual_software_doubles/software_contribution
-    return [np.log2(size) / normalizer for size in sizes]  # since log2(256) = 8 and default normalizer is 8 (8 total doublings per year, 4 from software and 4 from hardware)
+    normalizer = annual_software_doubles / software_contribution
+    return [np.log2(size) / normalizer for size in sizes]  # replaced 8 with normalizer
 
 def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample, software_contribution):
     """
@@ -21,6 +21,7 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample, soft
       - sizes: list of raw sizes
       - label: label for the curve
       - Yr_Left_sample: a reference ceiling (in years) to plot
+      - software_contribution: fraction of AI progress due to software
     """
     transformed_sizes = transform_sizes_to_years(sizes, software_contribution)
     times_in_years = [t / 12 for t in times]
@@ -48,7 +49,7 @@ def run():
     if "simulation_result" not in st.session_state:
         st.session_state.simulation_result = None
 
-    # Simulation parameters (these inputs may change, but we won’t update results until the button is pressed)
+    # Simulation parameters (these inputs may change, but we won't update results until the button is pressed)
     compute_growth = st.sidebar.checkbox('Gradual Boost', help="The initial speed-up from ASARA ramps up gradually over 5 years.")
     if compute_growth:
         f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0,
@@ -69,7 +70,7 @@ def run():
                                         help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
                                         min_value=1.0, max_value=60.0, value=11.0, step=0.5,
-                                        help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of \“years of AI progress at the recent rate of progress\”.)")
+                                        help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of \"years of AI progress at the recent rate of progress\".)")
     lambda_sample = st.sidebar.number_input('Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
                                         value=0.3, step=0.01,
                                         help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
@@ -90,7 +91,7 @@ def run():
             Set initial parameters and compute the initial time step.
             Returns a tuple:
               (factor_increase, r_initial, initial_factor_increase_time, limit_years,
-               lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max)
+               lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, software_contribution)
             """
             if compute_growth:
                 factor_increase = 1.1  # For smooth increases in compute growth scenario.
@@ -115,7 +116,7 @@ def run():
 
         def dynamic_system(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
                            f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5,
-                           max_time_months=72):
+                           software_contribution=0.5, max_time_months=72):
             """
             Run the simulation until time_elapsed reaches max_time_months (72 months).
             """
@@ -183,7 +184,7 @@ def run():
 
         return dynamic_system(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
                               f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor,
-                              max_time_months=72)
+                              software_contribution, max_time_months=72)
 
     # --- Auto-run Logic ---
     # If the simulation has never been run or if the button is pressed, update the simulation.
@@ -196,7 +197,7 @@ def run():
             "ceiling": ceiling,
             "compute_sizes": compute_sizes,
             "f_values": f_values,
-            "software_contribution": software_contribution
+            "software_contribution": software_contribution  # Store this in session state
         }
         st.session_state.initial_run_done = True
 
