@@ -8,7 +8,10 @@ def transform_sizes_to_years(sizes):
     We display AI capabilities in units of "years of progress at recent rates."
     (Assumes that effective AI capabilities are equivalent to a 256× jump per year.)
     """
-    return [np.log2(size) / 8 for size in sizes]  # since log2(256) = 8
+    software_doubles_per_year = 4
+    software_contribution = 0.6
+    normalizer = software_doubles_per_year/software_contribution
+    return [np.log2(size) / normalizer for size in sizes]  # since log2(256) = 8
 
 def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     """
