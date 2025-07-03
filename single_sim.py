@@ -2,20 +2,15 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ADD THIS LINE TO VERIFY NEW CODE IS RUNNING
-st.write("🚀 RUNNING UPDATED VERSION WITH SOFTWARE_CONTRIBUTION FIX")
-
-def transform_sizes_to_years(sizes, software_contribution):
+def transform_sizes_to_years(sizes):
     """
     Transform sizes such that 256^n -> n.
     We display AI capabilities in units of "years of progress at recent rates."
     (Assumes that effective AI capabilities are equivalent to a 256× jump per year.)
     """
-    annual_software_doubles = 4 
-    normalizer = annual_software_doubles / software_contribution
-    return [np.log2(size) / normalizer for size in sizes]  # replaced 8 with normalizer
+    return [np.log2(size) / 8 for size in sizes]  # since log2(256) = 8
 
-def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample, software_contribution):
+def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample):
     """
     Plot a single simulation with transformed sizes.
     
@@ -24,11 +19,10 @@ def plot_single_transformed_simulation(times, sizes, label, Yr_Left_sample, soft
       - sizes: list of raw sizes
       - label: label for the curve
       - Yr_Left_sample: a reference ceiling (in years) to plot
-      - software_contribution: fraction of AI progress due to software
     """
-    transformed_sizes = transform_sizes_to_years(sizes, software_contribution)
+    transformed_sizes = transform_sizes_to_years(sizes)
     times_in_years = [t / 12 for t in times]
-    
+
     fig, ax = plt.subplots(figsize=(12, 6))
     ax.plot(times_in_years, transformed_sizes, label=label, color='blue', linestyle='-')
     # Plot the "recent pace" line (i.e. y = t in years)
@@ -52,7 +46,7 @@ def run():
     if "simulation_result" not in st.session_state:
         st.session_state.simulation_result = None
 
-    # Simulation parameters (these inputs may change, but we won't update results until the button is pressed)
+    # Simulation parameters (these inputs may change, but we won’t update results until the button is pressed)
     compute_growth = st.sidebar.checkbox('Gradual Boost', help="The initial speed-up from ASARA ramps up gradually over 5 years.")
     if compute_growth:
         f_sample_min = st.sidebar.number_input('Initial speed-up ($f_0$)', min_value=1.0, max_value=1000.0,
@@ -73,15 +67,15 @@ def run():
                                         help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
     Yr_Left_sample = st.sidebar.number_input('Distance to effective limits on software',
                                         min_value=1.0, max_value=60.0, value=11.0, step=0.5,
-                                        help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of \"years of AI progress at the recent rate of progress\".)")
+                                        help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of \“years of AI progress at the recent rate of progress\”.)")
     lambda_sample = st.sidebar.number_input('Diminishing returns to parallel labour ($p$)', min_value=0.01, max_value=1.0,
                                         value=0.3, step=0.01,
                                         help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
-    software_contribution = st.sidebar.number_input('Fraction of total AI progress that is due to better software (rather than more compute)?', min_value=0.01, max_value=0.99,
+    lambda_sample1 = st.sidebar.number_input('Fraction of total AI progress that is due to better software (rather than more compute)?', min_value=0.01, max_value=0.99,
                                         value=0.5, step=0.01,
                                         help="A larger fraction means that the software progress modelled contributes more to the overall AI progress.")
-    
-                                                
+
+
     retraining_cost = st.sidebar.checkbox('Retraining Cost', help="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
     constant_r = st.sidebar.checkbox('Constant Diminishing Returns', help="Assumes that r is fixed at its initial value over time.")
 
@@ -94,7 +88,7 @@ def run():
             Set initial parameters and compute the initial time step.
             Returns a tuple:
               (factor_increase, r_initial, initial_factor_increase_time, limit_years,
-               lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, software_contribution)
+               lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max)
             """
             if compute_growth:
                 factor_increase = 1.1  # For smooth increases in compute growth scenario.
@@ -115,11 +109,11 @@ def run():
             time_takes_to_factor_increase = np.log(factor_increase) / implied_month_growth_rate
             initial_factor_increase_time = time_takes_to_factor_increase / (1 + f_0)
             return (factor_increase, r_initial, initial_factor_increase_time, limit_years,
-                    lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, software_contribution)
+                    lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max)
 
         def dynamic_system(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
                            f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor=0.5,
-                           software_contribution=0.5, max_time_months=72):
+                           max_time_months=72):
             """
             Run the simulation until time_elapsed reaches max_time_months (72 months).
             """
@@ -166,7 +160,7 @@ def run():
                     f_growth_rate = np.log(f_max/f_0)/(5*12) #reaches ceiling in 5 years
                     f =  f_0*np.exp(time_elapsed*f_growth_rate) #ensures exponential growth in f; options below are for old linear f approach
                     #f = f_0 + (f_max - f_0) * (compute_size / compute_max) 
-                                               
+
                     #f = f_0 + (f_max - f_0) * (np.log(compute_size / compute_size_start) /
                                                #np.log(compute_max / compute_size_start))
                 else:
@@ -183,11 +177,11 @@ def run():
             return times, sizes, rs, ceiling, compute_sizes, f_values
 
         (factor_increase, r_initial, initial_factor_increase_time, limit_years,
-         lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max, software_contribution) = choose_parameters()
+         lambda_factor, compute_growth_monthly_rate, f_0, f_max, compute_size_start, compute_max) = choose_parameters()
 
         return dynamic_system(r_initial, initial_factor_increase_time, limit_years, compute_growth_monthly_rate,
                               f_0, f_max, compute_size_start, compute_max, factor_increase, lambda_factor,
-                              software_contribution=software_contribution, max_time_months=72)
+                              max_time_months=72)
 
     # --- Auto-run Logic ---
     # If the simulation has never been run or if the button is pressed, update the simulation.
@@ -199,18 +193,15 @@ def run():
             "rs": rs,
             "ceiling": ceiling,
             "compute_sizes": compute_sizes,
-            "f_values": f_values,
-            "software_contribution": software_contribution  # Store this in session state
+            "f_values": f_values
         }
         st.session_state.initial_run_done = True
 
     # Use the stored simulation result for plotting.
     result = st.session_state.simulation_result
 
-    # Pass software_contribution to the plotting function
     plot_single_transformed_simulation(result["times"], result["sizes"], label="AI Capabilities Simulation", 
-                                       Yr_Left_sample=Yr_Left_sample, 
-                                       software_contribution=result["software_contribution"])
+                                       Yr_Left_sample=Yr_Left_sample)
 
     times_in_years = [t / 12 for t in result["times"]]
     fig_r, ax_r = plt.subplots(figsize=(10, 5))
