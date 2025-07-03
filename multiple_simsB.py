@@ -7,7 +7,7 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
     """
     Sample n_samples sets of parameters in a vectorized manner, ensuring consistency in dimensions.
     Returns:
-        A NumPy array of shape (n_samples, 8) containing sampled parameters.
+        A NumPy array of shape (n_samples, 9) containing sampled parameters.
     """
     # Log-uniform distributions
     initial_boost = np.exp(np.random.uniform(np.log(ib_low), np.log(ib_high), size=n_samples))
@@ -27,8 +27,6 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
         # denominator is initial_boost, which is already shape (n_samples,)
         denominator = initial_boost
     initial_factor_increase_time = time_takes_to_factor_increase / denominator
-    #initial_factor_increase_time = time_takes_to_factor_increase / (1.1 if compute_growth else initial_boost) 
-    #initial_factor_increase_time = time_takes_to_factor_increase / (1 + (0.1 if compute_growth else initial_boost))  # Matches each initial_boost
 
     # Variables dependent on initial_boost
     f_0 = np.full(n_samples, 0.1) if compute_growth else initial_boost  # Matches each draw of initial_boost
@@ -37,18 +35,19 @@ def sample_parameters_batch(n_samples, r_low, r_high, ly_low, ly_high, lf_low, l
     # Stack the parameters into a consistent array
     return np.column_stack((
         r_initial,                     # 1
-        factor_increase * np.ones(n_samples),  # 2  <-- new column
+        factor_increase * np.ones(n_samples),  # 2
         initial_factor_increase_time,  # 3
         limit_years,                   # 4
         np.full(n_samples, compute_growth_monthly_rate),  # 5
         f_0,                           # 6
         f_max,                         # 7
         lambda_factor,                 # 8
-        software_contribution_param    # 9
+        np.full(n_samples, software_contribution_param)  # 9 - software contribution as array
     ))
 
 def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, software_contribution_param, retraining_cost, constant_r, max_time_months=48):
-    ceiling = 2^(4/software_contribution_param) ** limit_years
+    # Fixed exponentiation syntax
+    ceiling = (2**(4/software_contribution_param)) ** limit_years
     size = 1.0
     r = r_initial
     f = f_0
@@ -68,9 +67,7 @@ def dynamic_system_with_lambda(r_initial, factor_increase, initial_factor_increa
 
         if compute_size < 4096:
             f_growth_rate = np.log(f_max/f_0)/(5*12) #reaches ceiling in 5 years
-            f =  f_0*np.exp(time_elapsed*f_growth_rate) #ensures exponential growth in f; options below are for old linear f approach       
-            #f = f_0 + (f_max - f_0) * (compute_size / 4096) #for exponential f growth
-            #f = f_0 + (f_max - f_0) * (np.log(compute_size) / np.log(4096)) # 12 doublings, for linear f growth
+            f =  f_0*np.exp(time_elapsed*f_growth_rate) #ensures exponential growth in f
         else:
             f = f_max
 
@@ -109,9 +106,10 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
     progress = st.progress(0)
 
     for i, params in enumerate(params_batch):
-        r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor = params
+        # Unpack all 9 parameters
+        r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, software_contribution = params
         times, sizes, rs, compute_sizes, f_values = dynamic_system_with_lambda(
-         r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, retraining_cost, constant_r)
+         r_initial, factor_increase, initial_factor_increase_time, limit_years, compute_growth_monthly_rate, f_0, f_max, lambda_factor, software_contribution, retraining_cost, constant_r)
         times_matrix.append(times)
         sizes_matrix.append(sizes)
         params_list.append({
@@ -122,14 +120,14 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
             "compute_growth_monthly_rate": compute_growth_monthly_rate,
             "f_0": f_0,
             "f_max": f_max,
-            "lambda_factor": lambda_factor
-            "software_contribution_param": software_contribution_param
+            "lambda_factor": lambda_factor,  # Added missing comma
+            "software_contribution_param": software_contribution
         })
         progress.progress((i + 1) / num_sims)
 
     batch_summary = {condition: 0 for condition in conditions}
     for times in times_matrix:
-        stats = calculate_summary_statistics_binary(times, conditions)
+        stats = calculate_summary_statistics_binary(times, conditions, software_contribution_param)  # Added missing parameter
         for condition in conditions:
             if stats[condition] == 'yes':
                 batch_summary[condition] += 1
@@ -141,19 +139,19 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
     return probabilities, times_matrix, sizes_matrix, params_list
 
 def to_markdown_table(df):
-        """
-         Convert a small pandas DataFrame to a markdown table (no index).
-        """
-        df = df.reset_index(drop=True)
-        header = "| " + " | ".join(df.columns) + " |\n"
-        separator = "| " + " | ".join("---" for _ in df.columns) + " |\n"
+    """
+    Convert a small pandas DataFrame to a markdown table (no index).
+    """
+    df = df.reset_index(drop=True)
+    header = "| " + " | ".join(df.columns) + " |\n"
+    separator = "| " + " | ".join("---" for _ in df.columns) + " |\n"
 
-        rows = []
-        for row_tuple in df.itertuples(index=False):
-            row_str = "| " + " | ".join(str(x) for x in row_tuple) + " |"
-            rows.append(row_str)
+    rows = []
+    for row_tuple in df.itertuples(index=False):
+        row_str = "| " + " | ".join(str(x) for x in row_tuple) + " |"
+        rows.append(row_str)
 
-        return header + separator + "\n".join(rows)
+    return header + separator + "\n".join(rows)
     
 def run():
     run_button = st.sidebar.button("Run Simulations")
@@ -163,7 +161,7 @@ def run():
     ib_high = st.sidebar.number_input(r"Initial speed-up ($f$); upper bound", min_value=ib_low, value=32.0)
     r_low = st.sidebar.number_input(r"Returns to Software R&D ($r$); lower bound", min_value=0.01, value=0.4, help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
     r_high = st.sidebar.number_input(r"Returns to Software R&D ($r$); upper bound", min_value=r_low, value=3.6)
-    ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=6.0, help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of “years of AI progress at the recent rate of progress”.)")
+    ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=6.0, help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of "years of AI progress at the recent rate of progress".)")
     ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=16.0)
     lf_low = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); lower bound", min_value=0.01, value=0.15, help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
     lf_high = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); upper bound", min_value=lf_low, value=0.6)
@@ -172,7 +170,7 @@ def run():
                                         help="A larger fraction means that the software progress modelled contributes more to the overall AI progress.")
 
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
-    multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30", help="These are the comparisson multiples (of the current growth rate) that are reported in the results.")
+    multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30", help="These are the comparison multiples (of the current growth rate) that are reported in the results.")
 
     compute_growth = st.sidebar.checkbox("Gradual Boost", help = "The initial speed-up from ASARA ramps up gradually over 5 years.")
     retraining_cost = st.sidebar.checkbox("Retraining Cost", help = "Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
@@ -202,7 +200,7 @@ def run():
         #Create DataFrame for times & sizes
         simulation_results = []
         for i, (times, sizes) in enumerate(zip(times_matrix, sizes_matrix)):
-            # Retrieve this simulation’s parameters
+            # Retrieve this simulation's parameters
             sim_params = params_list[i]
             # For each timestep in this simulation, add a row
             for t, s in zip(times, sizes):
@@ -216,6 +214,7 @@ def run():
                     "f_0": sim_params["f_0"],
                     "f_max": sim_params["f_max"],
                     "lambda_factor": sim_params["lambda_factor"],
+                    "software_contribution": sim_params["software_contribution_param"],
                     "Time (Months)": t,
                     "Size": s
                 })
