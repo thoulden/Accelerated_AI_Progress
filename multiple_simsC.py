@@ -98,7 +98,7 @@ def calculate_summary_statistics_binary(times, conditions, software_contribution
 
     return results
 
-def calculate_continuous_cdf_data(times_matrix, software_contribution_param, speed_up_factors=[3, 10, 30], max_years=4, resolution=150):
+def calculate_continuous_cdf_data(times_matrix, software_contribution_param, speed_up_factors=[3, 10, 30], max_years=4, resolution=100):
     """
     Calculate the fraction of simulations where growth exceeds various multiples 
     for a continuous range of time periods.
@@ -260,9 +260,7 @@ def run():
         st.write("###### What is the probability AI progress is X times faster for N months?")
         st.write("(More precisely, what is the probability that there is an N month period where the average pace of AI software progress is X times faster than the recent pace of overall AI progress?)")
         st.markdown(md_table)
-        
-        # Create CDF visualization
-        st.write("###### Continuous CDF: Fraction of Simulations where Accelerated Case growth exceeds Base case growth over time")
+    
         
         # Calculate CDF data
         time_points, cdf_data = calculate_continuous_cdf_data(
@@ -286,7 +284,7 @@ def run():
         
         ax.set_xlabel('Time Period (years)', fontsize=12)
         ax.set_ylabel('Probability', fontsize=12)
-        ax.set_title('Probability of Sustaining X× Acceleration', fontsize=14)
+        ax.set_title('Probability of Sustaining X× Recent Pace for Number of Years', fontsize=14)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
         ax.set_xlim(0, 4)
@@ -325,9 +323,8 @@ def run():
                 file_name="simulation_results.csv",
                 mime="text/csv",
             )
-            st.write("Note: CSV download available for simulations with 2000 or fewer runs.")
         else:
-            st.info(f"CSV download is disabled for {num_sims} simulations (limit: 2000). Run fewer simulations to enable download.")
+            st.info(f"CSV download of simulation results unavailable above 2000 simulations.")
     else:
         st.write("Press 'Run Simulation' to view results.")
     
