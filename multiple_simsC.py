@@ -255,8 +255,8 @@ def run():
             ax.plot(time_points, fractions, label=f'{int(factor)}x', color=color, linewidth=2)
         
         ax.set_xlabel('Years', fontsize=12)
-        ax.set_ylabel(f'Fraction where Progress Exceeds Multiplier x Recent Grwoth Rate', fontsize=12)
-        ax.set_title('Fraction of Simulations with Growth in Excess of Multipliers of Recent Rates', fontsize=14)
+        ax.set_ylabel(f'P(Acceleration > X× Recent Rates)', fontsize=12)
+        ax.set_title('Probability of Achieving X× Acceleration', fontsize=14)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
         ax.set_xlim(0, 4)
