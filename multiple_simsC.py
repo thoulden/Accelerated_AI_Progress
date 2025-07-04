@@ -98,14 +98,14 @@ def calculate_summary_statistics_binary(times, conditions, software_contribution
 
     return results
 
-def calculate_continuous_cdf_data(times_matrix, software_contribution_param, speed_up_factors=[3, 10, 30], max_years=4, resolution=150):
+def calculate_continuous_cdf_data(times_matrix, software_contribution_param, speed_up_factors=[3, 10, 30], max_years=4, resolution=100):
     """
     Calculate the fraction of simulations where growth exceeds various multiples 
     for a continuous range of time periods.
     
     Returns a dictionary with arrays for plotting CDF curves.
     """
-    time_points = np.linspace(0.05, max_years, resolution)  # Time points in years
+    time_points = np.linspace(0.1, max_years, resolution)  # Time points in years
     
     cdf_data = {factor: [] for factor in speed_up_factors}
     
@@ -254,9 +254,9 @@ def run():
             color = colors[i % len(colors)]
             ax.plot(time_points, fractions, label=f'{int(factor)}x', color=color, linewidth=2)
         
-        ax.set_xlabel('Years', fontsize=12)
-        ax.set_ylabel(f'Probability )', fontsize=12)
-        ax.set_title('Probability of Sustaining Acceleration > X× Recent Rates for Number of Years', fontsize=14)
+        ax.set_xlabel('Time Period (years)', fontsize=12)
+        ax.set_ylabel('Probability', fontsize=12)
+        ax.set_title('Probability of Sustaining X× Acceleration', fontsize=14)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
         ax.set_xlim(0, 4)
@@ -264,37 +264,40 @@ def run():
         
         st.pyplot(fig)
 
-        # Create DataFrame for times & sizes
-        simulation_results = []
-        for i, (times, sizes) in enumerate(zip(times_matrix, sizes_matrix)):
-            # Retrieve this simulation's parameters
-            sim_params = params_list[i]
-            # For each timestep in this simulation, add a row
-            for t, s in zip(times, sizes):
-                simulation_results.append({
-                    "Simulation": i + 1,
-                    "r_initial": sim_params["r_initial"],
-                    "initial_factor_increase_time": sim_params["initial_factor_increase_time"],
-                    "limit_years": sim_params["limit_years"],
-                    "f_0": sim_params["f_0"],
-                    "f_max": sim_params["f_max"],
-                    "lambda_factor": sim_params["lambda_factor"],
-                    "software_contribution": sim_params["software_contribution_param"],
-                    "Time (Months)": t,
-                    "Size": s
-                })
+        # Create DataFrame for times & sizes - only if simulations <= 2000
+        if num_sims <= 2000:
+            simulation_results = []
+            for i, (times, sizes) in enumerate(zip(times_matrix, sizes_matrix)):
+                # Retrieve this simulation's parameters
+                sim_params = params_list[i]
+                # For each timestep in this simulation, add a row
+                for t, s in zip(times, sizes):
+                    simulation_results.append({
+                        "Simulation": i + 1,
+                        "r_initial": sim_params["r_initial"],
+                        "initial_factor_increase_time": sim_params["initial_factor_increase_time"],
+                        "limit_years": sim_params["limit_years"],
+                        "f_0": sim_params["f_0"],
+                        "f_max": sim_params["f_max"],
+                        "lambda_factor": sim_params["lambda_factor"],
+                        "software_contribution": sim_params["software_contribution_param"],
+                        "Time (Months)": t,
+                        "Size": s
+                    })
 
-        df_results = pd.DataFrame(simulation_results)
+            df_results = pd.DataFrame(simulation_results)
 
-        # Convert to CSV & create Download Button
-        csv_data = df_results.to_csv(index=False)
-        st.download_button(
-            label="Download Simulation Results (CSV)",
-            data=csv_data,
-            file_name="simulation_results.csv",
-            mime="text/csv",
-        )
-        st.write("Download recommended for < 2000 simulations only.")
+            # Convert to CSV & create Download Button
+            csv_data = df_results.to_csv(index=False)
+            st.download_button(
+                label="Download Simulation Results (CSV)",
+                data=csv_data,
+                file_name="simulation_results.csv",
+                mime="text/csv",
+            )
+            st.write("Note: CSV download available for simulations with 2000 or fewer runs.")
+        else:
+            st.info(f"CSV download is disabled for {num_sims} simulations (limit: 2000). Run fewer simulations to enable download.")
     else:
         st.write("Press 'Run Simulation' to view results.")
     
