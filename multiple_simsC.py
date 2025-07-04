@@ -297,7 +297,7 @@ def run():
             )
             st.write("Note: CSV download available for simulations with 2000 or fewer runs.")
         else:
-            st.info(f"CSV download is disabled for {num_sims} simulations (limit: 2000). Run fewer simulations to enable download.")
+            st.info(f"CSV download unavailable above 2000 simulations.")
     else:
         st.write("Press 'Run Simulation' to view results.")
     
