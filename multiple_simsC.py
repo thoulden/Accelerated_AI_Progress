@@ -296,7 +296,7 @@ def run():
                 mime="text/csv",
             )
         else:
-            st.info(f"CSV download of simulation results unavailable above 2000 simulaitons.")
+            st.info(f"CSV download of simulation results unavailable above 2000 simulations.")
     else:
         st.write("Press 'Run Simulation' to view results.")
     
