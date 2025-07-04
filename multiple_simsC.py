@@ -98,7 +98,7 @@ def calculate_summary_statistics_binary(times, conditions, software_contribution
 
     return results
 
-def calculate_continuous_cdf_data(times_matrix, software_contribution_param, speed_up_factors=[3, 10, 30], max_years=4, resolution=100):
+def calculate_continuous_cdf_data(times_matrix, software_contribution_param, speed_up_factors=[3, 10, 30], max_years=4, resolution=150):
     """
     Calculate the fraction of simulations where growth exceeds various multiples 
     for a continuous range of time periods.
