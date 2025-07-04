@@ -232,8 +232,7 @@ def run():
         st.markdown(md_table)
         
         # Create CDF visualization
-        st.write("###### Continuous CDF: Fraction of Simulations where Accelerated Case growth exceeds Base case growth over time")
-        
+
         # Calculate CDF data
         time_points, cdf_data = calculate_continuous_cdf_data(
             times_matrix, 
