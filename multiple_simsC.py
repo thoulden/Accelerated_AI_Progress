@@ -98,7 +98,7 @@ def calculate_summary_statistics_binary(times, conditions, software_contribution
 
     return results
 
-def calculate_continuous_cdf_data(times_matrix, software_contribution_param, speed_up_factors=[3, 10, 30], max_years=4, resolution=1000):
+def calculate_continuous_cdf_data(times_matrix, software_contribution_param, speed_up_factors=[3, 10, 30], max_years=4, resolution=150):
     """
     Calculate the fraction of simulations where growth exceeds various multiples 
     for a continuous range of time periods.
@@ -113,19 +113,49 @@ def calculate_continuous_cdf_data(times_matrix, software_contribution_param, spe
         time_months = time_years * 12
         
         for factor in speed_up_factors:
-            baseline_doublings = time_years * (4/software_contribution_param)
-            required_doublings = int(baseline_doublings * factor)
+            baseline_doublings = time_years * (4/software_contribution_param) * factor
             
-            success_count = 0
-            for times in times_matrix:
-                if required_doublings < len(times):
-                    for i in range(len(times) - required_doublings):
-                        time_span = times[i + required_doublings] - times[i]
-                        if time_span < time_months:
-                            success_count += 1
-                            break
+            # Use floor and ceiling to interpolate
+            doublings_floor = int(np.floor(baseline_doublings))
+            doublings_ceil = int(np.ceil(baseline_doublings))
             
-            fraction = success_count / len(times_matrix)
+            if doublings_floor == doublings_ceil:
+                # Exact integer case
+                success_count = 0
+                for times in times_matrix:
+                    if doublings_floor < len(times):
+                        for i in range(len(times) - doublings_floor):
+                            time_span = times[i + doublings_floor] - times[i]
+                            if time_span < time_months:
+                                success_count += 1
+                                break
+                fraction = success_count / len(times_matrix)
+            else:
+                # Interpolate between floor and ceiling
+                # Calculate success for floor
+                success_count_floor = 0
+                for times in times_matrix:
+                    if doublings_floor < len(times):
+                        for i in range(len(times) - doublings_floor):
+                            time_span = times[i + doublings_floor] - times[i]
+                            if time_span < time_months:
+                                success_count_floor += 1
+                                break
+                
+                # Calculate success for ceiling
+                success_count_ceil = 0
+                for times in times_matrix:
+                    if doublings_ceil < len(times):
+                        for i in range(len(times) - doublings_ceil):
+                            time_span = times[i + doublings_ceil] - times[i]
+                            if time_span < time_months:
+                                success_count_ceil += 1
+                                break
+                
+                # Interpolate
+                weight = baseline_doublings - doublings_floor
+                fraction = ((1 - weight) * success_count_floor + weight * success_count_ceil) / len(times_matrix)
+            
             cdf_data[factor].append(fraction)
     
     return time_points, cdf_data
@@ -232,7 +262,8 @@ def run():
         st.markdown(md_table)
         
         # Create CDF visualization
-
+        st.write("###### Continuous CDF: Fraction of Simulations where Accelerated Case growth exceeds Base case growth over time")
+        
         # Calculate CDF data
         time_points, cdf_data = calculate_continuous_cdf_data(
             times_matrix, 
@@ -255,7 +286,7 @@ def run():
         
         ax.set_xlabel('Time Period (years)', fontsize=12)
         ax.set_ylabel('Probability', fontsize=12)
-        ax.set_title('Probability of Sustaining X× Recent Progress Rates for Number of Years', fontsize=14)
+        ax.set_title('Probability of Sustaining X× Acceleration', fontsize=14)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
         ax.set_xlim(0, 4)
@@ -294,8 +325,9 @@ def run():
                 file_name="simulation_results.csv",
                 mime="text/csv",
             )
+            st.write("Note: CSV download available for simulations with 2000 or fewer runs.")
         else:
-            st.info(f"CSV download of simulation results unavailable above 2000 simulations.")
+            st.info(f"CSV download is disabled for {num_sims} simulations (limit: 2000). Run fewer simulations to enable download.")
     else:
         st.write("Press 'Run Simulation' to view results.")
     
