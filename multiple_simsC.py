@@ -105,7 +105,7 @@ def calculate_continuous_cdf_data(times_matrix, software_contribution_param, spe
     
     Returns a dictionary with arrays for plotting CDF curves.
     """
-    time_points = np.linspace(0.05, max_years, resolution)  # Time points in years
+    time_points = np.linspace(0.01, max_years, resolution)  # Time points in years
     
     cdf_data = {factor: [] for factor in speed_up_factors}
     
