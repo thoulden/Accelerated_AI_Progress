@@ -256,7 +256,7 @@ def run():
         
         ax.set_xlabel('Time Period (years)', fontsize=12)
         ax.set_ylabel('Probability', fontsize=12)
-        ax.set_title('Probability of Sustaining X× Acceleration', fontsize=14)
+        ax.set_title('Probability of Sustaining X× Recent Progress Rates for Number of Years', fontsize=14)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
         ax.set_xlim(0, 4)
@@ -295,9 +295,8 @@ def run():
                 file_name="simulation_results.csv",
                 mime="text/csv",
             )
-            st.write("Note: CSV download available for simulations with 2000 or fewer runs.")
         else:
-            st.info(f"CSV download unavailable above 2000 simulations.")
+            st.info(f"CSV download of simulation results unavailable above 2000 simulaitons.")
     else:
         st.write("Press 'Run Simulation' to view results.")
     
