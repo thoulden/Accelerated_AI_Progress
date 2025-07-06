@@ -279,7 +279,7 @@ def run():
         
         ax.set_xlabel('Years Compressed', fontsize=12)
         ax.set_ylabel('Probability', fontsize=12)
-        ax.set_title('Probability of Compressing X Years into One Year', fontsize=14)
+        ax.set_title('TEST Probability of Compressing X Years into One Year', fontsize=14)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
         ax.set_xlim(0, 20)
