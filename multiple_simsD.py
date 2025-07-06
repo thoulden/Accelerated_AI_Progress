@@ -98,6 +98,21 @@ def calculate_summary_statistics_binary(times, conditions, software_contribution
 
     return results
 
+def to_markdown_table(df):
+    """
+    Convert a small pandas DataFrame to a markdown table (no index).
+    """
+    df = df.reset_index(drop=True)
+    header = "| " + " | ".join(df.columns) + " |\n"
+    separator = "| " + " | ".join("---" for _ in df.columns) + " |\n"
+
+    rows = []
+    for row_tuple in df.itertuples(index=False):
+        row_str = "| " + " | ".join(str(x) for x in row_tuple) + " |"
+        rows.append(row_str)
+
+    return header + separator + "\n".join(rows)
+
 def calculate_years_compressed_cdf(times_matrix, software_contribution_param, max_years=20, resolution=200):
     """
     Calculate the CDF for years of progress compressed into 1 year.
