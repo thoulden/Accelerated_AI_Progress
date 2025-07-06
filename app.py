@@ -27,7 +27,7 @@ def get_parameters_table_markdown():
     return table_markdown
 
 # Main Page content
-st.title('TEST Simulation of Accelerated AI Progress')
+st.title('Simulation of Accelerated AI Progress')
 
 st.markdown(r"""
 This tool allows users to enter their own parameterizations for the accompanying post on the pace of AI progress.
