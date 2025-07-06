@@ -245,8 +245,8 @@ def run():
         # Create the data for the table
         table_data = {
             "Years of progress": ["≥3 years", "≥10 years"],
-            "Compressed into TEST ≤1 year": [
-                f"{probabilities.get((12, 3), 0)*100:.0f}%",
+            "Compressed into ≤1 year": [
+                f"TEST{probabilities.get((12, 3), 0)*100:.0f}%",
                 f"{probabilities.get((12, 10), 0)*100:.0f}%"
             ],
             "Compressed into ≤4 months": [
