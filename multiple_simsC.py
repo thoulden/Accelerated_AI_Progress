@@ -238,7 +238,7 @@ def run():
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
     multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30", help="These are the comparison multiples (of the current growth rate) that are reported in the results.")
 
-    compute_growth = st.sidebar.checkbox("TEST Gradual Boost", help="The initial speed-up from ASARA ramps up gradually over 5 years.")
+    compute_growth = st.sidebar.checkbox("Gradual Boost", help="The initial speed-up from ASARA ramps up gradually over 5 years.")
     retraining_cost = st.sidebar.checkbox("Retraining Cost", help="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
     constant_r = st.sidebar.checkbox("Constant Diminishing Returns", help="Assumes that $r$ is fixed at its initial value over time.")
     
