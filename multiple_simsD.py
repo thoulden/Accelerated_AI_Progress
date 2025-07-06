@@ -246,7 +246,7 @@ def run():
         table_data = {
             "Years of progress": ["≥3 years", "≥10 years"],
             "Compressed into ≤1 year": [
-                f"TEST{probabilities.get((12, 3), 0)*100:.0f}%",
+                f"{probabilities.get((12, 3), 0)*100:.0f}%",
                 f"{probabilities.get((12, 10), 0)*100:.0f}%"
             ],
             "Compressed into ≤4 months": [
@@ -279,7 +279,7 @@ def run():
         
         ax.set_xlabel('Years Compressed', fontsize=12)
         ax.set_ylabel('Probability', fontsize=12)
-        ax.set_title('Probability of Compressing X Years into One Year', fontsize=14)
+        ax.set_title('Probability of Compressing At Least X Years into One Year', fontsize=14)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
         ax.set_xlim(0, 20)
