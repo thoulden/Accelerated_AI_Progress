@@ -87,8 +87,10 @@ def calculate_summary_statistics_binary(times, conditions, software_contribution
     results = {condition: 'no' for condition in conditions}
 
     for time_period, speed_up_factor in conditions:
-        baseline_doublings = (time_period / 12) * (4/software_contribution_param)
-        required_doublings = int(baseline_doublings * speed_up_factor)
+        # This calculates how many doublings we need to achieve speed_up_factor × recent pace
+        # for time_period months
+        baseline_doublings = (time_period / 12) * (4/software_contribution_param) * speed_up_factor
+        required_doublings = int(baseline_doublings)
 
         for i in range(len(times) - required_doublings):
             time_span = times[i + required_doublings] - times[i]
@@ -203,7 +205,7 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
 def run():
     run_button = st.sidebar.button("Run Simulations")
 
-    st.sidebar.markdown("###TEST Key Parameter Sampling Bounds")
+    st.sidebar.markdown("### Key Parameter Sampling Bounds")
     ib_low = st.sidebar.number_input(r"Initial speed-up ($f$); lower bound", min_value=0.1, value=2.0, help="After ASARA is deployed, how much faster is software progress compared to the recent pace of software progress?")
     ib_high = st.sidebar.number_input(r"Initial speed-up ($f$); upper bound", min_value=ib_low, value=32.0)
     r_low = st.sidebar.number_input(r"Returns to Software R&D ($r$); lower bound", min_value=0.01, value=0.4, help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
