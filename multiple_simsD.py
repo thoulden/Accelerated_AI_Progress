@@ -98,67 +98,59 @@ def calculate_summary_statistics_binary(times, conditions, software_contribution
 
     return results
 
-def calculate_continuous_cdf_data(times_matrix, software_contribution_param, speed_up_factors=[3, 10, 30], max_years=4, resolution=100):
+def calculate_years_compressed_cdf(times_matrix, software_contribution_param, max_years=20, resolution=200):
     """
-    Calculate the fraction of simulations where growth exceeds various multiples 
-    for a continuous range of time periods.
-    
-    Returns a dictionary with arrays for plotting CDF curves.
+    Calculate the CDF for years of progress compressed into 1 year.
     """
-    time_points = np.linspace(0.05, max_years, resolution)  # Time points in years
+    years_points = np.linspace(0.1, max_years, resolution)
+    fractions = []
     
-    cdf_data = {factor: [] for factor in speed_up_factors}
-    
-    for time_years in time_points:
-        time_months = time_years * 12
+    for years in years_points:
+        # For each target number of years to compress into 1 year
+        baseline_doublings = (4/software_contribution_param) * years
         
-        for factor in speed_up_factors:
-            baseline_doublings = time_years * (4/software_contribution_param) * factor
+        # Use floor and ceiling to interpolate
+        doublings_floor = int(np.floor(baseline_doublings))
+        doublings_ceil = int(np.ceil(baseline_doublings))
+        
+        if doublings_floor == doublings_ceil:
+            # Exact integer case
+            success_count = 0
+            for times in times_matrix:
+                if doublings_floor < len(times):
+                    for i in range(len(times) - doublings_floor):
+                        time_span = times[i + doublings_floor] - times[i]
+                        if time_span < 12:  # 12 months = 1 year
+                            success_count += 1
+                            break
+            fraction = success_count / len(times_matrix)
+        else:
+            # Interpolate between floor and ceiling
+            success_count_floor = 0
+            for times in times_matrix:
+                if doublings_floor < len(times):
+                    for i in range(len(times) - doublings_floor):
+                        time_span = times[i + doublings_floor] - times[i]
+                        if time_span < 12:
+                            success_count_floor += 1
+                            break
             
-            # Use floor and ceiling to interpolate
-            doublings_floor = int(np.floor(baseline_doublings))
-            doublings_ceil = int(np.ceil(baseline_doublings))
+            success_count_ceil = 0
+            for times in times_matrix:
+                if doublings_ceil < len(times):
+                    for i in range(len(times) - doublings_ceil):
+                        time_span = times[i + doublings_ceil] - times[i]
+                        if time_span < 12:
+                            success_count_ceil += 1
+                            break
             
-            if doublings_floor == doublings_ceil:
-                # Exact integer case
-                success_count = 0
-                for times in times_matrix:
-                    if doublings_floor < len(times):
-                        for i in range(len(times) - doublings_floor):
-                            time_span = times[i + doublings_floor] - times[i]
-                            if time_span < time_months:
-                                success_count += 1
-                                break
-                fraction = success_count / len(times_matrix)
-            else:
-                # Interpolate between floor and ceiling
-                # Calculate success for floor
-                success_count_floor = 0
-                for times in times_matrix:
-                    if doublings_floor < len(times):
-                        for i in range(len(times) - doublings_floor):
-                            time_span = times[i + doublings_floor] - times[i]
-                            if time_span < time_months:
-                                success_count_floor += 1
-                                break
-                
-                # Calculate success for ceiling
-                success_count_ceil = 0
-                for times in times_matrix:
-                    if doublings_ceil < len(times):
-                        for i in range(len(times) - doublings_ceil):
-                            time_span = times[i + doublings_ceil] - times[i]
-                            if time_span < time_months:
-                                success_count_ceil += 1
-                                break
-                
-                # Interpolate
-                weight = baseline_doublings - doublings_floor
-                fraction = ((1 - weight) * success_count_floor + weight * success_count_ceil) / len(times_matrix)
-            
-            cdf_data[factor].append(fraction)
+            # Interpolate
+            weight = baseline_doublings - doublings_floor
+            fraction = ((1 - weight) * success_count_floor + weight * success_count_ceil) / len(times_matrix)
+        
+        fractions.append(fraction)
     
-    return time_points, cdf_data
+    return years_points, fractions
 
 def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, software_contribution_param, retraining_cost, compute_growth, constant_r):
     params_batch = sample_parameters_batch(num_sims, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, software_contribution_param, compute_growth)
@@ -202,21 +194,6 @@ def run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low
     }
     return probabilities, times_matrix, sizes_matrix, params_list
 
-def to_markdown_table(df):
-    """
-    Convert a small pandas DataFrame to a markdown table (no index).
-    """
-    df = df.reset_index(drop=True)
-    header = "| " + " | ".join(df.columns) + " |\n"
-    separator = "| " + " | ".join("---" for _ in df.columns) + " |\n"
-
-    rows = []
-    for row_tuple in df.itertuples(index=False):
-        row_str = "| " + " | ".join(str(x) for x in row_tuple) + " |"
-        rows.append(row_str)
-
-    return header + separator + "\n".join(rows)
-    
 def run():
     run_button = st.sidebar.button("Run Simulations")
 
@@ -236,61 +213,69 @@ def run():
                                         help="A larger fraction means that the software progress modelled contributes more to the overall AI progress.")
 
     num_sims = st.sidebar.number_input("Number of simulations", min_value=1, max_value=30000, value=1000, step=100)
-    multiples_input = st.sidebar.text_input("Growth Multiples (comma-separated)", value="3,10,30", help="These are the comparison multiples (of the current growth rate) that are reported in the results.")
 
     compute_growth = st.sidebar.checkbox("Gradual Boost", help="The initial speed-up from ASARA ramps up gradually over 5 years.")
     retraining_cost = st.sidebar.checkbox("Retraining Cost", help="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.")
     constant_r = st.sidebar.checkbox("Constant Diminishing Returns", help="Assumes that $r$ is fixed at its initial value over time.")
     
-    multiples = [float(m.strip()) for m in multiples_input.split(',') if m.strip()]
-    conditions = list(product([1, 4, 12, 36], multiples))
+    # Fixed conditions for the specific table format
+    conditions = [(12, 3), (4, 10), (12, 10), (4, 30)]
 
     if run_button:
         probabilities, times_matrix, sizes_matrix, params_list = run_simulations(num_sims, conditions, r_low, r_high, ly_low, ly_high, lf_low, lf_high, ib_low, ib_high, software_contribution_param, retraining_cost, compute_growth, constant_r)
 
-        data = []
-        for time_period in sorted(set(c[0] for c in probabilities.keys())):
-            row = {"Time Period (Months)": time_period}
-            for multiple in sorted(set(c[1] for c in probabilities.keys())):
-                row[f"{multiple}x faster"] = probabilities.get((time_period, multiple), 0)
-            data.append(row)
-        # Convert 'data' (list of dicts) to a DataFrame
-        df = pd.DataFrame(data)
-
-        # Example usage:
-        md_table = to_markdown_table(df)
-        st.write("###### What is the probability AI progress is X times faster for N months?")
-        st.write("(More precisely, what is the probability that there is an N month period where the average pace of AI software progress is X times faster than the recent pace of overall AI progress?)")
-        st.markdown(md_table)
-    
+        # Create the specific table format
+        st.write("### Years of AI progress compressed into different time periods")
         
-        # Calculate CDF data
-        time_points, cdf_data = calculate_continuous_cdf_data(
+        # Create the data for the table
+        table_data = {
+            "Years of progress": ["≥3 years", "≥10 years"],
+            "Compressed into ≤1 year": [
+                f"~{probabilities.get((12, 3), 0)*100:.0f}%",
+                f"~{probabilities.get((12, 10), 0)*100:.0f}%"
+            ],
+            "Compressed into ≤4 months": [
+                f"~{probabilities.get((4, 10), 0)*100:.0f}%",
+                f"~{probabilities.get((4, 30), 0)*100:.0f}%"
+            ]
+        }
+        
+        df_table = pd.DataFrame(table_data)
+        st.table(df_table)
+        
+        # Calculate CDF data for years compressed into 1 year
+        years_points, fractions = calculate_years_compressed_cdf(
             times_matrix, 
             software_contribution_param, 
-            speed_up_factors=multiples,
-            max_years=4,
-            resolution=100
+            max_years=20,
+            resolution=200
         )
         
         # Create the plot
         fig, ax = plt.subplots(figsize=(10, 6))
         
-        # Define colors for different speed-up factors
-        colors = ['blue', 'orange', 'green', 'red', 'purple', 'brown']
+        ax.plot(years_points, fractions, color='blue', linewidth=2)
         
-        # Plot each CDF curve
-        for i, (factor, fractions) in enumerate(cdf_data.items()):
-            color = colors[i % len(colors)]
-            ax.plot(time_points, fractions, label=f'{int(factor)}x', color=color, linewidth=2)
+        # Add vertical lines for reference points
+        ax.axvline(x=3, color='red', linestyle='--', alpha=0.5, label='3 years')
+        ax.axvline(x=10, color='green', linestyle='--', alpha=0.5, label='10 years')
         
-        ax.set_xlabel('Time Period (years)', fontsize=12)
-        ax.set_ylabel('Probability', fontsize=12)
-        ax.set_title('Probability of Sustaining X× Recent Pace for Number of Years', fontsize=14)
+        ax.set_xlabel('Years of progress', fontsize=12)
+        ax.set_ylabel('Probability of compressing into 1 year', fontsize=12)
+        ax.set_title('CDF: Years of Progress Compressed into 1 Year', fontsize=14)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
-        ax.set_xlim(0, 4)
+        ax.set_xlim(0, 20)
         ax.set_ylim(0, 1)
+        
+        # Add percentage labels at key points
+        for years in [3, 10]:
+            idx = np.argmin(np.abs(years_points - years))
+            prob = fractions[idx]
+            ax.annotate(f'{prob*100:.0f}%', 
+                       xy=(years, prob), 
+                       xytext=(years+0.5, prob+0.05),
+                       fontsize=10)
         
         st.pyplot(fig)
 
