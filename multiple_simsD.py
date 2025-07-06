@@ -250,8 +250,8 @@ def run():
                 f"{probabilities.get((12, 10), 0)*100:.0f}%"
             ],
             "Compressed into ≤4 months": [
-                f"~{probabilities.get((4, 10), 0)*100:.0f}%",
-                f"~{probabilities.get((4, 30), 0)*100:.0f}%"
+                f"{probabilities.get((4, 10), 0)*100:.0f}%",
+                f"{probabilities.get((4, 30), 0)*100:.0f}%"
             ]
         }
         
