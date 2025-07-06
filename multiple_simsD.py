@@ -241,7 +241,9 @@ def run():
         }
         
         df_table = pd.DataFrame(table_data)
-        st.table(df_table)
+        # Use markdown table to avoid row numbers
+        md_table = to_markdown_table(df_table)
+        st.markdown(md_table)
         
         # Calculate CDF data for years compressed into 1 year
         years_points, fractions = calculate_years_compressed_cdf(
@@ -260,9 +262,9 @@ def run():
         ax.axvline(x=3, color='red', linestyle='--', alpha=0.5, label='3 years')
         ax.axvline(x=10, color='green', linestyle='--', alpha=0.5, label='10 years')
         
-        ax.set_xlabel('Years of progress', fontsize=12)
-        ax.set_ylabel('Probability of compressing into 1 year', fontsize=12)
-        ax.set_title('CDF: Years of Progress Compressed into 1 Year', fontsize=14)
+        ax.set_xlabel('Years Compressed', fontsize=12)
+        ax.set_ylabel('Probability', fontsize=12)
+        ax.set_title('Probability of Compressing X Years into One Year', fontsize=14)
         ax.grid(True, alpha=0.3)
         ax.legend(fontsize=10)
         ax.set_xlim(0, 20)
