@@ -4,7 +4,7 @@ matplotlib.use('agg')
 import matplotlib.pyplot as plt
 
 # Import simulation modules
-import multiple_simsD 
+import multiple_simsC 
 import single_sim
 
 # Parameters table in Markdown format
@@ -50,7 +50,7 @@ simulation_mode = st.sidebar.selectbox(
 if simulation_mode == "Single Simulation":
     single_sim.run()  # Run the single simulation (placeholder)
 elif simulation_mode == "Multiple Simulations":
-    multiple_simsD.run()  # Run the multiple simulations (placeholder)
+    multiple_simsC.run()  # Run the multiple simulations (placeholder)
 
 st.markdown("### Model Parameters and Estimates")
 st.markdown(r"""
