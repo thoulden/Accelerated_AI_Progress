@@ -297,8 +297,8 @@ def run():
         fig, ax = plt.subplots(figsize=(10, 6))
         
         # Plot both lines
-        ax.plot(years_points_12, fractions_12, color='blue', linewidth=2, label='Compressed into 1 year')
-        ax.plot(years_points_4, fractions_4, color='purple', linewidth=2, label='Compressed into 4 months')
+        ax.plot(years_points_12, fractions_12, color='blue', linewidth=2, label='Compressed into ≤1 year')
+        ax.plot(years_points_4, fractions_4, color='purple', linewidth=2, label='Compressed into ≤4 months')
         
         # Add vertical lines - dashed for 1 year, dotted for 4 months
         # For 3 years
@@ -315,7 +315,7 @@ def run():
         
         ax.set_xlabel('Years Compressed', fontsize=12)
         ax.set_ylabel('Probability', fontsize=12)
-        ax.set_title('Probability of Compressing X Years into One Year or Four Months', fontsize=14)
+        ax.set_title('Probability of Compressing ≥X Years into One Year or Four Months', fontsize=14)
         ax.grid(True, alpha=0.3)
         
         # Custom legend to avoid duplicates
