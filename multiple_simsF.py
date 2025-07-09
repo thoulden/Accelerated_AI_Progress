@@ -257,14 +257,7 @@ def run():
 
         # Create the specific table format
         st.write("### Years of AI progress compressed into different time periods")
-        
-        # Debug: Show what the table conditions actually represent
-        st.write("**Debug info:**")
-        st.write("- '≥3 years' row, 1 year column: 3x speed for 12 months = 3 years compressed into 1 year")
-        st.write("- '≥3 years' row, 4 months column: 10x speed for 4 months = 10×(4/12) = 3.33 years compressed into 4 months")
-        st.write("- '≥10 years' row, 1 year column: 10x speed for 12 months = 10 years compressed into 1 year")
-        st.write("- '≥10 years' row, 4 months column: 30x speed for 4 months = 30×(4/12) = 10 years compressed into 4 months")
-        
+
         # Create the data for the table
         table_data = {
             "Years of progress": ["≥3 years", "≥10 years"],
