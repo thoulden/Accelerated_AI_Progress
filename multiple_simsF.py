@@ -116,55 +116,35 @@ def to_markdown_table(df):
 def calculate_years_compressed_cdf(times_matrix, software_contribution_param, time_period_months=12, max_years=20, resolution=200):
     """
     Calculate the CDF for years of progress compressed into a given time period.
-    time_period_months: The time period to compress into (12 for 1 year, 4 for 4 months)
+    This should match exactly with calculate_summary_statistics_binary logic.
     """
     years_points = np.linspace(0.1, max_years, resolution)
     fractions = []
     
-    for years in years_points:
-        # For each target number of years to compress into the time period
-        # Adjust the baseline doublings calculation for the time period
-        baseline_doublings = (4/software_contribution_param) * years * (time_period_months / 12)
+    for speed_up_factor in years_points:
+        # Use EXACTLY the same calculation as calculate_summary_statistics_binary
+        baseline_doublings = (time_period_months / 12) * (4/software_contribution_param)
+        required_doublings = int(baseline_doublings * speed_up_factor)
         
-        # Use floor and ceiling to interpolate
-        doublings_floor = int(np.floor(baseline_doublings))
-        doublings_ceil = int(np.ceil(baseline_doublings))
-        
-        if doublings_floor == doublings_ceil:
-            # Exact integer case
-            success_count = 0
-            for times in times_matrix:
-                if doublings_floor < len(times):
-                    for i in range(len(times) - doublings_floor):
-                        time_span = times[i + doublings_floor] - times[i]
-                        if time_span < time_period_months:
-                            success_count += 1
-                            break
-            fraction = success_count / len(times_matrix)
-        else:
-            # Interpolate between floor and ceiling
-            success_count_floor = 0
-            for times in times_matrix:
-                if doublings_floor < len(times):
-                    for i in range(len(times) - doublings_floor):
-                        time_span = times[i + doublings_floor] - times[i]
-                        if time_span < time_period_months:
-                            success_count_floor += 1
-                            break
+        success_count = 0
+        for times in times_matrix:
+            if required_doublings == 0 or required_doublings >= len(times):
+                if required_doublings == 0:
+                    success_count += 1
+                continue
             
-            success_count_ceil = 0
-            for times in times_matrix:
-                if doublings_ceil < len(times):
-                    for i in range(len(times) - doublings_ceil):
-                        time_span = times[i + doublings_ceil] - times[i]
-                        if time_span < time_period_months:
-                            success_count_ceil += 1
-                            break
+            # Check if we can achieve this speed-up
+            achieved = False
+            for i in range(len(times) - required_doublings):
+                time_span = times[i + required_doublings] - times[i]
+                if time_span < time_period_months:
+                    achieved = True
+                    break
             
-            # Interpolate
-            weight = baseline_doublings - doublings_floor
-            fraction = ((1 - weight) * success_count_floor + weight * success_count_ceil) / len(times_matrix)
+            if achieved:
+                success_count += 1
         
+        fraction = success_count / len(times_matrix)
         fractions.append(fraction)
     
     return years_points, fractions
