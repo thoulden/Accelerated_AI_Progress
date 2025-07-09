@@ -116,23 +116,24 @@ def to_markdown_table(df):
 def calculate_years_compressed_cdf(times_matrix, software_contribution_param, time_period_months=12, max_years=20, resolution=200):
     """
     Calculate the CDF for years of progress compressed into a given time period.
-    time_period_months: The time period to compress into (12 for 1 year, 4 for 4 months)
+    For the plot, X-axis represents "years of progress to compress"
     """
     years_points = np.linspace(0.1, max_years, resolution)
     fractions = []
     
-    for years in years_points:
-        # For each target number of years to compress into the time period
-        # This should match the table calculation:
-        # For "3x faster for 12 months" → baseline_doublings = (12/12) * (4/0.5) = 8, required = 8*3 = 24
-        # For "10x faster for 4 months" → baseline_doublings = (4/12) * (4/0.5) = 2.67, required = 2.67*10 = 26.7
+    for years_to_compress in years_points:
+        # Calculate how much speed-up is needed to compress this many years into the time period
+        # If we want to compress X years into time_period_months:
+        # speed_up_factor = X / (time_period_months/12)
+        speed_up_factor = years_to_compress / (time_period_months / 12)
         
-        # Use the same formula as calculate_summary_statistics_binary
-        baseline_doublings = (time_period_months / 12) * (4/software_contribution_param) * years
+        # Now use the same calculation as the table
+        baseline_doublings = (time_period_months / 12) * (4/software_contribution_param)
+        required_doublings = baseline_doublings * speed_up_factor
         
         # Use floor and ceiling to interpolate
-        doublings_floor = int(np.floor(baseline_doublings))
-        doublings_ceil = int(np.ceil(baseline_doublings))
+        doublings_floor = int(np.floor(required_doublings))
+        doublings_ceil = int(np.ceil(required_doublings))
         
         if doublings_floor == doublings_ceil:
             # Exact integer case
@@ -175,7 +176,7 @@ def calculate_years_compressed_cdf(times_matrix, software_contribution_param, ti
                         success_count_ceil += 1
             
             # Interpolate
-            weight = baseline_doublings - doublings_floor
+            weight = required_doublings - doublings_floor
             fraction = ((1 - weight) * success_count_floor + weight * success_count_ceil) / len(times_matrix)
         
         fractions.append(fraction)
