@@ -116,35 +116,68 @@ def to_markdown_table(df):
 def calculate_years_compressed_cdf(times_matrix, software_contribution_param, time_period_months=12, max_years=20, resolution=200):
     """
     Calculate the CDF for years of progress compressed into a given time period.
-    This should match exactly with calculate_summary_statistics_binary logic.
+    time_period_months: The time period to compress into (12 for 1 year, 4 for 4 months)
     """
     years_points = np.linspace(0.1, max_years, resolution)
     fractions = []
     
-    for speed_up_factor in years_points:
-        # Use EXACTLY the same calculation as calculate_summary_statistics_binary
-        baseline_doublings = (time_period_months / 12) * (4/software_contribution_param)
-        required_doublings = int(baseline_doublings * speed_up_factor)
+    for years in years_points:
+        # For each target number of years to compress into the time period
+        # This should match the table calculation:
+        # For "3x faster for 12 months" → baseline_doublings = (12/12) * (4/0.5) = 8, required = 8*3 = 24
+        # For "10x faster for 4 months" → baseline_doublings = (4/12) * (4/0.5) = 2.67, required = 2.67*10 = 26.7
         
-        success_count = 0
-        for times in times_matrix:
-            if required_doublings == 0 or required_doublings >= len(times):
-                if required_doublings == 0:
-                    success_count += 1
-                continue
-            
-            # Check if we can achieve this speed-up
-            achieved = False
-            for i in range(len(times) - required_doublings):
-                time_span = times[i + required_doublings] - times[i]
-                if time_span < time_period_months:
-                    achieved = True
-                    break
-            
-            if achieved:
-                success_count += 1
+        # Use the same formula as calculate_summary_statistics_binary
+        baseline_doublings = (time_period_months / 12) * (4/software_contribution_param) * years
         
-        fraction = success_count / len(times_matrix)
+        # Use floor and ceiling to interpolate
+        doublings_floor = int(np.floor(baseline_doublings))
+        doublings_ceil = int(np.ceil(baseline_doublings))
+        
+        if doublings_floor == doublings_ceil:
+            # Exact integer case
+            success_count = 0
+            for times in times_matrix:
+                if doublings_floor < len(times):
+                    achieved = False
+                    for i in range(len(times) - doublings_floor):
+                        time_span = times[i + doublings_floor] - times[i]
+                        if time_span < time_period_months:
+                            achieved = True
+                            break
+                    if achieved:
+                        success_count += 1
+            fraction = success_count / len(times_matrix)
+        else:
+            # Interpolate between floor and ceiling
+            success_count_floor = 0
+            for times in times_matrix:
+                if doublings_floor < len(times):
+                    achieved = False
+                    for i in range(len(times) - doublings_floor):
+                        time_span = times[i + doublings_floor] - times[i]
+                        if time_span < time_period_months:
+                            achieved = True
+                            break
+                    if achieved:
+                        success_count_floor += 1
+            
+            success_count_ceil = 0
+            for times in times_matrix:
+                if doublings_ceil < len(times):
+                    achieved = False
+                    for i in range(len(times) - doublings_ceil):
+                        time_span = times[i + doublings_ceil] - times[i]
+                        if time_span < time_period_months:
+                            achieved = True
+                            break
+                    if achieved:
+                        success_count_ceil += 1
+            
+            # Interpolate
+            weight = baseline_doublings - doublings_floor
+            fraction = ((1 - weight) * success_count_floor + weight * success_count_ceil) / len(times_matrix)
+        
         fractions.append(fraction)
     
     return years_points, fractions
@@ -224,6 +257,13 @@ def run():
         # Create the specific table format
         st.write("### Years of AI progress compressed into different time periods")
         
+        # Debug: Show what the table conditions actually represent
+        st.write("**Debug info:**")
+        st.write("- '≥3 years' row, 1 year column: 3x speed for 12 months = 3 years compressed into 1 year")
+        st.write("- '≥3 years' row, 4 months column: 10x speed for 4 months = 10×(4/12) = 3.33 years compressed into 4 months")
+        st.write("- '≥10 years' row, 1 year column: 10x speed for 12 months = 10 years compressed into 1 year")
+        st.write("- '≥10 years' row, 4 months column: 30x speed for 4 months = 30×(4/12) = 10 years compressed into 4 months")
+        
         # Create the data for the table
         table_data = {
             "Years of progress": ["≥3 years", "≥10 years"],
@@ -302,8 +342,8 @@ def run():
         ax.set_ylim(0, 1)
         
         # Add percentage labels at key points for both curves
+        # For 1 year compression - exact matches to table
         for years in [3, 10]:
-            # For 1 year compression
             idx_12 = np.argmin(np.abs(years_points_12 - years))
             prob_12 = fractions_12[idx_12]
             ax.annotate(f'{prob_12*100:.0f}%', 
@@ -311,15 +351,25 @@ def run():
                        xytext=(years+0.5, prob_12+0.05),
                        fontsize=10,
                        color='blue')
-            
-            # For 4 months compression
-            idx_4 = np.argmin(np.abs(years_points_4 - years))
-            prob_4 = fractions_4[idx_4]
-            ax.annotate(f'{prob_4*100:.0f}%', 
-                       xy=(years, prob_4), 
-                       xytext=(years+0.5, prob_4-0.05),
-                       fontsize=10,
-                       color='purple')
+        
+        # For 4 months compression - need to check at 3.33 and 10
+        # 3.33 years corresponds to table's "≥3 years" row
+        idx_4_3 = np.argmin(np.abs(years_points_4 - (10/3)))  # 10*(4/12) = 3.33
+        prob_4_3 = fractions_4[idx_4_3]
+        ax.annotate(f'{prob_4_3*100:.0f}%', 
+                   xy=(3, prob_4_3),  # Place at x=3 for visual alignment
+                   xytext=(3+0.5, prob_4_3-0.05),
+                   fontsize=10,
+                   color='purple')
+        
+        # 10 years for 4-month compression
+        idx_4_10 = np.argmin(np.abs(years_points_4 - 10))
+        prob_4_10 = fractions_4[idx_4_10]
+        ax.annotate(f'{prob_4_10*100:.0f}%', 
+                   xy=(10, prob_4_10), 
+                   xytext=(10+0.5, prob_4_10-0.05),
+                   fontsize=10,
+                   color='purple')
         
         st.pyplot(fig)
 
