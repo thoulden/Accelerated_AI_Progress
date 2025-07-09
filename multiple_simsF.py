@@ -352,7 +352,7 @@ def run():
         prob_4_3 = fractions_4[idx_4_3]
         ax.annotate(f'{prob_4_3*100:.0f}%', 
                    xy=(3, prob_4_3),  # Place at x=3 for visual alignment
-                   xytext=(3+0.5, prob_4_3-0.05),
+                   xytext=(3+0.5, prob_4_3-0.1),
                    fontsize=10,
                    color='purple')
         
