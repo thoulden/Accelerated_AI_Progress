@@ -322,9 +322,9 @@ def run():
         handles, labels = [], []
         # Main lines
         handles.append(plt.Line2D([0], [0], color='blue', linewidth=2))
-        labels.append('Compressed into 1 year')
+        labels.append('Compressed into ≤1 year')
         handles.append(plt.Line2D([0], [0], color='purple', linewidth=2))
-        labels.append('Compressed into 4 months')
+        labels.append('Compressed into ≤4 months')
         # Reference lines
         handles.append(plt.Line2D([0], [0], color='red', linestyle='--', alpha=0.7))
         labels.append('3 years reference')
