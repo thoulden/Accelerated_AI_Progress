@@ -361,7 +361,7 @@ def run():
         prob_4_10 = fractions_4[idx_4_10]
         ax.annotate(f'{prob_4_10*100:.0f}%', 
                    xy=(10, prob_4_10), 
-                   xytext=(10+0.5, prob_4_10-0.05),
+                   xytext=(10+0.5, prob_4_10-0.1),
                    fontsize=10,
                    color='purple')
         
