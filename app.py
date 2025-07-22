@@ -30,7 +30,7 @@ def get_parameters_table_markdown():
 st.title('Simulation of Accelerated AI Progress')
 
 st.markdown(r"""
-This tool is a simulaiton companion to the [How quick and big would a software intelligence explosion be?](https://www.forethought.org/research/how-quick-and-big-would-a-software-intelligence-explosion-be). It allows users to enter their own parameterizations for the accompanying post on the pace of AI progress.
+This tool is a simulaiton companion to [How quick and big would a software intelligence explosion be?](https://www.forethought.org/research/how-quick-and-big-would-a-software-intelligence-explosion-be) It allows users to enter their own parameterizations for the accompanying post on the pace of AI progress.
 It offers two simulation options:
 
 - **Multiple Simulations:** Run several simulations with uncertainty over key parameters. The output is a table showing the fraction of simulations where the average pace of software progress exceeds a specified threshold over some number of years.
