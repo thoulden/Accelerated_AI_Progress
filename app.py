@@ -86,5 +86,5 @@ From these parameters, we define our two key model inputs:
 - $r$ = λα/β
 - $p$ = λα
 
-Additional details for this derivation as well as discussion of objections to our choice of model inputs are provided in the [appendix](https://www.forethought.org/research/how-quick-and-big-would-a-software-intelligence-explosion-be#appendix) of the post.""")
+Additional details for this derivation as well as discussion of objections to our choice of model inputs are provided in the [appendix](https://www.forethought.org/research/how-quick-and-big-would-a-software-intelligence-explosion-be#appendices) of the post.""")
 
