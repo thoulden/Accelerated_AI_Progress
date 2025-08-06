@@ -229,14 +229,18 @@ def run():
     run_button = st.sidebar.button("Run Simulations")
 
     st.sidebar.markdown("### Key Parameter Sampling Bounds")
-    ib_low = st.sidebar.number_input(r"Initial speed-up ($f$); lower bound", min_value=0.1, value=2.0, help="After ASARA is deployed, how much faster is software progress compared to the recent pace of software progress?")
-    ib_high = st.sidebar.number_input(r"Initial speed-up ($f$); upper bound", min_value=ib_low, value=32.0)
-    r_low = st.sidebar.number_input(r"Returns to Software R&D ($r$); lower bound", min_value=0.01, value=0.4, help="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)")
-    r_high = st.sidebar.number_input(r"Returns to Software R&D ($r$); upper bound", min_value=r_low, value=3.6)
-    ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=6.0, help="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of years of AI progress at the recent rate of progress.)")
-    ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=16.0)
-    lf_low = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); lower bound", min_value=0.01, value=0.15, help="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?")
-    lf_high = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); upper bound", min_value=lf_low, value=0.6)
+
+    ib_low = st.sidebar.number_input(r"Initial speed-up ($f$); lower bound", min_value=0.1, value=2.0, help="...")
+    ib_high = st.sidebar.number_input(r"Initial speed-up ($f$); upper bound", min_value=ib_low, value=max(32.0, ib_low))
+
+    r_low = st.sidebar.number_input(r"Returns to Software R&D ($r$); lower bound", min_value=0.01, value=0.4, help="...")
+    r_high = st.sidebar.number_input(r"Returns to Software R&D ($r$); upper bound", min_value=r_low, value=max(3.6, r_low))
+
+    ly_low = st.sidebar.number_input("Distance to effective limits on software; lower bound", min_value=1.0, value=6.0, help="...")
+    ly_high = st.sidebar.number_input("Distance to effective limits on software; upper bound", min_value=ly_low, value=max(16.0, ly_low))
+
+    lf_low = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); lower bound", min_value=0.01, value=0.15, help="...")
+    lf_high = st.sidebar.number_input(r"Diminishing returns to parallel labour ($p$); upper bound", min_value=lf_low, value=max(0.6, lf_low))
 
     st.sidebar.markdown("### Additional Simulation Options")
     software_contribution_param = st.sidebar.number_input(r"Fraction of total AI progress that is due to better software (rather than more compute)?", min_value=0.01, max_value=0.99,
