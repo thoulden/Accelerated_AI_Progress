@@ -440,6 +440,9 @@
       $('controls-' + mo).classList.toggle('hidden', !on);
       $('results-' + mo).classList.toggle('hidden', !on);
     });
+    // The shared "Model Parameters and Estimates" block (and everything below
+    // it) describes the simulation model; hide it on the Speed-Up Calculator tab.
+    $('shared-model-info').classList.toggle('hidden', mode === 'speedup');
     // Plotly needs a resize nudge when a hidden container becomes visible
     window.dispatchEvent(new Event('resize'));
   }

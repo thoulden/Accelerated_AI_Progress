@@ -21,7 +21,7 @@
     <nav class="tabbar" role="tablist" aria-label="Simulation mode">
       <button id="tab-single" class="active" role="tab" aria-selected="true">Single Simulation</button>
       <button id="tab-multiple" role="tab" aria-selected="false">Multiple Simulations</button>
-      <button id="tab-speedup" role="tab" aria-selected="false">Speed-up Calculator</button>
+      <button id="tab-speedup" role="tab" aria-selected="false">Speed-Up Calculator</button>
     </nav>
 
     <div class="layout">
@@ -252,7 +252,7 @@
           <ul>
             <li><strong>Multiple Simulations:</strong> Run several simulations with uncertainty over key parameters. The output is a table showing the fraction of simulations where the average pace of software progress exceeds a specified threshold over some number of years.</li>
             <li><strong>Single Simulation:</strong> Run a single simulation under specific parameter values to illustrate the path of AI progress, including the evolution of diminishing research productivity and growth rates over time.</li>
-            <li><em>Speed-up calculator</em>: This calculator calculates how many times faster is the (balanced) growth path of software once ASARA is achieved. This calculator explicitly considers a growing compute stock and constant diminishing returns.</li>
+            <li><strong>Speed-up calculator:</strong> This calculator calculates how many times faster is the (balanced) growth path of software once ASARA is achieved. This calculator explicitly considers a growing compute stock and constant diminishing returns.</li>
           </ul>
           <p>The simulation assumes that compute remains constant over time.</p>
         </div>
@@ -316,6 +316,7 @@
           <p class="prose">Notably, the speed-up depends only on <span class="m">r</span> and <span class="m">α</span> — the compute growth rates cancel out of the ratio. They still determine the underlying growth rates shown in steps 2–4.</p>
         </div>
 
+        <div id="shared-model-info">
         <h2 class="section">Model Parameters and Estimates</h2>
         <p class="prose">The table below summarizes the model parameters:</p>
 
@@ -393,6 +394,7 @@
         <div class="footer">
           Standalone recreation of the Accelerated AI Progress simulator — all simulation math is computed in your browser.
         </div>
+        </div><!-- /#shared-model-info -->
       </main>
     </div>
   </div>
