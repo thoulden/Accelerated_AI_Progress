@@ -139,7 +139,8 @@ a:hover { text-decoration: underline; }
   color: var(--ink-soft);
   margin-bottom: 6px;
 }
-.control .info {
+.info {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -152,6 +153,42 @@ a:hover { text-decoration: underline; }
   font-weight: 700;
   cursor: help;
   vertical-align: middle;
+}
+.info:hover { background: var(--blue); color: #fff; }
+.info.no-tip { display: none; }
+
+/* Custom immediate hover tooltip (replaces the slow native title tooltip) */
+.info[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 9px);
+  transform: translateX(-50%);
+  width: 230px;
+  max-width: 230px;
+  background: #1b1f27;
+  color: #fff;
+  padding: 9px 11px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.45;
+  text-align: left;
+  white-space: normal;
+  z-index: 60;
+  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.22);
+  pointer-events: none;
+}
+.info[data-tip]:hover::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 3px);
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-bottom-color: #1b1f27;
+  z-index: 60;
+  pointer-events: none;
 }
 .control input[type="number"] {
   width: 100%;

@@ -165,6 +165,20 @@
     }
     var lay4 = baseLayout('Annualized Software Growth Rate Over Time', 'Time (years)', 'Annualized Growth Rate');
     lay4.yaxis.type = 'log';
+    // Only show y ticks at 1, 10, 100 and no gridlines on this figure.
+    lay4.yaxis.tickmode = 'array';
+    lay4.yaxis.tickvals = [1, 10, 100];
+    lay4.yaxis.ticktext = ['1', '10', '100'];
+    lay4.yaxis.showgrid = false;
+    lay4.yaxis.minor = { showgrid: false, ticks: '' };
+    lay4.xaxis.showgrid = false;
+    // Range chosen so the 1, 10 and 100 ticks are all visible.
+    var finiteY = gr.filter(function (v) { return isFinite(v) && v > 0; });
+    var loData = finiteY.length ? Math.min.apply(null, finiteY) : 1;
+    var hiData = finiteY.length ? Math.max.apply(null, finiteY) : 100;
+    var loBound = Math.min(loData, 1);
+    var hiBound = Math.max(hiData, 100);
+    lay4.yaxis.range = [Math.log10(loBound) - 0.08, Math.log10(hiBound) + 0.08];
     Plotly.newPlot(div4, traces4, lay4, PLOT_CONFIG);
     noteEl(host, '<em>Note:</em> an annual growth rate of 2.77 corresponds to doubling every 3 months.');
   }
@@ -373,7 +387,25 @@
     $('s-fmax-wrap').classList.toggle('hidden', !on);
   }
 
+  // Convert native `title` tooltips into immediate custom hover tooltips.
+  function initTooltips() {
+    var infos = document.querySelectorAll('.info[title]');
+    for (var i = 0; i < infos.length; i++) {
+      var el = infos[i];
+      var tip = el.getAttribute('title');
+      el.removeAttribute('title');           // suppress the slow native tooltip
+      if (tip && tip !== '...') {
+        el.setAttribute('data-tip', tip);
+      } else {
+        // no real help text: drop the marker so it isn't a dead "?"
+        el.classList.add('no-tip');
+      }
+    }
+  }
+
   function init() {
+    initTooltips();
+
     // Tabs
     $('tab-single').addEventListener('click', function () { setMode('single'); });
     $('tab-multiple').addEventListener('click', function () { setMode('multiple'); });
