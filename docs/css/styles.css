@@ -206,6 +206,11 @@ a:hover { text-decoration: underline; }
   border-color: var(--blue);
   box-shadow: 0 0 0 3px var(--blue-soft);
 }
+.control input[type="number"]:disabled {
+  background: #f2f3f5;
+  color: #9aa1ac;
+  cursor: not-allowed;
+}
 
 .checkbox-row {
   display: flex;
@@ -371,6 +376,40 @@ table.result-table td:first-child { font-weight: 600; }
   color: var(--ink);
 }
 .mathblock .m { font-size: 19px; }
+
+/* ---- Speed-up calculator hero ---- */
+.speedup-hero {
+  text-align: center;
+  background: linear-gradient(135deg, #eef3ff 0%, #f7f9ff 100%);
+  border: 1px solid #cdd9ff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 30px 24px 26px;
+  margin: 4px 0 22px;
+}
+.speedup-label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.speedup-value {
+  font-size: 68px;
+  line-height: 1.05;
+  font-weight: 800;
+  color: var(--blue);
+  letter-spacing: -0.02em;
+}
+.speedup-value.explosion { font-size: 46px; color: #b21f2d; }
+.speedup-sub {
+  margin-top: 8px;
+  font-size: 15px;
+  color: var(--ink-soft);
+  font-family: "Cambria Math", "Times New Roman", Georgia, serif;
+}
+.mathblock sup { font-style: normal; }
 
 .footer {
   margin-top: 40px;

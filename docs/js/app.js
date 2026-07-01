@@ -363,19 +363,83 @@
   }
 
   // ======================================================================
+  // SPEED-UP CALCULATOR
+  //   Post-ASARA balanced-growth software speed-up.
+  //   Production: g_S = L^a E^b S^(-1/r).
+  //   Before ASARA (L exogenous, grows at g_L): g_before = r(a*g_L + b*g_E).
+  //   After ASARA  (L = C*S):                   g_after  = r(a*g_C + b*g_E)/(1 - r*a).
+  //   Taking g_L = g_C, the speed-up is M = g_after/g_before = 1/(1 - r*a).
+  // ======================================================================
+
+  function readSpeedupParams() {
+    return {
+      alpha: num('sp-alpha'),
+      r: num('sp-r'),
+      beta: num('sp-beta'),
+      gE: num('sp-ge'),
+      gcLink: checked('sp-gc-link'),
+      gC: num('sp-gc')
+    };
+  }
+
+  function fmtRatePct(x) { return Math.round(x * 100) + '%/yr'; }
+
+  // Keep the g_C input in sync when it is linked to 2*g_E.
+  function updateGcLink() {
+    var linked = checked('sp-gc-link');
+    var gcInput = $('sp-gc');
+    gcInput.disabled = linked;
+    if (linked) {
+      var gE = num('sp-ge');
+      if (!isNaN(gE)) gcInput.value = 2 * gE;
+    }
+  }
+
+  function renderSpeedup() {
+    var p = readSpeedupParams();
+    if (isNaN(p.alpha) || isNaN(p.r) || isNaN(p.beta) || isNaN(p.gE)) return;
+    var gC = p.gcLink ? 2 * p.gE : p.gC;
+    if (isNaN(gC)) return;
+    var gL = gC;                       // pre-ASARA labour grows at the compute rate
+    var ra = p.r * p.alpha;
+
+    var gBefore = p.r * (p.alpha * gL + p.beta * p.gE);
+    var multEl = $('sp-multiplier');
+    var subEl = $('sp-subnote');
+
+    $('sp-gbefore').textContent = fmtRatePct(gBefore);
+
+    if (ra >= 1) {
+      multEl.textContent = '∞';
+      multEl.classList.add('explosion');
+      subEl.textContent = 'r·α = ' + ra.toFixed(2) + ' ≥ 1  →  software-only intelligence explosion';
+      $('sp-gafter').textContent = '∞ (explosive)';
+      $('sp-mult-inline').textContent = '∞';
+    } else {
+      multEl.classList.remove('explosion');
+      var gAfter = p.r * (p.alpha * gC + p.beta * p.gE) / (1 - ra);
+      var M = 1 / (1 - ra);
+      multEl.textContent = M.toFixed(1) + '×';
+      subEl.textContent = '= 1 / (1 − r·α),  with r·α = ' + ra.toFixed(2);
+      $('sp-gafter').textContent = fmtRatePct(gAfter);
+      $('sp-mult-inline').textContent = M.toFixed(2) + '×';
+    }
+  }
+
+  // ======================================================================
   // TAB SWITCHING + WIRING
   // ======================================================================
 
+  var MODES = ['single', 'multiple', 'speedup'];
+
   function setMode(mode) {
-    var single = mode === 'single';
-    $('tab-single').classList.toggle('active', single);
-    $('tab-multiple').classList.toggle('active', !single);
-    $('tab-single').setAttribute('aria-selected', single ? 'true' : 'false');
-    $('tab-multiple').setAttribute('aria-selected', single ? 'false' : 'true');
-    $('controls-single').classList.toggle('hidden', !single);
-    $('controls-multiple').classList.toggle('hidden', single);
-    $('results-single').classList.toggle('hidden', !single);
-    $('results-multiple').classList.toggle('hidden', single);
+    MODES.forEach(function (mo) {
+      var on = mo === mode;
+      $('tab-' + mo).classList.toggle('active', on);
+      $('tab-' + mo).setAttribute('aria-selected', on ? 'true' : 'false');
+      $('controls-' + mo).classList.toggle('hidden', !on);
+      $('results-' + mo).classList.toggle('hidden', !on);
+    });
     // Plotly needs a resize nudge when a hidden container becomes visible
     window.dispatchEvent(new Event('resize'));
   }
@@ -409,6 +473,7 @@
     // Tabs
     $('tab-single').addEventListener('click', function () { setMode('single'); });
     $('tab-multiple').addEventListener('click', function () { setMode('multiple'); });
+    $('tab-speedup').addEventListener('click', function () { setMode('speedup'); });
 
     // Single-sim: live recompute on any control change + explicit button
     var singleInputs = ['s-f', 's-f0', 's-fmax', 's-r', 's-yr', 's-lambda', 's-sc'];
@@ -427,10 +492,24 @@
     // Multiple-sim: only on button press
     $('run-multiple').addEventListener('click', renderMultiple);
 
+    // Speed-up calculator: live recompute on any control change
+    ['sp-alpha', 'sp-r', 'sp-beta', 'sp-ge', 'sp-gc'].forEach(function (id) {
+      $(id).addEventListener('input', function () {
+        if (id === 'sp-ge') updateGcLink();
+        renderSpeedup();
+      });
+    });
+    $('sp-gc-link').addEventListener('change', function () {
+      updateGcLink();
+      renderSpeedup();
+    });
+
     // Initial state
     toggleGradualBoost();
     renderSingle();          // single sim auto-runs on load (matches original)
     showMultiplePlaceholder();
+    updateGcLink();
+    renderSpeedup();         // speed-up calculator computes on load
     setMode('single');
   }
 

@@ -21,6 +21,7 @@
     <nav class="tabbar" role="tablist" aria-label="Simulation mode">
       <button id="tab-single" class="active" role="tab" aria-selected="true">Single Simulation</button>
       <button id="tab-multiple" role="tab" aria-selected="false">Multiple Simulations</button>
+      <button id="tab-speedup" role="tab" aria-selected="false">Speed-up Calculator</button>
     </nav>
 
     <div class="layout">
@@ -188,6 +189,57 @@
             </label>
           </div>
         </div>
+
+        <!-- ---------- SPEED-UP CALCULATOR CONTROLS ---------- -->
+        <div id="controls-speedup" class="hidden">
+          <h2>Speed-up Calculator Controls</h2>
+
+          <div class="group-label">Software R&amp;D parameters</div>
+
+          <div class="control">
+            <label class="field-label" for="sp-alpha">Elasticity w.r.t. cognitive labour (<span class="m">α</span>)
+              <span class="info" title="Output elasticity of software progress with respect to cognitive labour L. Together with r it sets the returns to cognitive labour, r·α. The speed-up depends only on r and α.">?</span>
+            </label>
+            <input type="number" id="sp-alpha" min="0.01" max="1" step="0.01" value="0.5" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="sp-r">Returns to software R&amp;D (<span class="m">r</span>)
+              <span class="info" title="Each time cumulative inputs to software R&D double, how many times does software double? The stock exponent is −1/r and is held fixed (constant diminishing returns).">?</span>
+            </label>
+            <input type="number" id="sp-r" min="0.01" max="5" step="0.05" value="1.4" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="sp-beta">Elasticity w.r.t. training compute (<span class="m">β</span>)
+              <span class="info" title="Output elasticity of software progress with respect to training (experiment) compute E. Affects the displayed growth rates, but not the speed-up multiplier.">?</span>
+            </label>
+            <input type="number" id="sp-beta" min="0" max="1" step="0.01" value="0.5" />
+          </div>
+
+          <div class="group-label">Compute growth (per year)</div>
+
+          <div class="control">
+            <label class="field-label" for="sp-ge">Training compute growth (<span class="m">g<sub>E</sub></span>)
+              <span class="info" title="Exponential growth rate of training (experiment) compute E, in fraction per year. Before ASARA this drives progress alongside labour; after ASARA it continues to feed in.">?</span>
+            </label>
+            <input type="number" id="sp-ge" min="0" max="10" step="0.05" value="0.5" />
+          </div>
+
+          <div class="checkbox-row">
+            <input type="checkbox" id="sp-gc-link" checked />
+            <label for="sp-gc-link">Inference grows 2× training (<span class="m">g<sub>C</sub></span> = 2<span class="m">g<sub>E</sub></span>)
+              <span class="info" title="The screenshot's assumption: inference compute C grows twice as fast as training compute E. Uncheck to set the inference-compute growth rate directly.">?</span>
+            </label>
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="sp-gc">Inference compute growth (<span class="m">g<sub>C</sub></span>)
+              <span class="info" title="Exponential growth rate of inference compute C, in fraction per year. After ASARA, cognitive labour is the software run on inference compute (L = C·S).">?</span>
+            </label>
+            <input type="number" id="sp-gc" min="0" max="10" step="0.05" value="1.0" />
+          </div>
+        </div>
       </aside>
 
       <!-- ================= MAIN CONTENT ================= -->
@@ -196,10 +248,11 @@
         <div class="prose">
           <p>This tool is a simulation companion to
           <a href="https://www.forethought.org/research/how-quick-and-big-would-a-software-intelligence-explosion-be" target="_blank" rel="noopener">How quick and big would a software intelligence explosion be?</a>
-          Alongside the ability to change parameterizations (in the sidebar), users have two main simulation options:</p>
+          Alongside the ability to change parameterizations (in the sidebar), users have three main options:</p>
           <ul>
             <li><strong>Multiple Simulations:</strong> Run several simulations with uncertainty over key parameters. The output is a table showing the fraction of simulations where the average pace of software progress exceeds a specified threshold over some number of years.</li>
             <li><strong>Single Simulation:</strong> Run a single simulation under specific parameter values to illustrate the path of AI progress, including the evolution of diminishing research productivity and growth rates over time.</li>
+            <li><em>Speed-up calculator</em>: This calculator calculates how many times faster is the (balanced) growth path of software once ASARA is achieved. This calculator explicitly considers a growing compute stock and constant diminishing returns.</li>
           </ul>
           <p>The simulation assumes that compute remains constant over time.</p>
         </div>
@@ -211,6 +264,57 @@
 
         <!-- Multiple sim results -->
         <div id="results-multiple" class="hidden"></div>
+
+        <!-- Speed-up calculator results -->
+        <div id="results-speedup" class="hidden">
+          <div class="speedup-hero">
+            <div class="speedup-label">Software progress speed-up from full automation of AI R&amp;D</div>
+            <div class="speedup-value" id="sp-multiplier">—</div>
+            <div class="speedup-sub" id="sp-subnote"></div>
+          </div>
+
+          <h3 class="subsection">How this is calculated</h3>
+          <p class="prose">Once AI systems can fully automate AI R&amp;D (ASARA), the cognitive labour doing research is no longer a fixed human workforce — it becomes the AI software itself, run on inference compute. That closes a feedback loop (better software → better and more numerous AI researchers → better software) which raises the balanced-growth rate of software progress. The number above is how many times faster software progresses on the post-ASARA balanced growth path, assuming a growing compute stock and constant diminishing returns to R&amp;D (<span class="m">r</span> held fixed). The math below follows
+          <a href="https://www.lesswrong.com/posts/jfwhvd43sbpkGTLyn/full-automation-of-ai-r-and-d-probably-yields-a-large-speed?commentId=ffkNW6wQGwBkmXaKz" target="_blank" rel="noopener">this derivation</a>.</p>
+
+          <p class="prose"><strong>1. The production function.</strong> Write the rate of software progress as</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span> = <span class="m">L</span><sup><span class="m">α</span></sup> <span class="m">E</span><sup><span class="m">β</span></sup> <span class="m">S</span><sup>−1/<span class="m">r</span></sup>
+          </div>
+          <p class="prose">where <span class="m">L</span> is cognitive labour, <span class="m">E</span> is training (“experiment”) compute, <span class="m">S</span> is the current software stock, <span class="m">α</span> and <span class="m">β</span> are the output elasticities of labour and training compute, and <span class="m">r</span> is the returns to software R&amp;D. On a <em>balanced growth path</em> (BGP) <span class="m">g<sub>S</sub></span> is constant, so the growth rate of the right-hand side must be zero.</p>
+
+          <p class="prose"><strong>2. Before ASARA.</strong> Labour is human-driven and grows exogenously at <span class="m">g<sub>L</sub></span>, and training compute at <span class="m">g<sub>E</sub></span>. Setting the log-derivative of the right-hand side to zero:</p>
+          <div class="mathblock">
+            0 = <span class="m">α</span> <span class="m">g<sub>L</sub></span> + <span class="m">β</span> <span class="m">g<sub>E</sub></span> − (1/<span class="m">r</span>) <span class="m">g<sub>S</sub></span>
+            &nbsp;&nbsp;⟹&nbsp;&nbsp;
+            <span class="m">g<sub>S</sub></span><sup>before</sup> = <span class="m">r</span> (<span class="m">α</span> <span class="m">g<sub>L</sub></span> + <span class="m">β</span> <span class="m">g<sub>E</sub></span>)
+          </div>
+          <p class="prose">With the current inputs, <span class="m">g<sub>S</sub></span><sup>before</sup> = <strong><span id="sp-gbefore">—</span></strong> (taking pre-ASARA labour to grow at the compute rate, <span class="m">g<sub>L</sub></span> = <span class="m">g<sub>C</sub></span>).</p>
+
+          <p class="prose"><strong>3. After ASARA.</strong> Automated researchers are the software itself, run on inference compute <span class="m">C</span>, so <span class="m">L</span> = <span class="m">C</span>·<span class="m">S</span>. Substituting,</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span> = (<span class="m">C</span> <span class="m">S</span>)<sup><span class="m">α</span></sup> <span class="m">E</span><sup><span class="m">β</span></sup> <span class="m">S</span><sup>−1/<span class="m">r</span></sup>
+            = <span class="m">C</span><sup><span class="m">α</span></sup> <span class="m">E</span><sup><span class="m">β</span></sup> <span class="m">S</span><sup><span class="m">α</span>−1/<span class="m">r</span></sup>
+          </div>
+          <p class="prose">The extra <span class="m">S</span> in the exponent (<span class="m">α</span>−1/<span class="m">r</span> instead of −1/<span class="m">r</span>) <em>is</em> the automation feedback: software now feeds back into the labour input. Setting the log-derivative to zero:</p>
+          <div class="mathblock">
+            0 = <span class="m">α</span> <span class="m">g<sub>C</sub></span> + <span class="m">β</span> <span class="m">g<sub>E</sub></span> + (<span class="m">α</span>−1/<span class="m">r</span>) <span class="m">g<sub>S</sub></span>
+            &nbsp;&nbsp;⟹&nbsp;&nbsp;
+            <span class="m">g<sub>S</sub></span><sup>after</sup> = <span class="m">r</span> (<span class="m">α</span> <span class="m">g<sub>C</sub></span> + <span class="m">β</span> <span class="m">g<sub>E</sub></span>) / (1 − <span class="m">r</span><span class="m">α</span>)
+          </div>
+          <p class="prose">With the current inputs, <span class="m">g<sub>S</sub></span><sup>after</sup> = <strong><span id="sp-gafter">—</span></strong>. If <span class="m">r</span><span class="m">α</span> ≥ 1 the denominator is non-positive, the balanced path breaks down, and you get a <em>software-only intelligence explosion</em>.</p>
+
+          <p class="prose"><strong>4. A common assumption.</strong> If inference compute grows twice as fast as training compute, <span class="m">g<sub>C</sub></span> = 2<span class="m">g<sub>E</sub></span>, this simplifies to</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span><sup>after</sup> = <span class="m">g<sub>E</sub></span> <span class="m">r</span> (2<span class="m">α</span> + <span class="m">β</span>) / (1 − <span class="m">r</span><span class="m">α</span>)
+          </div>
+
+          <p class="prose"><strong>5. The speed-up.</strong> Taking cognitive labour to have grown at the compute rate before automation (<span class="m">g<sub>L</sub></span> = <span class="m">g<sub>C</sub></span>), the compute terms cancel and the speed-up is simply</p>
+          <div class="mathblock">
+            <span class="m">M</span> = <span class="m">g<sub>S</sub></span><sup>after</sup> / <span class="m">g<sub>S</sub></span><sup>before</sup> = 1 / (1 − <span class="m">r</span><span class="m">α</span>) = <strong><span id="sp-mult-inline">—</span></strong>
+          </div>
+          <p class="prose">Notably, the speed-up depends only on <span class="m">r</span> and <span class="m">α</span> — the compute growth rates cancel out of the ratio. They still determine the underlying growth rates shown in steps 2–4.</p>
+        </div>
 
         <h2 class="section">Model Parameters and Estimates</h2>
         <p class="prose">The table below summarizes the model parameters:</p>
