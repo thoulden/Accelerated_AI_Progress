@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simulation of Accelerated AI Progress</title>
+  <meta name="description" content="Simulation companion to 'How quick and big would a software intelligence explosion be?' — a standalone (non-Streamlit) recreation." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>" />
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="vendor/plotly.min.js" charset="utf-8"></script>
+</head>
+<body>
+  <div class="page">
+
+    <header class="app-header">
+      <h1>Simulation of Accelerated AI Progress</h1>
+      <p class="subtitle">A software intelligence explosion simulator</p>
+    </header>
+
+    <!-- Mode selector: top pill bar (replaces the old sidebar dropdown) -->
+    <nav class="tabbar" role="tablist" aria-label="Simulation mode">
+      <button id="tab-single" class="active" role="tab" aria-selected="true">Single Simulation</button>
+      <button id="tab-multiple" role="tab" aria-selected="false">Multiple Simulations</button>
+    </nav>
+
+    <div class="layout">
+
+      <!-- ================= SIDEBAR CONTROLS ================= -->
+      <aside class="sidebar card">
+
+        <!-- ---------- SINGLE SIM CONTROLS ---------- -->
+        <div id="controls-single">
+          <h2>Single Simulation Controls</h2>
+          <button class="run-btn" id="run-single">Run Simulation</button>
+
+          <div class="checkbox-row">
+            <input type="checkbox" id="s-compute-growth" />
+            <label for="s-compute-growth">Gradual Boost
+              <span class="info" title="The initial speed-up from ASARA ramps up gradually over 5 years.">?</span>
+            </label>
+          </div>
+
+          <!-- f (no gradual boost) -->
+          <div class="control" id="s-f-single-wrap">
+            <label class="field-label" for="s-f">Initial speed-up (<span class="m">f</span>)
+              <span class="info" title="After ASARA is deployed, how much faster is software progress compared to the recent pace of software progress?">?</span>
+            </label>
+            <input type="number" id="s-f" min="0" max="1000" step="0.1" value="8" />
+          </div>
+
+          <!-- f_0 and f_max (gradual boost) -->
+          <div class="control hidden" id="s-f0-wrap">
+            <label class="field-label" for="s-f0">Initial speed-up (<span class="m">f<sub>0</sub></span>)
+              <span class="info" title="After ASARA is deployed, how much faster is software progress compared to the recent pace of software progress immediately?">?</span>
+            </label>
+            <input type="number" id="s-f0" min="1" max="1000" step="0.1" value="1" />
+          </div>
+          <div class="control hidden" id="s-fmax-wrap">
+            <label class="field-label" for="s-fmax">Max speed-up (<span class="m">f<sub>max</sub></span>)
+              <span class="info" title="Max speed-up after 5 years.">?</span>
+            </label>
+            <input type="number" id="s-fmax" min="1" max="1000" step="0.1" value="32" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="s-r">Returns to Software R&amp;D (<span class="m">r</span>)
+              <span class="info" title="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)">?</span>
+            </label>
+            <input type="number" id="s-r" min="0" max="5" step="0.1" value="1.2" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="s-yr">Distance to effective limits on software
+              <span class="info" title="When ASARA is first developed, how far is AI software from effective limits? (Measured in units of &quot;years of AI progress at the recent rate of progress&quot;.)">?</span>
+            </label>
+            <input type="number" id="s-yr" min="1" max="60" step="0.5" value="11" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="s-lambda">Diminishing returns to parallel labour (<span class="m">p</span>)
+              <span class="info" title="If you instantaneously doubled the amount of parallel cognitive labour directed towards software R&D, how many times would the pace of software progress double?">?</span>
+            </label>
+            <input type="number" id="s-lambda" min="0.01" max="1" step="0.01" value="0.3" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="s-sc">Fraction of total AI progress that is due to better software (rather than more compute)?
+              <span class="info" title="A larger fraction means that the software progress modelled contributes more to the overall AI progress.">?</span>
+            </label>
+            <input type="number" id="s-sc" min="0.01" max="0.99" step="0.01" value="0.5" />
+          </div>
+
+          <div class="checkbox-row">
+            <input type="checkbox" id="s-retrain" />
+            <label for="s-retrain">Retraining Cost
+              <span class="info" title="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.">?</span>
+            </label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="s-constant-r" />
+            <label for="s-constant-r">Constant Diminishing Returns
+              <span class="info" title="Assumes that r is fixed at its initial value over time.">?</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- ---------- MULTIPLE SIM CONTROLS ---------- -->
+        <div id="controls-multiple" class="hidden">
+          <h2>Multiple Simulation Controls</h2>
+          <button class="run-btn" id="run-multiple">Run Simulations</button>
+
+          <div class="group-label">Key Parameter Sampling Bounds</div>
+
+          <div class="control">
+            <label class="field-label" for="m-ib-low">Initial speed-up (<span class="m">f</span>); lower bound
+              <span class="info" title="...">?</span>
+            </label>
+            <input type="number" id="m-ib-low" min="0.1" step="0.01" value="2" />
+          </div>
+          <div class="control">
+            <label class="field-label" for="m-ib-high">Initial speed-up (<span class="m">f</span>); upper bound</label>
+            <input type="number" id="m-ib-high" min="0.1" step="0.01" value="32" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="m-r-low">Returns to Software R&amp;D (<span class="m">r</span>); lower bound
+              <span class="info" title="...">?</span>
+            </label>
+            <input type="number" id="m-r-low" min="0.01" step="0.01" value="0.4" />
+          </div>
+          <div class="control">
+            <label class="field-label" for="m-r-high">Returns to Software R&amp;D (<span class="m">r</span>); upper bound</label>
+            <input type="number" id="m-r-high" min="0.01" step="0.01" value="3.6" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="m-ly-low">Distance to effective limits on software; lower bound
+              <span class="info" title="...">?</span>
+            </label>
+            <input type="number" id="m-ly-low" min="1" step="0.01" value="6" />
+          </div>
+          <div class="control">
+            <label class="field-label" for="m-ly-high">Distance to effective limits on software; upper bound</label>
+            <input type="number" id="m-ly-high" min="1" step="0.01" value="16" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="m-lf-low">Diminishing returns to parallel labour (<span class="m">p</span>); lower bound
+              <span class="info" title="...">?</span>
+            </label>
+            <input type="number" id="m-lf-low" min="0.01" step="0.01" value="0.15" />
+          </div>
+          <div class="control">
+            <label class="field-label" for="m-lf-high">Diminishing returns to parallel labour (<span class="m">p</span>); upper bound</label>
+            <input type="number" id="m-lf-high" min="0.01" step="0.01" value="0.6" />
+          </div>
+
+          <div class="group-label">Additional Simulation Options</div>
+
+          <div class="control">
+            <label class="field-label" for="m-sc">Fraction of total AI progress that is due to better software (rather than more compute)?
+              <span class="info" title="A larger fraction means that the software progress modelled contributes more to the overall AI progress.">?</span>
+            </label>
+            <input type="number" id="m-sc" min="0.01" max="0.99" step="0.01" value="0.5" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="m-nsims">Number of simulations</label>
+            <input type="number" id="m-nsims" min="1" max="30000" step="100" value="1000" />
+          </div>
+
+          <div class="checkbox-row">
+            <input type="checkbox" id="m-compute-growth" />
+            <label for="m-compute-growth">Gradual Boost
+              <span class="info" title="The initial speed-up from ASARA ramps up gradually over 5 years.">?</span>
+            </label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="m-retrain" />
+            <label for="m-retrain">Retraining Cost
+              <span class="info" title="Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.">?</span>
+            </label>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="m-constant-r" />
+            <label for="m-constant-r">Constant Diminishing Returns
+              <span class="info" title="Assumes that r is fixed at its initial value over time.">?</span>
+            </label>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ================= MAIN CONTENT ================= -->
+      <main class="content">
+
+        <div class="prose">
+          <p>This tool is a simulation companion to
+          <a href="https://www.forethought.org/research/how-quick-and-big-would-a-software-intelligence-explosion-be" target="_blank" rel="noopener">How quick and big would a software intelligence explosion be?</a>
+          Alongside the ability to change parameterizations (in the sidebar), users have two main simulation options:</p>
+          <ul>
+            <li><strong>Multiple Simulations:</strong> Run several simulations with uncertainty over key parameters. The output is a table showing the fraction of simulations where the average pace of software progress exceeds a specified threshold over some number of years.</li>
+            <li><strong>Single Simulation:</strong> Run a single simulation under specific parameter values to illustrate the path of AI progress, including the evolution of diminishing research productivity and growth rates over time.</li>
+          </ul>
+          <p>The simulation assumes that compute remains constant over time.</p>
+        </div>
+
+        <h2 class="section">Results</h2>
+
+        <!-- Single sim results -->
+        <div id="results-single"></div>
+
+        <!-- Multiple sim results -->
+        <div id="results-multiple" class="hidden"></div>
+
+        <h2 class="section">Model Parameters and Estimates</h2>
+        <p class="prose">The table below summarizes the model parameters:</p>
+
+        <table class="params-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Description</th>
+              <th>Low Estimate</th>
+              <th>Median Estimate</th>
+              <th>High Estimate</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Initial Speed Up (<span class="m">f</span>)</td>
+              <td>After AI Systems for AI R&amp;D Automation (ASARA) is deployed, how many times faster does software progress become (compared to the recent pace of software progress)?</td>
+              <td>2</td><td>8</td><td>32</td>
+            </tr>
+            <tr>
+              <td>Returns to Software R&amp;D (<span class="m">r</span>)</td>
+              <td>Controls the degree of diminishing returns to research. Each time cognitive inputs to software R&amp;D double, how many times does software double? (Note this parameter falls over time.)</td>
+              <td>0.4</td><td>1.2</td><td>3.6</td>
+            </tr>
+            <tr>
+              <td>Distance to effective limits on software</td>
+              <td>At the start of the simulation, how far is software from effective limits? Measured in the years of AI progress at recent rates of progress.</td>
+              <td>6</td><td>11</td><td>16</td>
+            </tr>
+            <tr>
+              <td>Diminishing returns to parallel labour (<span class="m">p</span>)</td>
+              <td>If cognitive inputs to software R&amp;D instantaneously double, how many times does the pace of software progress double?</td>
+              <td>0.15</td><td>0.3</td><td>0.6</td>
+            </tr>
+            <tr>
+              <td>Fraction of AI progress due to better software.</td>
+              <td>What fraction of observed progress in AI is due to software progress (rather than hardware improvements)?</td>
+              <td>-</td><td>0.5</td><td>-</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="prose">In addition to model parameters, you can select whether to enable additional model specifications:</p>
+        <ul class="prose">
+          <li><strong>Retraining Cost:</strong> Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.</li>
+          <li><strong>Gradual Boost:</strong> The initial speed-up from ASARA ramps up gradually over 5 years.</li>
+          <li><strong>Constant Diminishing Returns:</strong> Assumes that <span class="m">r</span> is fixed at its initial value over time.</li>
+        </ul>
+
+        <h3 class="subsection">Sampling</h3>
+        <p class="prose">When 'Multiple Simulations' is selected, randomization occurs over log-uniform distributions for <span class="m">f</span>, <span class="m">r<sub>0</sub></span>, and <span class="m">p</span>, while the years until the ceiling are randomized over a uniform distribution. The bounds for these distributions come from the sidebar inputs. Note that we don't sample over the fraction of AI progress due to software progress, but instead leave this as a deterministic parameter.</p>
+
+        <h3 class="subsection">Defining the inputs <span class="m">r</span> and <span class="m">p</span></h3>
+        <p class="prose">Consider the semi-endogenous software progress function:</p>
+        <div class="mathblock">
+          Software&nbsp;Growth = (<span class="m">L</span><sup><span class="m">α</span></sup>&nbsp;<span class="m">C</span><sup>1−<span class="m">α</span></sup>)<sup><span class="m">λ</span></sup>&nbsp;<span class="m">S</span><sup>−<span class="m">β</span></sup>
+        </div>
+        <p class="prose">where:</p>
+        <ul class="prose">
+          <li>Research investment combines human labor (<span class="m">L</span>) and compute (<span class="m">C</span>)</li>
+          <li><span class="m">L</span> represents human labor input</li>
+          <li><span class="m">C</span> represents computational resources</li>
+          <li><span class="m">S</span> represents the existing software stock</li>
+          <li><span class="m">α</span>, <span class="m">λ</span>, and <span class="m">β</span> are parameters</li>
+        </ul>
+        <p class="prose">From these parameters, we define our two key model inputs:</p>
+        <ul class="prose">
+          <li><span class="m">r</span> = <span class="m">λα</span>/<span class="m">β</span></li>
+          <li><span class="m">p</span> = <span class="m">λα</span></li>
+        </ul>
+        <p class="prose">Additional details for this derivation as well as discussion of objections to our choice of model inputs are provided in the
+        <a href="https://www.forethought.org/research/how-quick-and-big-would-a-software-intelligence-explosion-be#appendices" target="_blank" rel="noopener">appendix</a>
+        of the post.</p>
+
+        <div class="footer">
+          Standalone recreation of the Accelerated AI Progress simulator — all simulation math is computed in your browser.
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/simulation.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
