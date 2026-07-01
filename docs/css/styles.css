@@ -1,0 +1,344 @@
+/* ------------------------------------------------------------------
+   Accelerated AI Progress — standalone (no Streamlit) styles
+   Clean card / pill-tab aesthetic; sidebar-controls + main-content
+   layout mirroring the original Streamlit app.
+------------------------------------------------------------------ */
+
+:root {
+  --blue: #1a56f0;
+  --blue-dark: #1442c4;
+  --blue-soft: #eaf0ff;
+  --ink: #1b1f27;
+  --ink-soft: #48505e;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --line-soft: #eef0f3;
+  --bg: #f4f5f7;
+  --card: #ffffff;
+  --green-bg: #eaf7ee;
+  --green-line: #b6e2c2;
+  --green-ink: #1e7a3d;
+  --radius: 14px;
+  --shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 22px 80px;
+}
+
+/* ---- Header ---- */
+.app-header { text-align: left; margin-bottom: 18px; }
+.app-header h1 {
+  font-size: 30px;
+  line-height: 1.15;
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+.app-header .subtitle { color: var(--muted); font-size: 15px; margin: 0; }
+
+/* ---- Top pill tab bar (replaces sidebar dropdown) ---- */
+.tabbar {
+  display: flex;
+  gap: 6px;
+  background: var(--card);
+  border: 2px solid var(--blue);
+  border-radius: 999px;
+  padding: 6px;
+  margin: 0 0 22px;
+  box-shadow: var(--shadow);
+}
+.tabbar button {
+  flex: 1 1 0;
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--blue);
+  font-family: var(--font);
+  font-size: 17px;
+  font-weight: 700;
+  padding: 12px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.tabbar button:hover { background: var(--blue-soft); }
+.tabbar button.active {
+  background: var(--blue);
+  color: #fff;
+}
+.tabbar button.active:hover { background: var(--blue-dark); }
+
+/* ---- Two-column layout ---- */
+.layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 22px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+/* ---- Cards ---- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 20px 22px;
+}
+.sidebar { position: sticky; top: 18px; }
+@media (max-width: 900px) {
+  .sidebar { position: static; }
+}
+
+.sidebar h2 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 4px 0 14px;
+}
+.group-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 700;
+  margin: 20px 0 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.group-label:first-of-type { border-top: none; padding-top: 0; margin-top: 6px; }
+
+/* ---- Controls ---- */
+.control { margin-bottom: 15px; }
+.control label.field-label {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.control .info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px; height: 15px;
+  margin-left: 5px;
+  border-radius: 50%;
+  background: var(--line);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: help;
+  vertical-align: middle;
+}
+.control input[type="number"] {
+  width: 100%;
+  padding: 9px 11px;
+  font-size: 14px;
+  font-family: var(--font);
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.control input[type="number"]:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-soft);
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 12px 0;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.checkbox-row input[type="checkbox"] {
+  width: 17px; height: 17px;
+  margin: 1px 0 0;
+  accent-color: var(--blue);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.checkbox-row label { cursor: pointer; }
+
+.run-btn {
+  width: 100%;
+  appearance: none;
+  border: none;
+  background: var(--blue);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 6px 0 16px;
+  transition: background 0.15s ease;
+}
+.run-btn:hover { background: var(--blue-dark); }
+.run-btn:disabled { background: #9db4f5; cursor: default; }
+
+.hidden { display: none !important; }
+
+/* ---- Main content ---- */
+.content .prose { font-size: 15.5px; color: var(--ink-soft); }
+.content .prose p { margin: 0 0 14px; }
+.content h2.section {
+  font-size: 22px;
+  margin: 26px 0 10px;
+  letter-spacing: -0.01em;
+}
+.content h3.subsection {
+  font-size: 18px;
+  margin: 22px 0 8px;
+}
+.content ul { margin: 0 0 14px; padding-left: 20px; }
+.content li { margin-bottom: 6px; }
+
+.note {
+  font-style: italic;
+  color: var(--muted);
+  font-size: 14px;
+  margin: 8px 2px 4px;
+}
+
+/* ---- Explosion / info box ---- */
+.infobox {
+  background: var(--green-bg);
+  border: 1px solid var(--green-line);
+  color: var(--green-ink);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14.5px;
+  margin: 10px 0 18px;
+}
+.infobox.neutral {
+  background: #eef2ff;
+  border-color: #cdd7ff;
+  color: #2740a6;
+}
+
+/* ---- Plot cards ---- */
+.plot-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px 14px 6px;
+  margin: 0 0 18px;
+}
+.plot { width: 100%; height: 420px; }
+
+/* ---- Results table ---- */
+table.result-table, table.params-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0 18px;
+  font-size: 14.5px;
+  background: var(--card);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+table.result-table th, table.result-table td,
+table.params-table th, table.params-table td {
+  border: 1px solid var(--line);
+  padding: 9px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+table.result-table th, table.params-table th {
+  background: #f7f8fa;
+  font-weight: 700;
+  color: var(--ink);
+}
+table.result-table td:first-child { font-weight: 600; }
+.params-table td:nth-child(3),
+.params-table td:nth-child(4),
+.params-table td:nth-child(5) { text-align: center; white-space: nowrap; }
+
+.download-btn {
+  display: inline-block;
+  background: #fff;
+  color: var(--blue);
+  border: 1.5px solid var(--blue);
+  border-radius: 9px;
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin: 4px 0 8px;
+  transition: background 0.15s ease;
+}
+.download-btn:hover { background: var(--blue-soft); }
+
+.placeholder {
+  color: var(--muted);
+  font-size: 15px;
+  padding: 40px 8px;
+  text-align: center;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  background: #fbfcfd;
+}
+
+.progress-wrap {
+  height: 8px;
+  background: var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--blue);
+  transition: width 0.05s linear;
+}
+
+/* ---- Inline math ---- */
+.m { font-family: "Cambria Math", "Times New Roman", Georgia, serif; font-style: italic; }
+.m sub { font-style: normal; }
+.mathblock {
+  font-family: "Cambria Math", "Times New Roman", Georgia, serif;
+  font-size: 18px;
+  text-align: center;
+  margin: 14px 0;
+  color: var(--ink);
+}
+.mathblock .m { font-size: 19px; }
+
+.footer {
+  margin-top: 40px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
