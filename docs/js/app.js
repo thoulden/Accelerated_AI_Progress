@@ -364,46 +364,31 @@
 
   // ======================================================================
   // SPEED-UP CALCULATOR
-  //   Post-ASARA balanced-growth software speed-up.
-  //   Production: g_S = L^a E^b S^(-1/r).
-  //   Before ASARA (L exogenous, grows at g_L): g_before = r(a*g_L + b*g_E).
-  //   After ASARA  (L = C*S):                   g_after  = r(a*g_C + b*g_E)/(1 - r*a).
-  //   Taking g_L = g_C, the speed-up is M = g_after/g_before = 1/(1 - r*a).
+  //   Post-automation balanced-growth software speed-up.
+  //   After automation, quality-adjusted research labour is L ∝ C^(1+γ) S,
+  //   so g_L = (1+γ) g_C + g_S.  Software law of motion g_S = L^α C_E^(1-α) S^(-1/r)
+  //   gives, on the BGP, g_S = r[α g_L + (1-α) g_C]. Substituting g_L:
+  //       g_after = r(1 + α·γ) g_C / (1 - r·α).
+  //   Before automation (g_L = g_C): g_before = r·g_C.
+  //   Speed-up M = g_after / g_before = (1 + α·γ) / (1 - r·α).
   // ======================================================================
 
   function readSpeedupParams() {
     return {
       alpha: num('sp-alpha'),
+      gamma: num('sp-gamma'),
       r: num('sp-r'),
-      beta: num('sp-beta'),
-      gE: num('sp-ge'),
-      gcLink: checked('sp-gc-link'),
       gC: num('sp-gc')
     };
   }
 
   function fmtRatePct(x) { return Math.round(x * 100) + '%/yr'; }
 
-  // Keep the g_C input in sync when it is linked to 2*g_E.
-  function updateGcLink() {
-    var linked = checked('sp-gc-link');
-    var gcInput = $('sp-gc');
-    gcInput.disabled = linked;
-    if (linked) {
-      var gE = num('sp-ge');
-      if (!isNaN(gE)) gcInput.value = 2 * gE;
-    }
-  }
-
   function renderSpeedup() {
     var p = readSpeedupParams();
-    if (isNaN(p.alpha) || isNaN(p.r) || isNaN(p.beta) || isNaN(p.gE)) return;
-    var gC = p.gcLink ? 2 * p.gE : p.gC;
-    if (isNaN(gC)) return;
-    var gL = gC;                       // pre-ASARA labour grows at the compute rate
+    if (isNaN(p.alpha) || isNaN(p.gamma) || isNaN(p.r) || isNaN(p.gC)) return;
     var ra = p.r * p.alpha;
-
-    var gBefore = p.r * (p.alpha * gL + p.beta * p.gE);
+    var gBefore = p.r * p.gC;          // pre-automation, g_L = g_C
     var multEl = $('sp-multiplier');
     var subEl = $('sp-subnote');
 
@@ -417,10 +402,10 @@
       $('sp-mult-inline').textContent = '∞';
     } else {
       multEl.classList.remove('explosion');
-      var gAfter = p.r * (p.alpha * gC + p.beta * p.gE) / (1 - ra);
-      var M = 1 / (1 - ra);
+      var gAfter = p.r * (1 + p.alpha * p.gamma) * p.gC / (1 - ra);
+      var M = (1 + p.alpha * p.gamma) / (1 - ra);
       multEl.textContent = M.toFixed(1) + '×';
-      subEl.textContent = '= 1 / (1 − r·α),  with r·α = ' + ra.toFixed(2);
+      subEl.textContent = '= (1 + α·γ) / (1 − r·α),  with r·α = ' + ra.toFixed(2);
       $('sp-gafter').textContent = fmtRatePct(gAfter);
       $('sp-mult-inline').textContent = M.toFixed(2) + '×';
     }
@@ -496,22 +481,14 @@
     $('run-multiple').addEventListener('click', renderMultiple);
 
     // Speed-up calculator: live recompute on any control change
-    ['sp-alpha', 'sp-r', 'sp-beta', 'sp-ge', 'sp-gc'].forEach(function (id) {
-      $(id).addEventListener('input', function () {
-        if (id === 'sp-ge') updateGcLink();
-        renderSpeedup();
-      });
-    });
-    $('sp-gc-link').addEventListener('change', function () {
-      updateGcLink();
-      renderSpeedup();
+    ['sp-alpha', 'sp-gamma', 'sp-r', 'sp-gc'].forEach(function (id) {
+      $(id).addEventListener('input', renderSpeedup);
     });
 
     // Initial state
     toggleGradualBoost();
     renderSingle();          // single sim auto-runs on load (matches original)
     showMultiplePlaceholder();
-    updateGcLink();
     renderSpeedup();         // speed-up calculator computes on load
     setMode('single');
   }
