@@ -363,14 +363,13 @@
   }
 
   // ======================================================================
-  // SPEED-UP CALCULATOR
-  //   Post-automation balanced-growth software speed-up.
-  //   After automation, quality-adjusted research labour is L ∝ C^(1+γ) S,
-  //   so g_L = (1+γ) g_C + g_S.  Software law of motion g_S = L^α C_E^(1-α) S^(-1/r)
-  //   gives, on the BGP, g_S = r[α g_L + (1-α) g_C]. Substituting g_L:
-  //       g_after = r(1 + α·γ) g_C / (1 - r·α).
-  //   Before automation (g_L = g_C): g_before = r·g_C.
-  //   Speed-up M = g_after / g_before = (1 + α·γ) / (1 - r·α).
+  // SPEED-UP CALCULATOR  (no-SIE regime)
+  //   Before automation, labour is exogenous at g_L^before, giving
+  //       g_before = r(α·g_L^before + g_C).
+  //   After automation, quality-adjusted labour is L_after ∝ C^(1+γ) S, so
+  //   g_L = (1+γ) g_C + g_S; with law of motion g_S = L^α C_E^(1-α) S^(-1/r)
+  //   the BGP gives g_after = r(1 + α·γ) g_C / (1 - r·α).
+  //   Speed-up = g_after / g_before  (→ 1/(1-r·α) when γ = g_L^before = 0).
   // ======================================================================
 
   function readSpeedupParams() {
@@ -378,6 +377,7 @@
       alpha: num('sp-alpha'),
       gamma: num('sp-gamma'),
       r: num('sp-r'),
+      gLbefore: num('sp-glbefore'),
       gC: num('sp-gc')
     };
   }
@@ -386,9 +386,9 @@
 
   function renderSpeedup() {
     var p = readSpeedupParams();
-    if (isNaN(p.alpha) || isNaN(p.gamma) || isNaN(p.r) || isNaN(p.gC)) return;
+    if (isNaN(p.alpha) || isNaN(p.gamma) || isNaN(p.r) || isNaN(p.gLbefore) || isNaN(p.gC)) return;
     var ra = p.r * p.alpha;
-    var gBefore = p.r * p.gC;          // pre-automation, g_L = g_C
+    var gBefore = p.r * (p.alpha * p.gLbefore + p.gC);   // exogenous pre-automation baseline
     var multEl = $('sp-multiplier');
     var subEl = $('sp-subnote');
 
@@ -403,11 +403,12 @@
     } else {
       multEl.classList.remove('explosion');
       var gAfter = p.r * (1 + p.alpha * p.gamma) * p.gC / (1 - ra);
-      var M = (1 + p.alpha * p.gamma) / (1 - ra);
-      multEl.textContent = M.toFixed(1) + '×';
-      subEl.textContent = '= (1 + α·γ) / (1 − r·α),  with r·α = ' + ra.toFixed(2);
+      var M = (gBefore > 0) ? gAfter / gBefore : Infinity;
+      var Mtxt = isFinite(M) ? M.toFixed(1) : '∞';
+      multEl.textContent = Mtxt + '×';
+      subEl.innerHTML = '= g<sub>S</sub><sup>after</sup> / g<sub>S</sub><sup>before</sup> &nbsp;(r·α = ' + ra.toFixed(2) + ')';
       $('sp-gafter').textContent = fmtRatePct(gAfter);
-      $('sp-mult-inline').textContent = M.toFixed(2) + '×';
+      $('sp-mult-inline').textContent = (isFinite(M) ? M.toFixed(2) : '∞') + '×';
     }
   }
 
@@ -481,7 +482,7 @@
     $('run-multiple').addEventListener('click', renderMultiple);
 
     // Speed-up calculator: live recompute on any control change
-    ['sp-alpha', 'sp-gamma', 'sp-r', 'sp-gc'].forEach(function (id) {
+    ['sp-alpha', 'sp-gamma', 'sp-r', 'sp-glbefore', 'sp-gc'].forEach(function (id) {
       $(id).addEventListener('input', renderSpeedup);
     });
 
