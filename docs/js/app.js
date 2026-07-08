@@ -397,6 +397,7 @@
     if (ra >= 1) {
       multEl.textContent = '∞';
       multEl.classList.add('explosion');
+      subEl.style.display = '';
       subEl.textContent = 'r·α = ' + ra.toFixed(2) + ' ≥ 1  →  software-only intelligence explosion';
       $('sp-gafter').textContent = '∞ (explosive)';
       $('sp-mult-inline').textContent = '∞';
@@ -406,7 +407,8 @@
       var M = (gBefore > 0) ? gAfter / gBefore : Infinity;
       var Mtxt = isFinite(M) ? M.toFixed(1) : '∞';
       multEl.textContent = Mtxt + '×';
-      subEl.innerHTML = '= g<sub>S</sub><sup>after</sup> / g<sub>S</sub><sup>before</sup> &nbsp;(r·α = ' + ra.toFixed(2) + ')';
+      subEl.textContent = '';
+      subEl.style.display = 'none';
       $('sp-gafter').textContent = fmtRatePct(gAfter);
       $('sp-mult-inline').textContent = (isFinite(M) ? M.toFixed(2) : '∞') + '×';
     }

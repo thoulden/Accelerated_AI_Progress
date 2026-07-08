@@ -411,6 +411,17 @@ table.result-table td:first-child { font-weight: 600; }
 }
 .mathblock sup { font-style: normal; }
 
+/* inline stacked fraction */
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: middle;
+  text-align: center;
+  margin: 0 0.22em;
+}
+.frac > .num { border-bottom: 1px solid currentColor; padding: 0 0.4em; }
+.frac > .den { padding: 0 0.4em; }
+
 .footer {
   margin-top: 40px;
   padding-top: 18px;
