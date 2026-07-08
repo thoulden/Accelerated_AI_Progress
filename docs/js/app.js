@@ -365,11 +365,11 @@
   // ======================================================================
   // SPEED-UP CALCULATOR  (no-SIE regime)
   //   Before automation, labour is exogenous at g_L^before, giving
-  //       g_before = r(α·g_L^before + g_C).
+  //       g_before = r(α·g_L^before + (1-α)·g_C).
   //   After automation, quality-adjusted labour is L_after ∝ C^(1+γ) S, so
   //   g_L = (1+γ) g_C + g_S; with law of motion g_S = L^α C_E^(1-α) S^(-1/r)
   //   the BGP gives g_after = r(1 + α·γ) g_C / (1 - r·α).
-  //   Speed-up = g_after / g_before  (→ 1/(1-r·α) when γ = g_L^before = 0).
+  //   Speed-up = g_after / g_before  (→ (1+α·γ)/(1-r·α) when g_L^before = g_C).
   // ======================================================================
 
   function readSpeedupParams() {
@@ -388,7 +388,7 @@
     var p = readSpeedupParams();
     if (isNaN(p.alpha) || isNaN(p.gamma) || isNaN(p.r) || isNaN(p.gLbefore) || isNaN(p.gC)) return;
     var ra = p.r * p.alpha;
-    var gBefore = p.r * (p.alpha * p.gLbefore + p.gC);   // exogenous pre-automation baseline
+    var gBefore = p.r * (p.alpha * p.gLbefore + (1 - p.alpha) * p.gC);   // exogenous pre-automation baseline
     var multEl = $('sp-multiplier');
     var subEl = $('sp-subnote');
 
