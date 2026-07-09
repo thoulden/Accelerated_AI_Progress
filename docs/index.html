@@ -247,7 +247,6 @@
             <li><strong>Single Simulation:</strong> Run a single simulation under specific parameter values to illustrate the path of AI progress, including the evolution of diminishing research productivity and growth rates over time.</li>
             <li><strong>Speed-up calculator for when r&lt;1:</strong> This calculator calculates how many times faster is the (balanced) growth path of software once ASARA is achieved if there is no SIE. This calculator explicitly considers a exponentially growing compute stock and constant value for r&lt;1.</li>
           </ul>
-          <p>The simulation assumes that compute remains constant over time.</p>
         </div>
 
         <h2 class="section">Results</h2>
@@ -280,6 +279,7 @@
             Researcher quality = <span class="m">S</span> · <span class="m">C<sub>T</sub></span><sup><span class="m">γ</span></sup>,
             &nbsp;&nbsp; Researcher quantity ∝ <span class="m">C<sub>I</sub></span> &nbsp;&nbsp;(<span class="m">γ</span> &gt; 0)
           </div>
+          <p class="prose">where if you double training compute, <span class="m">γ</span> is how many times you double per-FLOP productivity at runtime, holding software constant.</p>
           <p class="prose">Quality-adjusted labour is the product of the two. Writing every compute stock as a common aggregate <span class="m">C</span> (they scale together):</p>
           <div class="mathblock">
             <span class="m">L<sub>after</sub></span> ∝ (<span class="m">S</span> · <span class="m">C<sub>T</sub></span><sup><span class="m">γ</span></sup>) · <span class="m">C<sub>I</sub></span> ∝ <span class="m">C</span><sup>1+<span class="m">γ</span></sup> <span class="m">S</span>
