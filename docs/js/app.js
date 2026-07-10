@@ -134,8 +134,8 @@
 
     // ---------- Figure 2: r over time ----------
     var div2 = plotCard(host, 'fig-r');
-    var traces2 = [{ x: t, y: res.rs, mode: 'lines', name: 'r(t)', line: { color: 'magenta', width: 2 } }];
-    Plotly.newPlot(div2, traces2, baseLayout('r Over Time', 'Time (years)', 'r'), PLOT_CONFIG);
+    var traces2 = [{ x: t, y: res.rs, mode: 'lines', name: 'r<sub>cog</sub>(t)', line: { color: 'magenta', width: 2 } }];
+    Plotly.newPlot(div2, traces2, baseLayout('r<sub>cog</sub> Over Time', 'Time (years)', 'r<sub>cog</sub>'), PLOT_CONFIG);
 
     // ---------- Figure 3: acceleration factor (only with Gradual Boost) ----------
     if (p.computeGrowth) {
