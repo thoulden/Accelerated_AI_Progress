@@ -364,12 +364,14 @@
 
   // ======================================================================
   // SPEED-UP CALCULATOR  (no-SIE regime)
+  //   Let r_cog = r·α (returns to cognitive labour), r_comp = r·(1-α).
   //   Before automation, labour is exogenous at g_L^before, giving
-  //       g_before = r(α·g_L^before + (1-α)·g_C).
+  //       g_before = r_cog·g_L^before + r_comp·g_C.
   //   After automation, quality-adjusted labour is L_after ∝ C^(1+γ) S, so
-  //   g_L = (1+γ) g_C + g_S; with law of motion g_S = L^α C_E^(1-α) S^(-1/r)
-  //   the BGP gives g_after = r(1 + α·γ) g_C / (1 - r·α).
-  //   Speed-up = g_after / g_before  (→ (1+α·γ)/(1-r·α) when g_L^before = g_C).
+  //   g_L = (1+γ) g_C + g_S; the BGP g_S = r_cog·g_L + r_comp·g_C gives
+  //       g_after = [r_cog(1+γ) + r_comp] g_C / (1 - r_cog)
+  //               = r(1 + α·γ) g_C / (1 - r·α)   (identical value).
+  //   Speed-up = g_after / g_before  (→ (1+α·γ)/(1-r_cog) when g_L^before = g_C).
   // ======================================================================
 
   function readSpeedupParams() {
@@ -398,7 +400,7 @@
       multEl.textContent = '∞';
       multEl.classList.add('explosion');
       subEl.style.display = '';
-      subEl.textContent = 'r·α = ' + ra.toFixed(2) + ' ≥ 1  →  software-only intelligence explosion';
+      subEl.textContent = 'r_cog = ' + ra.toFixed(2) + ' ≥ 1  →  software-only intelligence explosion';
       $('sp-gafter').textContent = '∞ (explosive)';
       $('sp-mult-inline').textContent = '∞';
     } else {
