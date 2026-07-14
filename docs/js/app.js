@@ -134,8 +134,8 @@
 
     // ---------- Figure 2: r over time ----------
     var div2 = plotCard(host, 'fig-r');
-    var traces2 = [{ x: t, y: res.rs, mode: 'lines', name: 'r(t)', line: { color: 'magenta', width: 2 } }];
-    Plotly.newPlot(div2, traces2, baseLayout('r Over Time', 'Time (years)', 'r'), PLOT_CONFIG);
+    var traces2 = [{ x: t, y: res.rs, mode: 'lines', name: 'r<sub>cog</sub>(t)', line: { color: 'magenta', width: 2 } }];
+    Plotly.newPlot(div2, traces2, baseLayout('r<sub>cog</sub> Over Time', 'Time (years)', 'r<sub>cog</sub>'), PLOT_CONFIG);
 
     // ---------- Figure 3: acceleration factor (only with Gradual Boost) ----------
     if (p.computeGrowth) {
@@ -363,19 +363,78 @@
   }
 
   // ======================================================================
+  // SPEED-UP CALCULATOR  (no-SIE regime)
+  //   Inputs are r_cog (returns to cognitive labour) and the labour share α;
+  //   these imply r = r_cog/α and r_comp = r·(1-α) = r_cog·(1-α)/α.
+  //   Before automation, labour is exogenous at g_L^before, giving
+  //       g_before = r_cog·g_L^before + r_comp·g_C.
+  //   After automation, quality-adjusted labour is L_after ∝ C^(1+γ) S, so
+  //   g_L = (1+γ) g_C + g_S; the BGP g_S = r_cog·g_L + r_comp·g_C gives
+  //       g_after = r_cog(1/α + γ) g_C / (1 - r_cog)
+  //               = [r_cog(1+γ) + r_comp] g_C / (1 - r_cog)   (identical value).
+  //   Speed-up = g_after / g_before.
+  // ======================================================================
+
+  function readSpeedupParams() {
+    return {
+      alpha: num('sp-alpha'),
+      gamma: num('sp-gamma'),
+      rCog: num('sp-rcog'),
+      gLbefore: num('sp-glbefore'),
+      gC: num('sp-gc')
+    };
+  }
+
+  function fmtRatePct(x) { return Math.round(x * 100) + '%/yr'; }
+
+  function renderSpeedup() {
+    var p = readSpeedupParams();
+    if (isNaN(p.alpha) || isNaN(p.gamma) || isNaN(p.rCog) || isNaN(p.gLbefore) || isNaN(p.gC) || p.alpha <= 0) return;
+    var ra = p.rCog;                                  // r_cog is now the direct input
+    var rComp = p.rCog * (1 - p.alpha) / p.alpha;      // implied returns to compute
+    var gBefore = p.rCog * p.gLbefore + rComp * p.gC;  // exogenous pre-automation baseline
+    var multEl = $('sp-multiplier');
+    var subEl = $('sp-subnote');
+
+    $('sp-gbefore').textContent = fmtRatePct(gBefore);
+
+    if (ra >= 1) {
+      multEl.textContent = '∞';
+      multEl.classList.add('explosion');
+      subEl.style.display = '';
+      subEl.textContent = 'r_cog = ' + ra.toFixed(2) + ' ≥ 1  →  software-only intelligence explosion';
+      $('sp-gafter').textContent = '∞ (explosive)';
+      $('sp-mult-inline').textContent = '∞';
+    } else {
+      multEl.classList.remove('explosion');
+      var gAfter = p.rCog * (1 / p.alpha + p.gamma) * p.gC / (1 - ra);
+      var M = (gBefore > 0) ? gAfter / gBefore : Infinity;
+      var Mtxt = isFinite(M) ? M.toFixed(1) : '∞';
+      multEl.textContent = Mtxt + '×';
+      subEl.textContent = '';
+      subEl.style.display = 'none';
+      $('sp-gafter').textContent = fmtRatePct(gAfter);
+      $('sp-mult-inline').textContent = (isFinite(M) ? M.toFixed(2) : '∞') + '×';
+    }
+  }
+
+  // ======================================================================
   // TAB SWITCHING + WIRING
   // ======================================================================
 
+  var MODES = ['single', 'multiple', 'speedup'];
+
   function setMode(mode) {
-    var single = mode === 'single';
-    $('tab-single').classList.toggle('active', single);
-    $('tab-multiple').classList.toggle('active', !single);
-    $('tab-single').setAttribute('aria-selected', single ? 'true' : 'false');
-    $('tab-multiple').setAttribute('aria-selected', single ? 'false' : 'true');
-    $('controls-single').classList.toggle('hidden', !single);
-    $('controls-multiple').classList.toggle('hidden', single);
-    $('results-single').classList.toggle('hidden', !single);
-    $('results-multiple').classList.toggle('hidden', single);
+    MODES.forEach(function (mo) {
+      var on = mo === mode;
+      $('tab-' + mo).classList.toggle('active', on);
+      $('tab-' + mo).setAttribute('aria-selected', on ? 'true' : 'false');
+      $('controls-' + mo).classList.toggle('hidden', !on);
+      $('results-' + mo).classList.toggle('hidden', !on);
+    });
+    // The shared "Model Parameters and Estimates" block (and everything below
+    // it) describes the simulation model; hide it on the Speed-Up Calculator tab.
+    $('shared-model-info').classList.toggle('hidden', mode === 'speedup');
     // Plotly needs a resize nudge when a hidden container becomes visible
     window.dispatchEvent(new Event('resize'));
   }
@@ -409,6 +468,7 @@
     // Tabs
     $('tab-single').addEventListener('click', function () { setMode('single'); });
     $('tab-multiple').addEventListener('click', function () { setMode('multiple'); });
+    $('tab-speedup').addEventListener('click', function () { setMode('speedup'); });
 
     // Single-sim: live recompute on any control change + explicit button
     var singleInputs = ['s-f', 's-f0', 's-fmax', 's-r', 's-yr', 's-lambda', 's-sc'];
@@ -427,10 +487,16 @@
     // Multiple-sim: only on button press
     $('run-multiple').addEventListener('click', renderMultiple);
 
+    // Speed-up calculator: live recompute on any control change
+    ['sp-alpha', 'sp-gamma', 'sp-rcog', 'sp-glbefore', 'sp-gc'].forEach(function (id) {
+      $(id).addEventListener('input', renderSpeedup);
+    });
+
     // Initial state
     toggleGradualBoost();
     renderSingle();          // single sim auto-runs on load (matches original)
     showMultiplePlaceholder();
+    renderSpeedup();         // speed-up calculator computes on load
     setMode('single');
   }
 

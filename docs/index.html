@@ -21,6 +21,7 @@
     <nav class="tabbar" role="tablist" aria-label="Simulation mode">
       <button id="tab-single" class="active" role="tab" aria-selected="true">Single Simulation</button>
       <button id="tab-multiple" role="tab" aria-selected="false">Multiple Simulations</button>
+      <button id="tab-speedup" role="tab" aria-selected="false">Speed-Up Calculator</button>
     </nav>
 
     <div class="layout">
@@ -63,7 +64,7 @@
           </div>
 
           <div class="control">
-            <label class="field-label" for="s-r">Returns to Software R&amp;D (<span class="m">r</span>)
+            <label class="field-label" for="s-r">Returns to Software R&amp;D (<span class="m">r<sub>cog</sub></span>)
               <span class="info" title="Each time cumulative inputs to software R&D double, how many times does software double? (Any improvement with the same benefits as running 2x more parallel copies of the same AI corresponds to a doubling of software.)">?</span>
             </label>
             <input type="number" id="s-r" min="0" max="5" step="0.1" value="1.2" />
@@ -99,7 +100,7 @@
           <div class="checkbox-row">
             <input type="checkbox" id="s-constant-r" />
             <label for="s-constant-r">Constant Diminishing Returns
-              <span class="info" title="Assumes that r is fixed at its initial value over time.">?</span>
+              <span class="info" title="Assumes that r_cog is fixed at its initial value over time.">?</span>
             </label>
           </div>
         </div>
@@ -123,13 +124,13 @@
           </div>
 
           <div class="control">
-            <label class="field-label" for="m-r-low">Returns to Software R&amp;D (<span class="m">r</span>); lower bound
+            <label class="field-label" for="m-r-low">Returns to Software R&amp;D (<span class="m">r<sub>cog</sub></span>); lower bound
               <span class="info" title="...">?</span>
             </label>
             <input type="number" id="m-r-low" min="0.01" step="0.01" value="0.4" />
           </div>
           <div class="control">
-            <label class="field-label" for="m-r-high">Returns to Software R&amp;D (<span class="m">r</span>); upper bound</label>
+            <label class="field-label" for="m-r-high">Returns to Software R&amp;D (<span class="m">r<sub>cog</sub></span>); upper bound</label>
             <input type="number" id="m-r-high" min="0.01" step="0.01" value="3.6" />
           </div>
 
@@ -184,8 +185,52 @@
           <div class="checkbox-row">
             <input type="checkbox" id="m-constant-r" />
             <label for="m-constant-r">Constant Diminishing Returns
-              <span class="info" title="Assumes that r is fixed at its initial value over time.">?</span>
+              <span class="info" title="Assumes that r_cog is fixed at its initial value over time.">?</span>
             </label>
+          </div>
+        </div>
+
+        <!-- ---------- SPEED-UP CALCULATOR CONTROLS ---------- -->
+        <div id="controls-speedup" class="hidden">
+          <h2>Speed-Up Calculator Controls</h2>
+
+          <div class="group-label">Software R&amp;D parameters</div>
+
+          <div class="control">
+            <label class="field-label" for="sp-alpha">Labour share (<span class="m">α</span>)
+              <span class="info" title="Exponent on quality-adjusted research labour in the software law of motion g_S = L^α · C_E^(1−α) · S^(−1/r). Compute gets the remaining share 1−α. Together with the returns to cognitive labour r_cog it pins down the implied r = r_cog/α and the returns to compute r_comp = r_cog·(1−α)/α.">?</span>
+            </label>
+            <input type="number" id="sp-alpha" min="0.01" max="0.99" step="0.01" value="0.5" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="sp-gamma">Compute → researcher quality (<span class="m">γ</span>)
+              <span class="info" title="If you double training compute, how many times do you double per-FLOP productivity at runtime, holding software constant. Enters researcher quality as S · C_T^γ, with γ > 0.">?</span>
+            </label>
+            <input type="number" id="sp-gamma" min="0" max="3" step="0.05" value="0.5" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="sp-rcog">Returns to cognitive labour (<span class="m">r<sub>cog</sub></span>)
+              <span class="info" title="Returns to cognitive labour, r_cog = r·α, held fixed. Together with the labour share α this implies the returns to software R&D r = r_cog/α and to compute r_comp = r·(1−α) = r_cog·(1−α)/α. A software-only intelligence explosion (SIE) occurs when r_cog ≥ 1; this calculator describes the no-SIE case (r_cog < 1).">?</span>
+            </label>
+            <input type="number" id="sp-rcog" min="0.01" max="5" step="0.05" value="0.7" />
+          </div>
+
+          <div class="group-label">Input growth rates</div>
+
+          <div class="control">
+            <label class="field-label" for="sp-glbefore">Pre-automation labour growth (<span class="m">g<sub>L</sub><sup>before</sup></span>)
+              <span class="info" title="Exogenous growth rate of research labour before automation, in fraction per year. It sets the pre-automation software growth rate g_S^before = r_cog·g_L^before + r_comp·g_C, the baseline the speed-up is measured against.">?</span>
+            </label>
+            <input type="number" id="sp-glbefore" min="0" max="10" step="0.001" value="0.627" />
+          </div>
+
+          <div class="control">
+            <label class="field-label" for="sp-gc">Aggregate compute growth (<span class="m">g<sub>C</sub></span>)
+              <span class="info" title="Growth rate of the aggregate compute stock — training, inference and experiment compute all scale together — as a continuously-compounded fraction per year. The default 1.224 (≈122%/yr) corresponds to compute growing 3.4× per year, since e^1.224 ≈ 3.4.">?</span>
+            </label>
+            <input type="number" id="sp-gc" min="0" max="10" step="0.05" value="1.224" />
           </div>
         </div>
       </aside>
@@ -196,12 +241,12 @@
         <div class="prose">
           <p>This tool is a simulation companion to
           <a href="https://www.forethought.org/research/how-quick-and-big-would-a-software-intelligence-explosion-be" target="_blank" rel="noopener">How quick and big would a software intelligence explosion be?</a>
-          Alongside the ability to change parameterizations (in the sidebar), users have two main simulation options:</p>
+          Alongside the ability to change parameterizations (in the sidebar), users have three main options:</p>
           <ul>
             <li><strong>Multiple Simulations:</strong> Run several simulations with uncertainty over key parameters. The output is a table showing the fraction of simulations where the average pace of software progress exceeds a specified threshold over some number of years.</li>
             <li><strong>Single Simulation:</strong> Run a single simulation under specific parameter values to illustrate the path of AI progress, including the evolution of diminishing research productivity and growth rates over time.</li>
+            <li><strong>Speed-up calculator for when <span class="m">r<sub>cog</sub></span>&lt;1:</strong> This calculator calculates how many times faster is the (balanced) growth path of software once ASARA is achieved if there is no SIE. This calculator explicitly considers a exponentially growing compute stock and constant value for <span class="m">r<sub>cog</sub></span>&lt;1.</li>
           </ul>
-          <p>The simulation assumes that compute remains constant over time.</p>
         </div>
 
         <h2 class="section">Results</h2>
@@ -212,6 +257,68 @@
         <!-- Multiple sim results -->
         <div id="results-multiple" class="hidden"></div>
 
+        <!-- Speed-up calculator results -->
+        <div id="results-speedup" class="hidden">
+          <div class="speedup-hero">
+            <div class="speedup-label">Software progress speed-up from full automation of AI R&amp;D</div>
+            <div class="speedup-value" id="sp-multiplier">—</div>
+            <div class="speedup-sub" id="sp-subnote"></div>
+          </div>
+
+          <h3 class="subsection">How this is calculated</h3>
+          <p class="prose">Once AI R&amp;D is fully automated, the “researchers” are AI systems running on compute. Their <em>number</em> scales with inference compute, and their <em>quality</em> rises with the software stock and with training compute — closing a feedback loop (better software → better and more numerous researchers → better software) that raises the balanced-growth rate of software progress. The number above is how many times faster software progresses on the post-automation balanced growth path, assuming a growing compute stock and constant diminishing returns to R&amp;D (<span class="m">r<sub>cog</sub></span> held fixed).</p>
+
+          <p class="prose"><strong>1. Research labour before automation.</strong> Software progress follows the semi-endogenous law of motion</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span> = <span class="m">L</span><sup><span class="m">α</span></sup> <span class="m">C<sub>E</sub></span><sup>1−<span class="m">α</span></sup> <span class="m">S</span><sup>−1/<span class="m">r</span></sup>
+          </div>
+          <p class="prose">where <span class="m">C<sub>E</sub></span> is experiment compute, <span class="m">α</span> is the labour share, and <span class="m">r</span> is the returns to software R&amp;D. We take the returns to cognitive labour <span class="m">r<sub>cog</sub></span> = <span class="m">r</span><span class="m">α</span> as an input; together with <span class="m">α</span> this pins down the implied <span class="m">r</span> = <span class="m">r<sub>cog</sub></span>/<span class="m">α</span> and the returns to compute <span class="m">r<sub>comp</sub></span> = <span class="m">r</span>(1 − <span class="m">α</span>) = <span class="m">r<sub>cog</sub></span>(1 − <span class="m">α</span>)/<span class="m">α</span>. On the balanced growth path the law of motion implies</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span> = <span class="m">r<sub>cog</sub></span> <span class="m">g<sub>L</sub></span> + <span class="m">r<sub>comp</sub></span> <span class="m">g<sub>C</sub></span>
+          </div>
+          <p class="prose">Before automation, research labour is exogenous — it grows at a rate <span class="m">g<sub>L</sub><sup>before</sup></span> set outside the model — so</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span><sup>before</sup> = <span class="m">r<sub>cog</sub></span> <span class="m">g<sub>L</sub></span><sup>before</sup> + <span class="m">r<sub>comp</sub></span> <span class="m">g<sub>C</sub></span>
+          </div>
+          <p class="prose">With the current inputs, <span class="m">g<sub>S</sub></span><sup>before</sup> = <strong><span id="sp-gbefore">—</span></strong>. This is the baseline the speed-up is measured against.</p>
+
+          <p class="prose"><strong>2. Research labour after automation.</strong> An automated researcher’s quality grows with the software stock <span class="m">S</span> and with training compute <span class="m">C<sub>T</sub></span>, while the number of researchers scales with inference compute <span class="m">C<sub>I</sub></span>:</p>
+          <div class="mathblock">
+            Researcher quality = <span class="m">S</span> · <span class="m">C<sub>T</sub></span><sup><span class="m">γ</span></sup>,
+            &nbsp;&nbsp; Researcher quantity ∝ <span class="m">C<sub>I</sub></span> &nbsp;&nbsp;(<span class="m">γ</span> &gt; 0)
+          </div>
+          <p class="prose">where if you double training compute, <span class="m">γ</span> is how many times you double per-FLOP productivity at runtime, holding software constant.</p>
+          <p class="prose">Quality-adjusted labour is the product of the two. Writing every compute stock as a common aggregate <span class="m">C</span> (they scale together):</p>
+          <div class="mathblock">
+            <span class="m">L<sub>after</sub></span> ∝ (<span class="m">S</span> · <span class="m">C<sub>T</sub></span><sup><span class="m">γ</span></sup>) · <span class="m">C<sub>I</sub></span> ∝ <span class="m">C</span><sup>1+<span class="m">γ</span></sup> <span class="m">S</span>
+            &nbsp;&nbsp;⟹&nbsp;&nbsp;
+            <span class="m">g<sub>L</sub></span> = (1 + <span class="m">γ</span>) <span class="m">g<sub>C</sub></span> + <span class="m">g<sub>S</sub></span>
+          </div>
+          <p class="prose">The trailing <span class="m">g<sub>S</sub></span> term is the automation feedback — research labour now depends on the very software stock it is helping to build.</p>
+
+          <p class="prose"><strong>3. Software growth on the balanced path.</strong> As above, on the balanced growth path we have the growth rate of software quality given by</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span> = <span class="m">r<sub>cog</sub></span> <span class="m">g<sub>L</sub></span> + <span class="m">r<sub>comp</sub></span> <span class="m">g<sub>C</sub></span>
+          </div>
+
+          <p class="prose"><strong>4. Substitute the researcher growth rate.</strong> Plugging <span class="m">g<sub>L</sub></span> = (1+<span class="m">γ</span>)<span class="m">g<sub>C</sub></span> + <span class="m">g<sub>S</sub></span> into the balanced-growth condition (point 3) and solving for <span class="m">g<sub>S</sub></span>:</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span><sup>after</sup> = <span class="frac"><span class="num"><span class="m">r<sub>cog</sub></span>(1 + <span class="m">γ</span>) + <span class="m">r<sub>comp</sub></span></span><span class="den">1 − <span class="m">r<sub>cog</sub></span></span></span> <span class="m">g<sub>C</sub></span>
+          </div>
+          <p class="prose">or equivalently we have</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span><sup>after</sup> = <span class="frac"><span class="num">1/<span class="m">α</span> + <span class="m">γ</span></span><span class="den">1 − <span class="m">r<sub>cog</sub></span></span></span> <span class="m">r<sub>cog</sub></span> <span class="m">g<sub>C</sub></span>
+          </div>
+          <p class="prose">With the current inputs, <span class="m">g<sub>S</sub></span><sup>after</sup> = <strong><span id="sp-gafter">—</span></strong>. If <span class="m">r<sub>cog</sub></span> ≥ 1 the denominator is non-positive, the balanced path breaks down, and you get a <em>software-only intelligence explosion</em> (outside this calculator’s no-SIE scope).</p>
+
+          <p class="prose"><strong>5. The speed-up.</strong> Dividing the post-automation rate (step 4) by the pre-automation rate (step 1) gives how many times faster software progresses once AI R&amp;D is automated:</p>
+          <div class="mathblock">
+            <span class="m">g<sub>S</sub></span><sup>after</sup> / <span class="m">g<sub>S</sub></span><sup>before</sup> = <strong><span id="sp-mult-inline">—</span></strong>
+          </div>
+          <p class="prose">The speed-up grows with <span class="m">γ</span> (higher-quality automated researchers) and as <span class="m">r<sub>cog</sub></span> approaches 1 (stronger software feedback), and shrinks the faster pre-automation labour already grew (<span class="m">g<sub>L</sub><sup>before</sup></span>). When pre-automation labour grew at the compute rate (<span class="m">g<sub>L</sub><sup>before</sup></span> = <span class="m">g<sub>C</sub></span>) it simplifies to (1 + <span class="m">α</span><span class="m">γ</span>) / (1 − <span class="m">r<sub>cog</sub></span>).</p>
+        </div>
+
+        <div id="shared-model-info">
         <h2 class="section">Model Parameters and Estimates</h2>
         <p class="prose">The table below summarizes the model parameters:</p>
 
@@ -232,7 +339,7 @@
               <td>2</td><td>8</td><td>32</td>
             </tr>
             <tr>
-              <td>Returns to Software R&amp;D (<span class="m">r</span>)</td>
+              <td>Returns to Software R&amp;D (<span class="m">r<sub>cog</sub></span>)</td>
               <td>Controls the degree of diminishing returns to research. Each time cognitive inputs to software R&amp;D double, how many times does software double? (Note this parameter falls over time.)</td>
               <td>0.4</td><td>1.2</td><td>3.6</td>
             </tr>
@@ -258,13 +365,13 @@
         <ul class="prose">
           <li><strong>Retraining Cost:</strong> Reduce the degree of acceleration as some software efficiency gains are spent making training happen more quickly.</li>
           <li><strong>Gradual Boost:</strong> The initial speed-up from ASARA ramps up gradually over 5 years.</li>
-          <li><strong>Constant Diminishing Returns:</strong> Assumes that <span class="m">r</span> is fixed at its initial value over time.</li>
+          <li><strong>Constant Diminishing Returns:</strong> Assumes that <span class="m">r<sub>cog</sub></span> is fixed at its initial value over time.</li>
         </ul>
 
         <h3 class="subsection">Sampling</h3>
-        <p class="prose">When 'Multiple Simulations' is selected, randomization occurs over log-uniform distributions for <span class="m">f</span>, <span class="m">r<sub>0</sub></span>, and <span class="m">p</span>, while the years until the ceiling are randomized over a uniform distribution. The bounds for these distributions come from the sidebar inputs. Note that we don't sample over the fraction of AI progress due to software progress, but instead leave this as a deterministic parameter.</p>
+        <p class="prose">When 'Multiple Simulations' is selected, randomization occurs over log-uniform distributions for <span class="m">f</span>, <span class="m">r<sub>cog,0</sub></span>, and <span class="m">p</span>, while the years until the ceiling are randomized over a uniform distribution. The bounds for these distributions come from the sidebar inputs. Note that we don't sample over the fraction of AI progress due to software progress, but instead leave this as a deterministic parameter.</p>
 
-        <h3 class="subsection">Defining the inputs <span class="m">r</span> and <span class="m">p</span></h3>
+        <h3 class="subsection">Defining the inputs <span class="m">r<sub>cog</sub></span> and <span class="m">p</span></h3>
         <p class="prose">Consider the semi-endogenous software progress function:</p>
         <div class="mathblock">
           Software&nbsp;Growth = (<span class="m">L</span><sup><span class="m">α</span></sup>&nbsp;<span class="m">C</span><sup>1−<span class="m">α</span></sup>)<sup><span class="m">λ</span></sup>&nbsp;<span class="m">S</span><sup>−<span class="m">β</span></sup>
@@ -279,15 +386,16 @@
         </ul>
         <p class="prose">From these parameters, we define our two key model inputs:</p>
         <ul class="prose">
-          <li><span class="m">r</span> = <span class="m">λα</span>/<span class="m">β</span></li>
+          <li><span class="m">r<sub>cog</sub></span> = <span class="m">λα</span>/<span class="m">β</span></li>
           <li><span class="m">p</span> = <span class="m">λα</span></li>
         </ul>
         <p class="prose">Additional details for this derivation as well as discussion of objections to our choice of model inputs are provided in the
         <a href="https://www.forethought.org/research/how-quick-and-big-would-a-software-intelligence-explosion-be#appendices" target="_blank" rel="noopener">appendix</a>
         of the post.</p>
 
+        </div><!-- /#shared-model-info -->
         <div class="footer">
-          Standalone recreation of the Accelerated AI Progress simulator — all simulation math is computed in your browser.
+          <a href="https://github.com/thoulden/Accelerated_AI_Progress" target="_blank" rel="noopener">View the source code on GitHub</a>
         </div>
       </main>
     </div>
