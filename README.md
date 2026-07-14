@@ -1,23 +1,23 @@
-# AI R&D App
+# Accelerated AI Progress simulator
 
-This repository contains two independent front-ends for the same simulation model.
+**▶ Live site: https://thoulden.github.io/Accelerated_AI_Progress/**
 
-## 1. Streamlit app (original)
+Use the link above. It is a static site (GitHub Pages) with **no wake-up
+delay**. The old Streamlit app at
+https://accelerated-ai-progress.streamlit.app/ is deprecated — it now just
+redirects here, but because Streamlit Community Cloud sleeps idle apps you
+have to sit through its wake-up screen first, so please share/bookmark the
+GitHub Pages link instead.
 
-- `app.py` houses the main code to run the app;
-- `multiple_sims.py` runs the code to simulate many of the models under distributions of parameter assumptions;
-- `single_sim.py` runs the code to simulate a single simulation for given parameters;
-- `requirements.txt` tells streamlit which packages to install.
+This repository contains two front-ends for the same simulation model.
 
-Run with `streamlit run app.py`.
+## 1. Standalone static site (recommended) — `docs/`
 
-## 2. Standalone static site (no Streamlit)
-
-The `docs/` folder is a self-contained recreation of the same tool as a plain
-HTML/CSS/JavaScript website — no Python server required. It reproduces the exact
-same layout, controls, math and figures as the Streamlit app, but replaces the
-sidebar mode dropdown with a top tab bar to switch between **Single Simulation**
-and **Multiple Simulations**.
+A self-contained recreation of the tool as a plain HTML/CSS/JavaScript website
+— no Python server, no wake-up. It reproduces the same layout, controls, math
+and figures as the original Streamlit app, with a top tab bar to switch between
+**Single Simulation**, **Multiple Simulations**, and the **Speed-Up
+Calculator**.
 
 - `docs/index.html` — page markup, text and parameter tables;
 - `docs/css/styles.css` — styling;
@@ -30,7 +30,16 @@ and **Multiple Simulations**.
 
 All simulation math runs client-side in the browser. To view it locally, serve
 the `docs/` folder over HTTP (e.g. `python3 -m http.server -d docs`) and open
-`http://localhost:8000/`. It can also be deployed directly via GitHub Pages
-(set the source to the `docs/` folder).
+`http://localhost:8000/`. It is deployed via GitHub Pages (Settings → Pages →
+source: `main` branch, `/docs` folder).
 
-The Streamlit files above are untouched by this addition.
+## 2. Streamlit app (deprecated / redirect)
+
+- `app.py` — now redirects visitors to the static site above;
+- `single_sim.py` — original single-simulation logic (still the reference for
+  the JS port);
+- `multiple_sims.py` — original multi-simulation logic;
+- `requirements.txt` — Streamlit's package list.
+
+The original interactive app can still be run locally with an older revision,
+but the deployed Streamlit URL only serves the redirect.
