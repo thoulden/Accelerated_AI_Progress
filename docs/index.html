@@ -198,7 +198,7 @@
 
           <div class="control">
             <label class="field-label" for="sp-alpha">Labour share (<span class="m">α</span>)
-              <span class="info" title="Exponent on quality-adjusted research labour in the software law of motion g_S = L^α · C_E^(1−α) · S^(−1/r). Compute gets the remaining share 1−α. With r it gives the returns to cognitive labour r_cog = r·α and to compute r_comp = r·(1−α).">?</span>
+              <span class="info" title="Exponent on quality-adjusted research labour in the software law of motion g_S = L^α · C_E^(1−α) · S^(−1/r). Compute gets the remaining share 1−α. Together with the returns to cognitive labour r_cog it pins down the implied r = r_cog/α and the returns to compute r_comp = r_cog·(1−α)/α.">?</span>
             </label>
             <input type="number" id="sp-alpha" min="0.01" max="0.99" step="0.01" value="0.5" />
           </div>
@@ -211,10 +211,10 @@
           </div>
 
           <div class="control">
-            <label class="field-label" for="sp-r">Returns to software R&amp;D (<span class="m">r</span>)
-              <span class="info" title="Returns to software R&D. The software-stock exponent is −1/r, held fixed. With the labour share it gives the returns to cognitive labour r_cog = r·α and to compute r_comp = r·(1−α). A software-only intelligence explosion (SIE) occurs when r_cog ≥ 1; this calculator describes the no-SIE case (r_cog < 1).">?</span>
+            <label class="field-label" for="sp-rcog">Returns to cognitive labour (<span class="m">r<sub>cog</sub></span>)
+              <span class="info" title="Returns to cognitive labour, r_cog = r·α, held fixed. Together with the labour share α this implies the returns to software R&D r = r_cog/α and to compute r_comp = r·(1−α) = r_cog·(1−α)/α. A software-only intelligence explosion (SIE) occurs when r_cog ≥ 1; this calculator describes the no-SIE case (r_cog < 1).">?</span>
             </label>
-            <input type="number" id="sp-r" min="0.01" max="5" step="0.05" value="1.4" />
+            <input type="number" id="sp-rcog" min="0.01" max="5" step="0.05" value="0.7" />
           </div>
 
           <div class="group-label">Input growth rates</div>
@@ -272,7 +272,7 @@
           <div class="mathblock">
             <span class="m">g<sub>S</sub></span> = <span class="m">L</span><sup><span class="m">α</span></sup> <span class="m">C<sub>E</sub></span><sup>1−<span class="m">α</span></sup> <span class="m">S</span><sup>−1/<span class="m">r</span></sup>
           </div>
-          <p class="prose">where <span class="m">C<sub>E</sub></span> is experiment compute, <span class="m">α</span> is the labour share, and <span class="m">r</span> is the returns to software R&amp;D. Writing <span class="m">r<sub>cog</sub></span> = <span class="m">r</span><span class="m">α</span> (returns to cognitive labour) and <span class="m">r<sub>comp</sub></span> = <span class="m">r</span>(1 − <span class="m">α</span>) (returns to compute), on the balanced growth path this implies</p>
+          <p class="prose">where <span class="m">C<sub>E</sub></span> is experiment compute, <span class="m">α</span> is the labour share, and <span class="m">r</span> is the returns to software R&amp;D. We take the returns to cognitive labour <span class="m">r<sub>cog</sub></span> = <span class="m">r</span><span class="m">α</span> as an input; together with <span class="m">α</span> this pins down the implied <span class="m">r</span> = <span class="m">r<sub>cog</sub></span>/<span class="m">α</span> and the returns to compute <span class="m">r<sub>comp</sub></span> = <span class="m">r</span>(1 − <span class="m">α</span>) = <span class="m">r<sub>cog</sub></span>(1 − <span class="m">α</span>)/<span class="m">α</span>. On the balanced growth path the law of motion implies</p>
           <div class="mathblock">
             <span class="m">g<sub>S</sub></span> = <span class="m">r<sub>cog</sub></span> <span class="m">g<sub>L</sub></span> + <span class="m">r<sub>comp</sub></span> <span class="m">g<sub>C</sub></span>
           </div>

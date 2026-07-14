@@ -364,21 +364,22 @@
 
   // ======================================================================
   // SPEED-UP CALCULATOR  (no-SIE regime)
-  //   Let r_cog = r·α (returns to cognitive labour), r_comp = r·(1-α).
+  //   Inputs are r_cog (returns to cognitive labour) and the labour share α;
+  //   these imply r = r_cog/α and r_comp = r·(1-α) = r_cog·(1-α)/α.
   //   Before automation, labour is exogenous at g_L^before, giving
   //       g_before = r_cog·g_L^before + r_comp·g_C.
   //   After automation, quality-adjusted labour is L_after ∝ C^(1+γ) S, so
   //   g_L = (1+γ) g_C + g_S; the BGP g_S = r_cog·g_L + r_comp·g_C gives
-  //       g_after = [r_cog(1+γ) + r_comp] g_C / (1 - r_cog)
-  //               = r(1 + α·γ) g_C / (1 - r·α)   (identical value).
-  //   Speed-up = g_after / g_before  (→ (1+α·γ)/(1-r_cog) when g_L^before = g_C).
+  //       g_after = r_cog(1/α + γ) g_C / (1 - r_cog)
+  //               = [r_cog(1+γ) + r_comp] g_C / (1 - r_cog)   (identical value).
+  //   Speed-up = g_after / g_before.
   // ======================================================================
 
   function readSpeedupParams() {
     return {
       alpha: num('sp-alpha'),
       gamma: num('sp-gamma'),
-      r: num('sp-r'),
+      rCog: num('sp-rcog'),
       gLbefore: num('sp-glbefore'),
       gC: num('sp-gc')
     };
@@ -388,9 +389,10 @@
 
   function renderSpeedup() {
     var p = readSpeedupParams();
-    if (isNaN(p.alpha) || isNaN(p.gamma) || isNaN(p.r) || isNaN(p.gLbefore) || isNaN(p.gC)) return;
-    var ra = p.r * p.alpha;
-    var gBefore = p.r * (p.alpha * p.gLbefore + (1 - p.alpha) * p.gC);   // exogenous pre-automation baseline
+    if (isNaN(p.alpha) || isNaN(p.gamma) || isNaN(p.rCog) || isNaN(p.gLbefore) || isNaN(p.gC) || p.alpha <= 0) return;
+    var ra = p.rCog;                                  // r_cog is now the direct input
+    var rComp = p.rCog * (1 - p.alpha) / p.alpha;      // implied returns to compute
+    var gBefore = p.rCog * p.gLbefore + rComp * p.gC;  // exogenous pre-automation baseline
     var multEl = $('sp-multiplier');
     var subEl = $('sp-subnote');
 
@@ -405,7 +407,7 @@
       $('sp-mult-inline').textContent = '∞';
     } else {
       multEl.classList.remove('explosion');
-      var gAfter = p.r * (1 + p.alpha * p.gamma) * p.gC / (1 - ra);
+      var gAfter = p.rCog * (1 / p.alpha + p.gamma) * p.gC / (1 - ra);
       var M = (gBefore > 0) ? gAfter / gBefore : Infinity;
       var Mtxt = isFinite(M) ? M.toFixed(1) : '∞';
       multEl.textContent = Mtxt + '×';
@@ -486,7 +488,7 @@
     $('run-multiple').addEventListener('click', renderMultiple);
 
     // Speed-up calculator: live recompute on any control change
-    ['sp-alpha', 'sp-gamma', 'sp-r', 'sp-glbefore', 'sp-gc'].forEach(function (id) {
+    ['sp-alpha', 'sp-gamma', 'sp-rcog', 'sp-glbefore', 'sp-gc'].forEach(function (id) {
       $(id).addEventListener('input', renderSpeedup);
     });
 
