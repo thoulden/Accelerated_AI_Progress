@@ -221,14 +221,14 @@
 
           <div class="control">
             <label class="field-label" for="sp-glbefore">Pre-automation labour growth (<span class="m">g<sub>L</sub><sup>before</sup></span>)
-              <span class="info" title="Exogenous growth rate of research labour before automation, in fraction per year. It sets the pre-automation software growth rate g_S^before = r_cog·g_L^before + r_comp·g_C, the baseline the speed-up is measured against.">?</span>
+              <span class="info" title="Exogenous growth rate of research labour before automation, in fraction per year. It sets the pre-automation software growth rate g_S = r_cog·g_L + r_comp·g_C, the baseline the speed-up is measured against.">?</span>
             </label>
             <input type="number" id="sp-glbefore" min="0" max="10" step="0.001" value="0.627" />
           </div>
 
           <div class="control">
             <label class="field-label" for="sp-gc">Aggregate compute growth (<span class="m">g<sub>C</sub></span>)
-              <span class="info" title="Growth rate of the aggregate compute stock — training, inference and experiment compute all scale together — as a continuously-compounded fraction per year. The default 1.224 (≈122%/yr) corresponds to compute growing 3.4× per year, since e^1.224 ≈ 3.4.">?</span>
+              <span class="info" title="Growth rate of the aggregate compute stock — training, inference and experiment compute all scale together — as a continuously-compounded fraction per year. This is the compute growth rate both before and after AI R&D is automated (it is assumed to be the same). The default 1.224 (≈122%/yr) corresponds to compute growing 3.4× per year, since e^1.224 ≈ 3.4.">?</span>
             </label>
             <input type="number" id="sp-gc" min="0" max="10" step="0.05" value="1.224" />
           </div>
