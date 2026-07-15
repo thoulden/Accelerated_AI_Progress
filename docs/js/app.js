@@ -424,7 +424,16 @@
 
   var MODES = ['single', 'multiple', 'speedup'];
 
-  function setMode(mode) {
+  // Map a URL hash (e.g. #speedup, #calculator) to a mode, or null if unknown.
+  function modeFromHash() {
+    var h = (window.location.hash || '').replace(/^#/, '').toLowerCase();
+    if (h === 'speedup' || h === 'speed-up' || h === 'calculator') return 'speedup';
+    if (h === 'multiple' || h === 'multiple-simulations') return 'multiple';
+    if (h === 'single' || h === 'single-simulation') return 'single';
+    return null;
+  }
+
+  function setMode(mode, updateHash) {
     MODES.forEach(function (mo) {
       var on = mo === mode;
       $('tab-' + mo).classList.toggle('active', on);
@@ -435,6 +444,12 @@
     // The shared "Model Parameters and Estimates" block (and everything below
     // it) describes the simulation model; hide it on the Speed-Up Calculator tab.
     $('shared-model-info').classList.toggle('hidden', mode === 'speedup');
+    // Reflect the active tab in the URL so it can be linked/bookmarked
+    // (replaceState doesn't fire hashchange, so this won't loop).
+    if (updateHash !== false) {
+      try { window.history.replaceState(null, '', '#' + mode); }
+      catch (e) { window.location.hash = mode; }
+    }
     // Plotly needs a resize nudge when a hidden container becomes visible
     window.dispatchEvent(new Event('resize'));
   }
@@ -492,12 +507,20 @@
       $(id).addEventListener('input', renderSpeedup);
     });
 
+    // React to the URL hash changing (bookmarks, back/forward, manual edits).
+    window.addEventListener('hashchange', function () {
+      var m = modeFromHash();
+      if (m) setMode(m, false);
+    });
+
     // Initial state
     toggleGradualBoost();
     renderSingle();          // single sim auto-runs on load (matches original)
     showMultiplePlaceholder();
     renderSpeedup();         // speed-up calculator computes on load
-    setMode('single');
+    // Open the tab named in the URL hash (e.g. #speedup), else default to single.
+    // Don't rewrite a clean URL on load — only user clicks update the hash.
+    setMode(modeFromHash() || 'single', false);
   }
 
   if (document.readyState === 'loading') {
